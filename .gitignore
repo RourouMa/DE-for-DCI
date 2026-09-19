@@ -1,0 +1,11 @@
+# Research inputs and large local calculation archives are deliberately local.
+/outputs/
+/*.wl
+!/PacletInfo.wl
+/*.txt
+/.DS_Store
+**/.DS_Store
+/runs/
+*.mx
+*.wxf
+*.log

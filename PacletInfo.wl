@@ -1,0 +1,6 @@
+PacletObject[<|
+ "Name" -> "ConformalIBP", "Version" -> "0.1.0",
+ "WolframVersion" -> "13.0+", "Description" ->
+ "Auditable IBP reduction and differential-equation iteration for embedding-space conformal integrals.",
+ "Extensions" -> {{"Kernel", "Root" -> "Kernel", "Context" -> {"ConformalIBP`"}}}
+|>]

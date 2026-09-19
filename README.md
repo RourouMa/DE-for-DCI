@@ -1,0 +1,154 @@
+# DE-for-DCI / ConformalIBP
+
+A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
+
+Version 0.1.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+
+## Quick Start
+
+Wolfram Language 13 or newer is required. Development tests were run with the local Wolfram installation; a license permitting multiple simultaneous kernels is needed only for multi-process generation. The small exact solver needs no external software.
+
+From the repository directory, run:
+
+```sh
+# macOS
+/Applications/Wolfram.app/Contents/MacOS/WolframKernel -script Examples/one-loop.wls
+
+# Ubuntu: use the executable supplied by your Wolfram installation
+WolframKernel -script Examples/one-loop.wls
+```
+
+In a fresh Mathematica session:
+
+```wolfram
+Get[FileNameJoin[{repositoryDirectory, "Kernel", "ConformalIBP.wl"}]];
+Get[FileNameJoin[{repositoryDirectory, "Examples", "kinematics.wl"}]];
+
+family = LadderFamily[1, kinematics, {x, y}];
+result = RunDE[family, G[1,1,1,1,1],
+  "Solver" -> "Exact", "OutputDirectory" -> "runs/box"];
+
+result["Status"]
+result["Basis"]
+result["Matrices"]
+```
+
+The one-loop example reaches a four-element basis and passes an exact flatness check. This is a small regression example, not a four-loop performance benchmark.
+
+Only reduction is also supported:
+
+```wolfram
+result = RunReduction[family, {G[-2,2,4,0,1]},
+  "OutputDirectory" -> "runs/reduction"];
+result["ReducedInputs"]
+```
+
+## Family Input
+
+Supply the family, external kinematics and target integral(s). `LadderFamily[L,...]` supplies the ladder convention. For another topology:
+
+```wolfram
+family = CreateFamily[<|
+  "Name" -> "MyFamily",
+  "External" -> {X1,X2,X3,X4},
+  "Loops" -> {Y1,Y2},
+  "Variables" -> {x,y},
+  "Kinematics" -> kinematics,
+  "Propagators" -> Automatic,
+  "TopSector" -> {1,1,0,1, 0,1,1,1, 1},
+  "Completion" -> "LadderBlocks"
+|>];
+FamilyPropagators[family]
+```
+
+The complete scalar-product basis contains every `SP[Xi,Yj]` and every distinct `SP[Yi,Yj]`. It must retain ISP slots even when those slots are not denominators. Self-products are unit delta cuts appended by the package. A user-supplied permutation of the complete propagator list is preserved exactly; `TopSector` must follow that permutation.
+
+Default order: external products grouped by loop, adjacent loop edges, other loop edges, delta cuts. Thus the four-loop ladder has **13 denominator propagators plus 4 cuts**, represented in **26 index slots**, not 26 denominators:
+
+```wolfram
+G[1,1,0,1, 0,1,0,1, 0,1,0,1, 0,1,1,1,
+  1,1,1,0,0,0, 1,1,1,1]
+```
+
+`Kinematics` must specify the entire symmetric external Gram matrix, including external norms. The built-in derivative is the symmetric Gram deformation `C_z = (d Gram/dz).Inverse[Gram]/2`. A singular Gram matrix requires an explicit association of `"ExternalDerivatives" -> <|z -> matrix, ...|>`; the matrices are checked against the Gram derivatives.
+
+Supported integrands have integer powers of scalar products and unit delta indices in physical dimension four. Nonlinear propagators, nonunit delta derivatives, other dimensions, dimension regularization, and degenerate massless/collinear finiteness analysis are not implemented. Kinematics are symbolic and generic, away from exceptional denominators and singular Gram loci. Finiteness tests assume the deformed external configuration removes external/collinear singularities.
+
+## What Is Automated
+
+1. Analytic delta-tangent rotation operators, classified by all loop-scaling degrees. Four loops give 84 rotations in 11 degree classes. This backend does not need Singular and is not an arbitrary protected-propagator syzygy solver.
+2. Component-local **axial +1/-1** seed neighborhoods and seed/operator degree matching. Independent factor neighborhoods are combined by Cartesian products. All degree classes are considered, and empty classes are reported.
+3. IBP actions including endpoint-local isolated double-collision contact terms. Whole finite combinations are additionally acted on by degree-zero operators before checking infinity cancellation.
+4. All loop permutations and Gram-preserving external permutations. Distinct factor blocks undergo independent external transformations, including simultaneous transformations on every block. Every generated support is canonicalized.
+5. Gaussian column ordering that prefers factorized free representatives, zero loop-loop ISP indices, and simple isolated boxes. High powers in an isolated tadpole are not, by themselves, a complexity failure.
+6. Re-reduction of historical targets and representatives after every system extension, followed by replay from the original input. A self-rule `G -> G` is recorded, never counted as a successful simplification, and remains a seed center. Simpler neighbors in existing relations containing a surviving representative also become centers. This supplies conformal centers that a lone unconstrained axial shift would miss; the applied seed geometry remains axial. The audit lists these added centers.
+7. Constant-coefficient finite combinations extracted from the actual reduced expressions. Simple two-term candidates are considered first; bare finite integrals remain single basis elements. Exact coverage and collision cancellation are checked before the next differentiation.
+8. Full coefficient product rules, simplification of whole combinations before target collection, and closure testing on the **same differentiated input span**. Stable counts alone do not imply closure.
+
+### Factorized Supersectors and ISP Restrictions
+
+`"Completion" -> "LadderBlocks"` completes disconnected scalar ladder blocks to ladders, with isolated one-loop factors completed to boxes. It preserves the requested left/right external assignment. This is not a union of arbitrary sectors. For other topologies use `"Completion" -> "FamilyOnly"` and explicitly list allowed supersectors as denominator ID lists:
+
+```wolfram
+"SuperSectors" -> {{1,2,3,4,6,8,9}, {1,2,4,5,6,7,8,9}}
+```
+
+A positive index must fit one declared domain. Loop-loop ISPs remain nonpositive unless a specified supersector explicitly promotes them. Positive loop-loop powers are capped at two by default. No hidden global seed truncation is used. A numerator connecting two loops is conservatively treated as a connection, not as a product of independent scalar factors.
+
+### Finite Combinations
+
+`BuildFiniteBasis[family, rows]` uses the constant coefficient span of the actual rational coefficient rows. It never invents differences merely because two integrals are divergent. A zero coefficient sum is a candidate condition, not proof of finiteness: the built-in checker also compares contracted isolated-collision residues modulo symmetry. Unequal residues reject the difference.
+
+The chosen combinations contain rational constants, not `x`, `y` or other kinematic parameters. Their count equals the rank of the actual constant divergent coefficient span when the available candidates are certified. This is **not** a proof of the globally sparsest basis, nor of the true irreducible MI count with a more complete IBP system. Overlapping or larger collision clusters stop the built-in certification. An expert-supplied `"FiniteValidator" -> Function[{family,expression}, ...]` may replace it, but assumes responsibility for that proof.
+
+## Lower-Loop Sources and Closure
+
+Contacts are retained as `BoundaryIntegral[L, indices]` in the standard lower-loop order. They are not zero and are not differentiated as constants. The engine does **not yet recursively close the lower-loop source systems**.
+
+- `"Closed"`: derivatives return to the selected input span, all retained source residuals vanish, and the source-free connection is flat.
+- `"ClosedModuloBoundary"`: the same-loop block closes, but lower-loop source terms remain explicitly recorded.
+- `"QuotientClosed"`: same situation when the user explicitly sets `"BoundaryPolicy" -> "Quotient"`. `"Closed"` is still `False`.
+- `"RoundLimit"`, `"ExpansionLimit"`, or a `Failure`: unfinished computation, not closure.
+- `"ReductionFixedPoint"`: the current degree-matched local search generated no new rows. It is not a proof of global IBP completeness.
+
+Read `Basis`, `Matrices`, `BoundaryRows`, `AllInputDEResidualSources`, and `InputReconstructionSources` together. To build a full triangular system, solve the retained lower-loop families separately and connect their DEs; do not erase the sources.
+
+## FiniteFlow and Independent Kernels
+
+Install FiniteFlow from its upstream project and build it for the host platform; the package does not ship binaries or third-party source. Then load explicit local paths:
+
+```wolfram
+InitializeFiniteFlow[finiteFlowInstallDirectory, finiteFlowMathlinkDirectory];
+result = RunDE[family, targets, "Solver" -> "FiniteFlow", "Workers" -> 4];
+```
+
+`Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by exact equation-residual and normal-form checks. Exact verification can itself be expensive on large systems. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
+
+`Workers -> 4` launches four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
+
+## Checkpoints and Ubuntu
+
+All machine-specific paths are supplied at runtime. On Ubuntu, clone this private repository using your GitHub authorization, install/activate Wolfram, and build the Linux FiniteFlow backend. Do not copy macOS dynamic libraries.
+
+```sh
+git clone https://github.com/RourouMa/DE-for-DCI.git
+cd DE-for-DCI
+WolframKernel -script Tests/RunTests.wls
+WolframKernel -script Examples/one-loop.wls
+```
+
+Use `ResumeRun["runs/box"]` in Wolfram to resume. Checkpoints store the family, original input, accumulated system, application ledger, historical reductions and limits. Content, family, version and source fingerprints are checked. **Only load trusted checkpoints:** they are executable Wolfram expressions. Changed implementation or finite-basis logic requires a new campaign from the original input, not reuse of stale ledgers.
+
+Output directories contain a checkpoint and `epochN/roundM/` artifacts: input, derivatives/targets, reduction rules, reduced DE, finite basis and count summary. The checkpoint also records rejected IBP applications, degree coverage gaps and pending relations. `MaxRounds` and `MaxSystemExpansions` are per invocation. Large-system memory planning and scheduler integration remain the caller's responsibility.
+
+## Tests
+
+```sh
+WolframKernel -script Tests/RunTests.wls
+WolframKernel -script Tests/Workers.wls
+WolframKernel -script Tests/FiniteFlow.wls /path/to/finiteflow/install /path/to/finiteflow/mathlink
+# Optional comparison with a trusted original local four-loop generator:
+WolframKernel -script Tests/CompareLegacy.wls /path/to/IBP4loop.wl
+```
+
+The repository excludes original research inputs, PDFs, large relation caches and computed campaign outputs. No four-loop closure result is bundled or implied.

@@ -1,0 +1,63 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+passed=0;
+assert[test_,name_]:=If[TrueQ[test],passed++;Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+kin={SP[X1,X1]->2 x,SP[X3,X3]->2 x,SP[X2,X2]->2 y,SP[X4,X4]->2 y,
+ SP[X1,X3]->1+x^2,SP[X2,X4]->1+y^2,SP[X1,X2]->0,SP[X1,X4]->0,SP[X2,X3]->0,SP[X3,X4]->0};
+f1=LadderFamily[1,kin,{x,y}];f2=LadderFamily[2,kin,{x,y}];f4=LadderFamily[4,kin,{x,y}];
+assert[And@@(AssociationQ /@ {f1,f2,f4}),"families 1, 2, 4"];
+assert[Total[f4["TopSector"]]===13 && Length[FamilyPropagators[f4]]===26,"four-loop 13 denominators plus 4 cuts; 26 complete slots"];
+ops=GenerateOperators[f4];assert[Length[ops]===84 && Length[Union[Lookup[ops,"Degree"]]]===11,"84 rotations in 11 degree classes"];
+assert[And@@Table[With[{yi=f4["Loops"][[op["Loop"]]],a=op["A"],b=op["B"]},
+ SP[yi,a] SP[yi,b]-SP[yi,b] SP[yi,a]===0],{op,ops}],"delta tangency"];
+g1=G[1,1,1,1,1];g4=G@@Join[f4["TopSector"],{1,1,1,1}];
+plan=GenerateSeeds[f4,{g4}];
+assert[And@@Flatten[Table[ConformalIBP`Private`weights[f4,List@@s]+b["Degree"]==={4,4,4,4},{b,plan["Batches"]},{s,b["Seeds"]}]],"every seed is degree matched"];
+assert[And@@Flatten[Table[Max[(List@@s)[[{20,21,22}]]] <= 0 && Max[(List@@s)[[{17,18,19}]]] <= 2,
+ {b,plan["Batches"]},{s,b["Seeds"]}]],"no positive loop ISPs or cubic poles"];
+withNumerator=G@@ReplacePart[List@@g4,{17->0,18->0,20->-1}];
+assert[Intersection[Union@@ConformalIBP`Private`templates[f4,withNumerator],{20,21,22}]==={},
+ "factor completion cannot promote a numerator loop ISP"];
+assert[FiniteIntegralQ[f1,g1],"box finite"];
+assert[!FiniteIntegralQ[f2,G[2,0,0,0,0,2,0,0,2,1,1]],"bare double collision divergent"];
+a=G[2,0,0,0,0,2,0,0,2,1,1];b=G[1,1,0,0,1,1,0,0,2,1,1];
+c=G[1,0,1,0,0,2,0,0,2,1,1];
+assert[FiniteIntegralQ[f2,a-b],"equal collision residues cancel"];
+assert[!FiniteIntegralQ[f2,a-c],"zero coefficient sum alone is not finiteness"];
+fb=BuildFiniteBasis[f2,{x(a-b),y(a-b)}];
+assert[AssociationQ[fb] && Length[fb["Combinations"]]===1 && fb["ExactCoverage"] && fb["NoKinematicsInCombinations"],"constant finite cover"];
+assert[FailureQ[BuildFiniteBasis[f2,{a-c}]],"unverified differences rejected"];
+assert[FailureQ[DifferentiateIntegrals[f1,{BoundaryIntegral[1,{1,1,1,1,1}]}]],"boundary sources are not constants"];
+dp=DifferentiateIntegrals[f1,{x g1}];d0=DifferentiateIntegrals[f1,{g1}];
+assert[ConformalIBP`Private`zero[First[dp["Rows"][x]]-g1-x First[d0["Rows"][x]]],"coefficient product rule"];
+fz=LadderFamily[1,kin/.x->z,{z,y}];
+assert[AssociationQ[fz] && FreeQ[DifferentiateIntegrals[fz,{g1}],x],"kinematic variable names not hard-coded"];
+freverse=CreateFamily[Join[KeyDrop[f1,{"Hash"}],<|"Propagators"->Reverse[f1["Propagators"]],"TopSector"->{1,1,1,1}|>]];
+assert[AssociationQ[freverse] && First[FamilyPropagators[freverse]]===SP[X4,Y1],"user propagator ordering preserved"];
+fgen=CreateFamily[Join[KeyDrop[f1,{"Hash"}],<|"ExternalPermutations"->{{3,2,1,4},{1,4,3,2}}|>]];
+assert[Length[fgen["ExternalPermutations"]]===4 && MemberQ[fgen["ExternalPermutations"],{3,4,1,2}],"external symmetry generators closed under composition"];
+assert[FailureQ[CreateFamily[Join[KeyDrop[f1,{"Hash"}],<|"Dimension"->6|>]]],"unsupported dimension rejected"];
+split1=G[2,0,0,2,1,1,0,2,0,1,1];split2=G[0,0,2,2,1,2,0,1,0,1,1];
+assert[CanonicalIntegral[f2,split1]===CanonicalIntegral[f2,split2],"independent external symmetries on both factors"];
+connected=G@@Join[f2["TopSector"],{1,1}];
+connected=CanonicalIntegral[f2,connected];factorized=CanonicalIntegral[f2,split1];
+pref=ReduceIntegrals[f2,{connected},{connected-factorized},"Solver"->"Exact"];
+assert[pref["ReducedTargets"]==={factorized},"factorized free representative preferred in Gaussian columns"];
+serial=GenerateSystem[f1,{g1}];
+assert[AssociationQ[serial] && Length[serial["Equations"]]>0,"serial IBP generation"];
+reduced=ReduceIntegrals[f1,d0["Targets"],serial["Equations"],"Solver"->"Exact"];
+assert[AssociationQ[reduced] && reduced["ExactEquationResidualsZero"],"exact Gaussian residual verification"];
+temp=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"conformal-ibp-test-"<>CreateUUID[]}]];
+run=RunDE[f1,g1,"Solver"->"Exact","MaxRounds"->4,"MaxSystemExpansions"->6,"ProgressFunction"->None,"OutputDirectory"->temp];
+assert[AssociationQ[run] && run["Status"]==="Closed" && run["FlatnessVerified"] && Length[run["Basis"]]===4,"one-loop automatic DE closure and flatness"];
+resume=ResumeRun[temp];assert[AssociationQ[resume] && resume["Closed"],"checkpoint resume"];
+dup=RunDE[f1,{g1,2 g1},"Solver"->"Exact","MaxRounds"->4,"MaxSystemExpansions"->6,"ProgressFunction"->None];
+assert[AssociationQ[dup] && dup["Closed"] && Length[dup["Basis"]]===4,"dependent inputs do not cause infinite replay"];
+limited=RunDE[f1,g1,"MaxSystemExpansions"->0,"ProgressFunction"->None];
+assert[limited["Status"]==="ExpansionLimit" && !limited["Closed"],"budget exhaustion is not closure"];
+high=RunReduction[f1,G[-2,2,4,0,1],"Solver"->"Exact","ProgressFunction"->None];
+assert[AssociationQ[high] && TrueQ[Together[First[high["ReducedInputs"]]-(1+x^2+x^4)/(3 x^2) G[0,0,2,2,1]]===0],
+ "high-power box reduced automatically using local relation neighbors"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];
+Print["ALL ",passed," TESTS PASSED"];
+Quit[0];
