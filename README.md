@@ -4,6 +4,8 @@ A Wolfram Language research package for auditable IBP reduction and differential
 
 Version 0.1.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
+For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
+
 ## Quick Start
 
 Wolfram Language 13 or newer is required. Development tests were run with the local Wolfram installation; a license permitting multiple simultaneous kernels is needed only for multi-process generation. The small exact solver needs no external software.
