@@ -62,6 +62,8 @@ WolframKernel -script reproduction/ordering01/solve.wls
 
 `solve.wls` 从完整方程重新做 FiniteFlow 消元，与发布的 canonical rules 逐项作精确差值检查，并输出 raw rules。这一步与前面的“固定规则重放”不同，内存和时间开销明显更大。不要把成功读取矩阵或已有规则当作新求解成功。输出在 `work/solve/`，不覆盖固定规则。
 
+若 canonical 规则已保存，但 raw 导出曾中断，可运行 `WolframKernel -script reproduction/ordering01/compose.wls`，按积分收集有理系数并重新导出；它会与固定 raw 规则精确比较。不要对整条含积分的表达式盲目 `Expand`，这会令规则文件无谓膨胀。
+
 若 `work/solve/Verification.wl` 为 `ExactCanonicalRulesMatch -> True`，可进一步用**新求出的规则**重跑：
 
 ```bash

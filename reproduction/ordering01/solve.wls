@@ -24,7 +24,8 @@ hResidual=Together /@ ((hNeed/.Dispatch[hCanonical])-(hNeed/.hExpected));
 hExact=And@@(#===0& /@ hResidual);
 Put[hCanonical,FileNameJoin[{hWork,"CanonicalReductionRules.wl"}]];
 hMap=hGet["QueryMap.wl"];
-hRules=Thread[(First /@ hMap)->(Expand /@ ((Last /@ hMap)/.Dispatch[hCanonical]))];
+Get[FileNameJoin[{hHome,"normal_form.wl"}]];
+hRules=Thread[(First /@ hMap)->(SnapshotLinearNormal /@ ((Last /@ hMap)/.Dispatch[hCanonical]))];
 Put[hRules,FileNameJoin[{hWork,"IBP4ReductionRules.txt"}]];
 Do[CopyFile[FileNameJoin[{hData,"reduction",hFile}],FileNameJoin[{hWork,hFile}]],
  {hFile,{"OrderingSummary.wl","Projection.wl"}}];

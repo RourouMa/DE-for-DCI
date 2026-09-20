@@ -25,3 +25,9 @@ FiniteFlow solve; that optional run produces its own `Verification.wl`.
 
 Tests were run on the source Mac with the version recorded in `Replay.wl`.
 No Ubuntu runtime result is asserted until these checks are run on Ubuntu.
+
+`GitHubDownloadReplay.wl` repeats the four-round verification in a fresh
+clone obtained from GitHub, after downloading all three private Release
+assets with `fetch.py --all`. All 320 extracted payload checksums passed,
+and every round again matched the exact saved basis, targets and reduced
+DE. This clean-clone check ran on the Mac, not on the remote Ubuntu host.
