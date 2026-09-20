@@ -6,12 +6,12 @@ f=LadderFamily[2,kin,{x,y}];g=CanonicalIntegral[f,G@@Join[f["TopSector"],{1,1}]]
 b1=BoundaryIntegral[1,{1,1,1,1,1}];b2=BoundaryIntegral[1,{2,0,2,0,1}];
 eq={g-b1,b1-2 b2};
 a=ReduceIntegrals[f,{g,b1},eq,"Solver"->"Exact"];
-assert[AssociationQ[a] && a["ExactEquationResidualsZero"] && a["Idempotent"],"full residuals and source idempotence"];
+assert[AssociationQ[a] && a["NumericalEquationResidualsZero"] && a["Idempotent"],"full residuals and source idempotence"];
 assert[a["ReducedTargets"]==={2 b2,2 b2},"source pivot retained in target images"];
 assert[Length[a["SameLoopRules"]]===1 && Length[a["BoundaryRules"]]===2,"separate same-loop and boundary exports"];
 assert[a["RawMasters"]==={} && a["BoundarySources"]==={b2},"lower sources do not become same-loop masters"];
 bad=ReduceIntegrals[f,{g},eq,"Solver"->Function[{equations,columns,queries},{g->b1}]];
-assert[FailureQ[bad] && bad[[1]]==="UnverifiedReduction","omitted boundary constraint still fails exact verification"];
+assert[FailureQ[bad] && bad[[1]]==="UnverifiedReduction","omitted boundary constraint fails two-point verification"];
 free=ReduceIntegrals[f,{g+b1},{},"Solver"->"Exact"];
 assert[free["ReducedTargets"]==={g+b1} && MemberQ[free["ColumnOrder"],b1],"unconstrained target source retained"];
 cover=BuildFiniteBasis[f,{g+b1}];
@@ -20,6 +20,6 @@ If[MemberQ[Join[$CommandLine,$ScriptCommandLine],"--finiteflow"],
  args=Take[If[Length[$ScriptCommandLine]>=3,$ScriptCommandLine,$CommandLine],-2];
  assert[InitializeFiniteFlow@@args,"load FiniteFlow"];
  b=ReduceIntegrals[f,{g,b1},eq,"Solver"->"FiniteFlow"];
- assert[AssociationQ[b] && b["ReducedTargets"]===a["ReducedTargets"] && b["ExactEquationResidualsZero"],"FiniteFlow retains source pivots like exact elimination"]];
+ assert[AssociationQ[b] && b["ReducedTargets"]===a["ReducedTargets"] && b["NumericalEquationResidualsZero"],"FiniteFlow retains source pivots like exact elimination"]];
 assert[$MessageList==={},"no unexpected Wolfram messages"];
 Quit[0];

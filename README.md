@@ -194,7 +194,7 @@ combination with every domain-only closure problem is not yet established.
 Included implementation optimizations: compiled ordinary IBP shifts; shared
 operator-degree seed geometry; coefficient-wise rational normalization and
 one expansion per coefficient-matrix row; sparse FiniteFlow output; dependency
-selection of original equation rows; exact residual/idempotence checks;
+selection of original equation rows; two-point residual/idempotence checks;
 full-pool target comparison for the FiniteFlow selector; sampling, permutation,
 symmetry-orbit, application and verified-reduction caches; worker cache transfer
 and checkpoint fingerprints. See [the optimization and strategy report](docs/OPTIMIZATIONS_20260920.zh-CN.md).

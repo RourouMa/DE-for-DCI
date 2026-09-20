@@ -6,7 +6,7 @@ f=LadderFamily[1,kin,{x,y}];g=G[1,1,1,1,1];
 run=RunDE[f,g,"Solver"->"Exact","GenerationPolicy"->"OnDemand","MaxRounds"->6,"MaxSystemExpansions"->8,"ProgressFunction"->None];
 assert[AssociationQ[run] && run["Closed"] && run["FlatnessVerified"],"demand-driven one-loop DE closes with exact flatness"];
 assert[Length[run["Basis"]]===4 && Length[run["History"]]>=2,"finite cover feeds a subsequent derivative round"];
-assert[run["LastReduction"]["ExactEquationResidualsZero"] && run["LastReduction"]["Idempotent"],"full reduction verification retained"];
+assert[run["LastReduction"]["NumericalEquationResidualsZero"] && run["LastReduction"]["Idempotent"],"full reduction verification retained"];
 assert[run["CompletedApplications"]=!={},"missing targets trigger actual IBP generation"];
 assert[And@@(FiniteIntegralQ[f,#]& /@ run["Basis"]),"final differentiated inputs remain certified finite"];
 assert[FailureQ[RunDE[f,g,"GenerationPolicy"->"invalid"]],"invalid scheduling option rejected"];

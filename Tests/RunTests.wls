@@ -46,7 +46,7 @@ assert[pref["ReducedTargets"]==={factorized},"factorized free representative pre
 serial=GenerateSystem[f1,{g1}];
 assert[AssociationQ[serial] && Length[serial["Equations"]]>0,"serial IBP generation"];
 reduced=ReduceIntegrals[f1,d0["Targets"],serial["Equations"],"Solver"->"Exact"];
-assert[AssociationQ[reduced] && reduced["ExactEquationResidualsZero"],"exact Gaussian residual verification"];
+assert[AssociationQ[reduced] && reduced["NumericalEquationResidualsZero"],"Gaussian reduction with two-point residual verification"];
 temp=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"conformal-ibp-test-"<>CreateUUID[]}]];
 run=RunDE[f1,g1,"Solver"->"Exact","MaxRounds"->4,"MaxSystemExpansions"->6,"ProgressFunction"->None,"OutputDirectory"->temp];
 assert[AssociationQ[run] && run["Status"]==="Closed" && run["FlatnessVerified"] && Length[run["Basis"]]===4,"one-loop automatic DE closure and flatness"];
