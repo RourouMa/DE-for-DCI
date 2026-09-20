@@ -1,3 +1,9 @@
+## 0.2.7: two-point verification by default
+
+Reduction residuals, normal-form checks, full-pool target comparisons, and historical-rule replay now use exactly two numerical points by default. Integral and boundary-source coefficients are checked individually modulo primes 1000003 and 1000033. Symbolic verification requires explicit `"VerificationMode" -> "Exact"`; numerical results do not claim exact certification. Physical finite-integral checks are unchanged. Verification mode and requested points participate in the reduction cache key.
+
+`NumericalVerification`, `ParallelResiduals`, `ReductionReuse`, `TargetReduction`, and `FiniteFlowTargetSelection` pass: good/bad rules, singular-point rejection, two-point count, explicit exact-mode cache separation, parallel row coverage, and boundary-source constraints. Live four-loop jobs retain their frozen 0.2.6 implementation and the independent two-point full-pool verifier.
+
 # Validation Record
 
 ## 0.2.6 shared worker options

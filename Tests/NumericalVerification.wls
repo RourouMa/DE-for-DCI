@@ -1,0 +1,16 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+a=G[1];b=G[2];rows={a-x b,a-x b};
+check=ConformalIBP`Private`sampledRuleResiduals;
+assert[check[rows,{a->x b},{x}]==={0,0},"correct rule passes both points"];
+assert[check[rows,{a->(x+1)b},{x}]==={1,1},"incorrect rule rejected for every row"];
+assert[FailureQ[check[rows,{a->x b},{x},{{2}}]],"one point rejected"];
+assert[Quiet[check[{a-b/(x-2)},{a->b/(x-2)},{x},{{2},{3}}]]=!={0},"singular point never accepted"];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+f=LadderFamily[1,kinematics,{x,y}];g=CanonicalIntegral[f,G[1,1,1,1,1]];
+r=ReduceIntegrals[f,{g},{(x+y)g},"Solver"->"Exact"];
+assert[AssociationQ[r] && r["NumericalEquationResidualsZero"] && !r["ExactEquationResidualsZero"] && Length[r["NumericalVerificationPoints"]]===2,"default checks exactly two points and makes no exact claim"];
+e=ReduceIntegrals[f,{g},{(x+y)g},"Solver"->"Exact","VerificationMode"->"Exact"];
+assert[AssociationQ[e] && e["ExactEquationResidualsZero"] && !e["ReductionReused"],"explicit exact mode has separate cache"];
+assert[FailureQ[ReduceIntegrals[f,{g},{g},"VerificationMode"->"invalid"]],"unknown mode rejected"];
+Quit[0];

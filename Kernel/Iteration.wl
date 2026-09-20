@@ -42,7 +42,7 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"JobDirectory"->dir|>];
 
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
- "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
+ "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
  "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets",
  "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ProgressFunction"->Print};
@@ -103,12 +103,12 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    s["HistoricalTargets"]=Union[s["HistoricalTargets"],targets];
    query=Union[s["HistoricalTargets"],s["PreviousRepresentatives"],targets];
    If[o["ReductionScope"]==="Targets",query=Union[query,support[Lookup[s,"HistoricalRules",{}]],sources[Lookup[s,"HistoricalRules",{}]]]];
-   reduction=If[o["ReductionScope"]==="Targets",ReduceTargetIntegrals,ReduceIntegrals][f,query,s["Equations"],"Solver"->o["Solver"],"MaxExactColumns"->o["MaxExactColumns"],"MaxPrimes"->o["MaxPrimes"],"VerificationWorkers"->o["VerificationWorkers"],"KernelExecutable"->o["KernelExecutable"],
+   reduction=If[o["ReductionScope"]==="Targets",ReduceTargetIntegrals,ReduceIntegrals][f,query,s["Equations"],"Solver"->o["Solver"],"MaxExactColumns"->o["MaxExactColumns"],"MaxPrimes"->o["MaxPrimes"],"VerificationMode"->o["VerificationMode"],"NumericalVerificationPoints"->o["NumericalVerificationPoints"],"VerificationWorkers"->o["VerificationWorkers"],"KernelExecutable"->o["KernelExecutable"],
     "ProgressFunction"->Function[event,progress[o,Join[<|"Epoch"->s["Epoch"],"Round"->pass|>,event]]]];
    If[FailureQ[reduction],reason=reduction;Break[]];
    historyRules=Lookup[s,"HistoricalRules",{}];
-   If[historyRules=!={},oldResidual=canonicalLinear /@ (((First /@ historyRules)-(Last /@ historyRules))/.Dispatch[reduction["Rules"]]);
-    If[!And@@(zero /@ oldResidual),reason=fail["HistoricalRegression","An old reduction identity is not reproduced."];Break[]]];
+   If[historyRules=!={},oldResidual=If[o["VerificationMode"]==="Exact",canonicalLinear /@ (((First /@ historyRules)-(Last /@ historyRules))/.Dispatch[reduction["Rules"]]),sampledRuleResiduals[(First /@ historyRules)-(Last /@ historyRules),reduction["Rules"],coefficientParameters[Join[Last /@ historyRules,Last /@ reduction["Rules"]]],o["NumericalVerificationPoints"]]];
+    If[FailureQ[oldResidual] || !And@@(zero /@ oldResidual),reason=fail["HistoricalRegression","An old reduction identity is not reproduced."];Break[]]];
    s["HistoricalRules"]=reduction["Rules"];s["LastReduction"]=reduction;
    s["CurrentRound"]=pass;s["CurrentInputs"]=basis;
    s["Status"]="ReductionVerified";checkpoint[s,o["OutputDirectory"]];

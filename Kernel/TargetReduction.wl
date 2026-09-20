@@ -59,7 +59,7 @@ ReduceTargetIntegrals[f_Association,targets_List,equations_List,opts:OptionsPatt
  certificate=<|"OriginalPoolHash"->Hash[rows,"SHA256"],"OriginalRowIndices"->ids,
   "SelectedEquationsHash"->Hash[rows[[ids]],"SHA256"],"Rules"->red["Rules"],
   "ExactEquationResidualsZero"->red["ExactEquationResidualsZero"],"Idempotent"->red["Idempotent"],"Sampling"->selection["Samples"],
-  "ModularRankWitness"->rankWitness,"IndependentConstraintCount"->Length[nontrivial],"ExactSelectedRowSpaceCertified"->rankCertified|>;
+  "ModularRankWitness"->rankWitness,"IndependentConstraintCount"->Length[nontrivial],"ExactSelectedRowSpaceCertified"->(rankCertified && OptionValue["VerificationMode"]==="Exact"),"NumericalSelectedRowSpaceChecked"->(rankCertified && OptionValue["VerificationMode"]==="Numerical")|>;
  result=Join[red,<|"Rules"->rules,"ColumnOrder"->keep,"Columns"->Length[keep],
   "SameLoopRules"->Select[rules,MatchQ[First[#],_G]&],"BoundaryRules"->Select[rules,MatchQ[First[#],_BoundaryIntegral]&],
   "UnseenTargets"->Complement[support[ct],support[rows]],"VerificationScope"->"SelectedOriginalEquations",
@@ -99,15 +99,15 @@ reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
  reference=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->inner["ColumnOrder"],"Parameters"->parameters,"SparseOutput"->True,"MaxPrimes"->o["MaxPrimes"]];
  If[!ListQ[reference] || !And@@(MatchQ[#,_Rule]& /@ reference),Return[fail["FullPoolTargetSolve","Full-pool target reference failed."]]];
  If[report=!=None,report[<|"Action"->"Full-pool target solve returned; comparing exact normal forms","Seconds"->AbsoluteTime[]-start|>]];
- diff=canonicalLinear /@ ((inner["ColumnOrder"]/.Dispatch[reference])-(inner["ColumnOrder"]/.Dispatch[inner["Rules"]]));
+ diff=If[o["VerificationMode"]==="Exact",canonicalLinear /@ ((inner["ColumnOrder"]/.Dispatch[reference])-(inner["ColumnOrder"]/.Dispatch[inner["Rules"]])),If[sampledRuleAgreement[inner["ColumnOrder"],reference,inner["Rules"],parameters,o["NumericalVerificationPoints"]],{}, {1}]];
  If[!And@@(zero /@ diff),Return[fail["FullPoolTargetMismatch","Selected target normal forms differ from the full pool.",<|"Residuals"->DeleteCases[diff,0]|>]]];
  fullSeconds=AbsoluteTime[]-start;
  certificate=inner["VerificationCertificate"];mapped=ids[[certificate["OriginalRowIndices"]]];
  certificate=Join[certificate,<|"OriginalPoolHash"->Hash[rows,"SHA256"],"OriginalRowIndices"->mapped,
   "SelectedEquationsHash"->Hash[rows[[mapped]],"SHA256"],"SelectionBackend"->"FiniteFlowThenIndependentModularCertificate",
-  "FullPoolTargetAgreement"->True,"FullPoolTargetRulesHash"->Hash[reference,"SHA256"]|>];
- If[report=!=None,report[<|"Action"->"Full-pool target normal forms agree exactly","Queries"->Length[inner["ColumnOrder"]],"Seconds"->fullSeconds|>]];
+  "FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->o["VerificationMode"],"FullPoolTargetRulesHash"->Hash[reference,"SHA256"]|>];
+ If[report=!=None,report[<|"Action"->If[o["VerificationMode"]==="Exact","Full-pool target normal forms agree exactly","Full-pool target normal forms agree at two numerical points"],"Queries"->Length[inner["ColumnOrder"]],"Seconds"->fullSeconds|>]];
  Join[inner,<|"VerificationCertificate"->certificate,"OriginalEquationCount"->Length[rows],
-  "FullPoolEquationResidualsChecked"->(Length[mapped]===Length[rows]),"FullPoolTargetAgreement"->True,
+  "FullPoolEquationResidualsChecked"->(Length[mapped]===Length[rows]),"FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->o["VerificationMode"],
   "SelectionSeconds"->(selectedSeconds+inner["SelectionSeconds"]),"FullPoolTargetCheckSeconds"->fullSeconds|>]
 ];

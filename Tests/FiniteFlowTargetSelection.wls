@@ -13,7 +13,7 @@ Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},
  assert[AssociationQ[automatic] && TrueQ[automatic["FullPoolTargetAgreement"]],"automatic loaded FiniteFlow selects verified dependency backend"];
  full=ReduceIntegrals[f,{g,b1},eq,"Solver"->"Exact"];
  assert[AssociationQ[red] && red["ReducedTargets"]===full["ReducedTargets"],"symbolic target and source normal forms match full exact system"];
- cert=red["VerificationCertificate"];assert[cert["FullPoolTargetAgreement"] && cert["ExactSelectedRowSpaceCertified"],"full-target comparison plus independent selected rank certificate"];
+ cert=red["VerificationCertificate"];assert[cert["FullPoolTargetAgreement"] && cert["NumericalSelectedRowSpaceChecked"],"full-target comparison plus independent selected rank certificate"];
  rows=ConformalIBP`Private`canonExpr[f,#]& /@ eq;
  assert[And@@(ConformalIBP`Private`zero /@ (rows[[cert["OriginalRowIndices"]]]/.Dispatch[cert["Rules"]])),"original row provenance survives two-stage selection"];
  assert[Length[cert["OriginalRowIndices"]]===2,"irrelevant component excluded"];

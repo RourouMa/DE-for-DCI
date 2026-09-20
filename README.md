@@ -124,7 +124,7 @@ InitializeFiniteFlow[finiteFlowInstallDirectory, finiteFlowMathlinkDirectory];
 result = RunDE[family, targets, "Solver" -> "FiniteFlow", "Workers" -> 4];
 ```
 
-`Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by exact equation-residual and normal-form checks. Exact verification can itself be expensive on large systems. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
+`Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by checks at exactly two numerical kinematic points (all integral coefficients, including boundary sources). `"VerificationMode" -> "Numerical"` is the default; `"NumericalVerificationPoints" -> {{11,17},{13,19}}` overrides the points for a two-parameter system. Singular points fail verification. These checks are numerical evidence, not an analytic proof. Symbolic residual checks run only with explicit `"VerificationMode" -> "Exact"`. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
 
 `Workers -> 4` launches up to four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
 
@@ -215,7 +215,7 @@ FINITEFLOW_ROOT=/path/to/finiteflow python3 scripts/run-tests.py --kernel /path/
 Archive comparison scripts in `Tests/` additionally require the baseline/job
 files described at their beginning; they are not part of the portable suite.
 
-For expensive exact residual checks, `"VerificationWorkers" -> 4` uses independent
+For parallel residual checks, `"VerificationWorkers" -> 4` uses independent
 kernels to verify every selected original equation. It defaults to 1 and does
 not change the mathematical acceptance checks. Relation-frontier construction
 is also deferred until broad seeding is needed and uses a single support scan.

@@ -5,7 +5,7 @@ f=LadderFamily[2,kin,{x,y}];g=CanonicalIntegral[f,G@@Join[f["TopSector"],{1,1}]]
 b1=BoundaryIntegral[1,{1,1,1,1,1}];b2=BoundaryIntegral[1,{2,0,2,0,1}];b3=BoundaryIntegral[1,{3,0,1,0,1}];
 eq={g-b1,b1-2 b2};events={};
 a=ReduceIntegrals[f,{g},eq,"Solver"->"Exact"];
-assert[!a["ReductionReused"] && a["ExactEquationResidualsZero"] && a["Idempotent"],"initial solve fully verified"];
+assert[!a["ReductionReused"] && a["NumericalEquationResidualsZero"] && a["Idempotent"],"initial solve fully verified"];
 b=ReduceIntegrals[f,{x g+b1,b2},eq,"Solver"->"Exact","ProgressFunction"->(AppendTo[events,#]&)];
 assert[b["ReductionReused"] && b["ReducedTargets"]==={2 (1+x) b2,b2},"new queries reuse same full system and refresh images"];
 assert[MemberQ[Lookup[events,"Action"],"Reusing verified full reduction"] && !MemberQ[Lookup[events,"Action"],"Starting coefficient solve"],"cache hit skips coefficient solver"];

@@ -61,29 +61,45 @@ reductionTargets[result_,targets_,rows_]:=Module[{dispatch=Dispatch[result["Rule
 (* Infer parameters from scalar coefficients, never polynomialize thousands of integral columns. *)
 coefficientParameters[rows_List]:=Union[Flatten[Function[row,With[{atoms=Join[support[row],sources[row]]},
  Variables[If[atoms==={},row,Last /@ CoefficientRules[Expand[row],atoms]]]]]/@rows]];
-(* Independent exact row checks; all shards must finish and every original row is covered. *)
-verifyEquationResiduals[rows_,rules_,workers_,kernel_]:=Module[{n=Min[workers,Length[rows]],dir,runner,jobs={},results,ids,job,result,bad={},executable},
- If[workers===1 || Length[rows]<2,Return[canonicalLinear /@ (rows/.Dispatch[rules])]];
+(* Evaluate kinematics before substituting rules: never form symbolic residuals in numerical mode. *)
+numericalPoints[vars_,requested_]:=If[requested===Automatic,If[Length[vars]===2,{{11,17},{13,19}},Table[Prime[Range[Length[vars]]+k+3],{k,2}]],requested];
+numericalLinearZeroQ[e_,prime_]:=Module[{atoms=Join[support[e],sources[e]],values},
+ values=If[atoms==={},{e},Quiet[Check[Last /@ CoefficientRules[Expand[e],atoms],$Failed]]];
+ ListQ[values] && AllTrue[values,MatchQ[#,_Integer|_Rational] && Mod[Denominator[#],prime]=!=0 && Mod[Numerator[#] PowerMod[Denominator[#],-1,prime],prime]===0&]];
+sampledRuleResiduals[rows_,rules_,vars_,requested_:Automatic]:=Module[{points=numericalPoints[vars,requested],result=ConstantArray[0,Length[rows]],point,nrules,values,prime,bad},
+ If[!MatchQ[points,{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[fail["NumericalPoints","Supply exactly two integer kinematic points of the correct dimension."]]];
+ Do[point=Dispatch[Thread[vars->points[[k]]]];prime={1000003,1000033}[[k]];
+ nrules=Dispatch[Thread[(First /@ rules)->((Last /@ rules)/.point)]];values=(rows/.point)/.nrules;
+ bad=Select[Range[Length[values]],!numericalLinearZeroQ[values[[#]],prime]&];If[bad=!={},result[[bad]]=ConstantArray[1,Length[bad]]],{k,2}];result];
+sampledRuleAgreement[queries_,a_,b_,vars_,requested_:Automatic]:=Module[{points=numericalPoints[vars,requested],point,ar,br,diff,prime,passed=True},
+ If[!MatchQ[points,{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[False]];
+ Do[point=Dispatch[Thread[vars->points[[k]]]];prime={1000003,1000033}[[k]];ar=Dispatch[Thread[(First /@ a)->((Last /@ a)/.point)]];br=Dispatch[Thread[(First /@ b)->((Last /@ b)/.point)]];
+ diff=((queries/.point)/.ar)-((queries/.point)/.br);If[!AllTrue[diff,numericalLinearZeroQ[#,prime]&],passed=False;Break[]],{k,2}];passed];
+(* Check every selected row; numerical verification is the default. *)
+verifyEquationResiduals[rows_,rules_,workers_,kernel_,mode_:"Numerical",points_:Automatic]:=Module[{n=Min[workers,Length[rows]],dir,runner,jobs={},results,ids,job,result,bad={},executable,parameters},
+ If[workers===1 || Length[rows]<2,Return[If[mode==="Exact",canonicalLinear /@ (rows/.Dispatch[rules]),sampledRuleResiduals[rows,rules,coefficientParameters[Join[rows,Last /@ rules]],points]]]];
  dir=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"conformal-residuals-"<>CreateUUID[]}]];
  runner=FileNameJoin[{DirectoryName[DirectoryName[$packageFile]],"scripts","verify-residual-worker.wls"}];
  executable=Replace[kernel,Automatic:>First[$CommandLine]];
+ parameters=coefficientParameters[Join[rows,Last /@ rules]];
  Put[rules,FileNameJoin[{dir,"Rules.wl"}]];
- Do[ids=Range[k,Length[rows],n];job=<|"Rows"->rows[[ids]],"Indices"->ids,"RulesFile"->FileNameJoin[{dir,"Rules.wl"}],"ImplementationHash"->$implementationHash|>;
+ Do[ids=Range[k,Length[rows],n];job=<|"Rows"->rows[[ids]],"Indices"->ids,"RulesFile"->FileNameJoin[{dir,"Rules.wl"}],"ImplementationHash"->$implementationHash,"VerificationMode"->mode,"NumericalVerificationPoints"->points,"Parameters"->parameters|>;
   Put[job,FileNameJoin[{dir,"input"<>ToString[k]<>".wl"}]];
   AppendTo[jobs,StartProcess[{executable,"-script",runner,FileNameJoin[{dir,"input"<>ToString[k]<>".wl"}],FileNameJoin[{dir,"output"<>ToString[k]<>".wl"}]}]],{k,n}];
- If[AnyTrue[jobs,Head[#]=!=ProcessObject&],Scan[If[Head[#]===ProcessObject,KillProcess[#]]&,jobs];Return[fail["ResidualWorkerLaunch","Could not launch exact verification workers.",<|"Directory"->dir|>]]];
+ If[AnyTrue[jobs,Head[#]=!=ProcessObject&],Scan[If[Head[#]===ProcessObject,KillProcess[#]]&,jobs];Return[fail["ResidualWorkerLaunch","Could not launch verification workers.",<|"Directory"->dir|>]]];
  While[AnyTrue[jobs,ProcessStatus[#]==="Running"&],Pause[0.1]];
  If[!And@@Table[ProcessInformation[jobs[[k]],"ExitCode"]===0 && FileExistsQ[FileNameJoin[{dir,"output"<>ToString[k]<>".wl"}]],{k,n}],
-  Return[fail["ResidualWorkerFailure","An exact verification shard failed; no reduction accepted.",<|"Directory"->dir|>]]];
+  Return[fail["ResidualWorkerFailure","An verification shard failed; no reduction accepted.",<|"Directory"->dir|>]]];
  results=Get /@ Table[FileNameJoin[{dir,"output"<>ToString[k]<>".wl"}],{k,n}];
  If[!And@@Table[AssociationQ[results[[k]]] && Lookup[results[[k]],"ImplementationHash",None]===$implementationHash &&
     Lookup[results[[k]],"CheckedIndices",{}]===Range[k,Length[rows],n] && ListQ[Lookup[results[[k]],"NonzeroResiduals",None]],{k,n}],
-  Return[fail["ResidualWorkerCoverage","Exact verification shard coverage or source mismatch.",<|"Directory"->dir|>]]];
+  Return[fail["ResidualWorkerCoverage","Verification shard coverage or source mismatch.",<|"Directory"->dir|>]]];
  bad=Flatten[Lookup[results,"NonzeroResiduals"]];
  If[bad==={},ConstantArray[0,Length[rows]],bad]];
-Options[ReduceIntegrals]={"Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"ProgressFunction"->None,"ReuseVerifiedReduction"->True,"VerificationWorkers"->1,"KernelExecutable"->Automatic};
+Options[ReduceIntegrals]={"Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"ProgressFunction"->None,"ReuseVerifiedReduction"->True,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"VerificationWorkers"->1,"KernelExecutable"->Automatic};
 ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Module[
- {rows,cols,boundary,all,solver=OptionValue["Solver"],matrix,reduced,pivs,rules,raw,images,residual,canonTargets,stageStart=AbsoluteTime[],timings=<||>,report=OptionValue["ProgressFunction"],stage,cacheKey,reuse,result},
+ {rows,cols,boundary,all,solver=OptionValue["Solver"],matrix,reduced,pivs,rules,raw,images,residual,canonTargets,stageStart=AbsoluteTime[],timings=<||>,report=OptionValue["ProgressFunction"],stage,cacheKey,reuse,result,mode=OptionValue["VerificationMode"],points=OptionValue["NumericalVerificationPoints"]},
+ If[!MemberQ[{"Numerical","Exact"},mode],Return[fail["VerificationMode","Use Numerical or explicitly request Exact."]]];
  If[!IntegerQ[OptionValue["VerificationWorkers"]] || OptionValue["VerificationWorkers"]<1,Return[fail["VerificationWorkers","VerificationWorkers must be a positive integer."]]];
  stage[name_]:=(AssociateTo[timings,name->(AbsoluteTime[]-stageStart)];If[report=!=None,report[<|"Action"->"Reduction stage completed","Stage"->name,"Seconds"->timings[name]|>]];stageStart=AbsoluteTime[]);
  rows=DeleteCases[canonExpr[f,#]& /@ equations,0];If[AnyTrue[rows,FailureQ],Return[First[Select[rows,FailureQ]]]];
@@ -95,7 +111,7 @@ ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Mod
  (* Only a fully verified, identical system and ordered column set may be reused.
     Keep one entry in memory; checkpoint rules are never trusted as this cache. *)
  reuse=TrueQ[OptionValue["ReuseVerifiedReduction"]] && MemberQ[{"Exact","FiniteFlow"},solver];
- cacheKey=Hash[{f["Hash"],$implementationHash,rows,all,solver,OptionValue["MaxExactColumns"],OptionValue["MaxPrimes"]},"SHA256"];
+ cacheKey=Hash[{f["Hash"],$implementationHash,rows,all,solver,OptionValue["MaxExactColumns"],OptionValue["MaxPrimes"],mode,points},"SHA256"];
  If[reuse && Lookup[$lastVerifiedReduction,"Key",None]===cacheKey,
   If[report=!=None,report[<|"Action"->"Reusing verified full reduction","Rows"->Length[rows],"Columns"->Length[all]|>]];
   Return[reductionTargets[Join[$lastVerifiedReduction["Result"],<|"StageTimings"->timings,"ReductionReused"->True|>],canonTargets,rows]]];
@@ -115,15 +131,15 @@ ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Mod
     generation occurs here; dropping these rules invalidates full residuals. *)
  (* FiniteFlow already returns linear combinations with rational-function
     coefficients. Avoid re-expanding every reconstructed auxiliary rule;
-    full exact equation residuals and idempotence are still checked below. *)
+    equation residuals and idempotence are checked at two points by default. *)
  images=If[solver==="FiniteFlow",all/.Dispatch[rules],canonicalLinear /@ (all/.Dispatch[rules])];rules=Thread[all->images];
  stage["NormalizeRules"];
- residual=verifyEquationResiduals[rows,rules,OptionValue["VerificationWorkers"],OptionValue["KernelExecutable"]];
+ residual=verifyEquationResiduals[rows,rules,OptionValue["VerificationWorkers"],OptionValue["KernelExecutable"],mode,points];
  If[FailureQ[residual],Return[residual]];
- If[!And@@(zero /@ residual),Return[fail["UnverifiedReduction","Exact residual check failed; no reduction accepted.",<|"Residuals"->DeleteCases[residual,0]|>]]];
- stage["EquationResiduals"];
+ If[!And@@(zero /@ residual),Return[fail["UnverifiedReduction","Reduction verification failed; no reduction accepted.",<|"Residuals"->DeleteCases[residual,0]|>]]];
+ stage[If[mode==="Exact","EquationResiduals","TwoPointEquationResiduals"]];
  raw=Join[support[images],sources[images]];
- If[!And@@(zero /@ (canonicalLinear /@ ((raw/.Dispatch[rules])-raw))),Return[fail["NonIdempotentReduction","Reduction images are not normal forms."]]];
+ If[!If[mode==="Exact",And@@(zero /@ (canonicalLinear /@ ((raw/.Dispatch[rules])-raw))),sampledRuleAgreement[raw,rules,{},coefficientParameters[Join[rows,Last /@ rules]],points]],Return[fail["NonIdempotentReduction","Reduction images are not normal forms."]]];
  stage["Idempotence"];
  result=<|"StageTimings"->timings,"ReductionReused"->False,"Rules"->rules,"ReducedTargets"->(canonicalLinear /@ (canonTargets/.Dispatch[rules])),
   "SameLoopRules"->Take[rules,Length[cols]],"BoundaryRules"->Drop[rules,Length[cols]],
@@ -131,7 +147,7 @@ ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Mod
   "RawMasters"->support[canonTargets/.Dispatch[rules]],"BoundarySources"->sources[canonTargets/.Dispatch[rules]],
   "SelfReducedTargets"->Select[support[canonTargets],selfReducedIntegralQ[#,#/.Dispatch[rules]]&],
   "UnseenTargets"->Complement[support[canonTargets],support[rows]],
-  "ExactEquationResidualsZero"->True,"Idempotent"->True,"Solver"->solver,
+  "ExactEquationResidualsZero"->(mode==="Exact"),"NumericalEquationResidualsZero"->(mode==="Numerical"),"VerificationMode"->mode,"NumericalVerificationPoints"->If[mode==="Numerical",numericalPoints[coefficientParameters[rows],points],None],"Idempotent"->True,"Solver"->solver,
   "Ordering"->Lookup[f,"IntegralOrdering","LadderFirst"],
   "Columns"->Length[all],"EquationCount"->Length[rows],"VerificationWorkers"->OptionValue["VerificationWorkers"]|>;
  stage["TargetMetadata"];AssociateTo[result,"StageTimings"->timings];

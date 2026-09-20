@@ -15,7 +15,7 @@ Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},
  assert[And@@(ConformalIBP`Private`zero /@ (rows[[cert["OriginalRowIndices"]]]/.Dispatch[cert["Rules"]])),"certificate independently verifies every selected original equation"];
  full=ReduceIntegrals[f,{g,b1},eq,"Solver"->"Exact"];
  assert[red["ReducedTargets"]===full["ReducedTargets"],"target images agree with independent full system"];
- assert[red["VerificationCertificate"]["ExactSelectedRowSpaceCertified"],"modular rank and exact residuals certify selected row space"];
+ assert[red["VerificationCertificate"]["NumericalSelectedRowSpaceChecked"],"modular rank and two-point residuals check selected row space"];
  overconstrained=ReduceTargetIntegrals[f,{g,b1},eq,"Solver"->Function[{rows,columns,queries},Thread[columns->ConstantArray[0,Length[columns]]]],"MinimumSelectionRows"->0];
  assert[FailureQ[overconstrained] && overconstrained[[1]]==="TargetRankCertificate","zero solution that imposes spurious constraints rejected despite zero residuals"];
  next=ReduceTargetIntegrals[f,{g,b3},eq,"Solver"->"Exact","MinimumSelectionRows"->0];
