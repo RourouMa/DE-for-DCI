@@ -22,7 +22,7 @@ InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirec
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.2.3";
+$ConformalIBPVersion="0.2.4";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -34,7 +34,7 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls"},"SHA256"];
+ {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
@@ -286,6 +286,7 @@ DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["
  If[FailureQ[rows],Return[rows]];
  <|"Rows"->rows,"Targets"->support[Values[rows]],"WholeCombinationsSimplifiedFirst"->True|>];
 
+Get[FileNameJoin[{DirectoryName[$InputFileName],"SeedPlanning.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Reduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"TargetReduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Iteration.wl"}]];

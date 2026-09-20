@@ -2,7 +2,7 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.2.3 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.2.4 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
@@ -126,7 +126,7 @@ result = RunDE[family, targets, "Solver" -> "FiniteFlow", "Workers" -> 4];
 
 `Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by exact equation-residual and normal-form checks. Exact verification can itself be expensive on large systems. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
 
-`Workers -> 4` launches four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
+`Workers -> 4` launches up to four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
 
 ## Checkpoints and Ubuntu
 
@@ -226,3 +226,7 @@ Recommended hardware allocation: `RecommendedWorkerCount[]` returns four fifths 
 Version 0.2.2 computes the seed plan once in the parent process and dispatches only operator/seed applications absent from the completed ledger. Fully overlapping ordinary neighborhoods launch no workers. See [seeding deduplication](docs/SEEDING_DEDUPLICATION.zh-CN.md) and [17-group validation](docs/VALIDATION_0.2.2.json).
 
 Version 0.2.3 also skips worker startup when finite-combination applications are already completed. Pending finite combinations still run. This changes dispatch only; the active four-loop campaign remains on its frozen 0.2.2 source. See [targeted validation](docs/VALIDATION_0.2.3.json).
+
+Version 0.2.4 prepares large seed plans across center partitions before global application deduplication. `"SeedPlanningWorkers" -> Automatic` follows `"Workers"`; `"SeedPlanningThreshold" -> 64` keeps small plans serial. Planning and IBP generation run in separate phases. See [parallel seed planning](docs/PARALLEL_SEED_PLANNING.zh-CN.md).
+
+The 0.2.4 release passed all [18 validation groups](docs/VALIDATION_0.2.4.json), including complete serial/parallel plan equivalence and unchanged generated relation/application sets.

@@ -2,8 +2,9 @@
 generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages,plan,active,ids,subplan,done},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
  ops=DeleteDuplicates[Replace[options["Operators"],Automatic:>GenerateOperators[f]]];
- plan=GenerateSeeds[f,targets,ops,Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];If[FailureQ[plan],Return[plan]];
+ plan=seedPlan[f,targets,ops,options];If[FailureQ[plan],Return[plan]];
  plan=pendingSeedPlan[plan,options["CompletedApplications"]];
+ If[options["ProgressFunction"]=!=None,options["ProgressFunction"][Join[<|"Action"->"Seed plan deduplicated"|>,plan["SeedingDeduplication"]]]];
  done=Association[(#->True)& /@ options["CompletedApplications"]];
  active=Select[Range[Length[ops]],Function[k,plan["Batches"][[k]]["Seeds"]=!={} ||
    (ops[[k]]["Degree"]===ConstantArray[0,f["LoopCount"]] &&
@@ -35,11 +36,11 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "NewSymmetryInputs"->Union[Flatten[Lookup[results,"NewSymmetryInputs"]]],
   "AllActualSeedsInsideOriginalDomain"->And@@Lookup[results,"AllActualSeedsInsideOriginalDomain"],
   "SeedPolicy"->Lookup[First[results],"SeedPolicy",<||>],
-  "SeedingDeduplication"->plan["SeedingDeduplication"],
+  "SeedingDeduplication"->plan["SeedingDeduplication"],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"JobDirectory"->dir|>];
 
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
- "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"Workers"->1,"VerificationWorkers"->1,
+ "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
  "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets",
  "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ProgressFunction"->Print};
@@ -129,7 +130,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    seedTargets=If[focused,gapTargets,Union[targets,masters,frontier]];
    progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Generating IBP seeds","FocusedGapSeeding"->focused,"GapTargetCount"->Length[gapTargets],"CenterCount"->Length[seedTargets]|>];
    seedOptions={"CompletedApplications"->s["CompletedApplications"],"CompletedSymmetryInputs"->Lookup[s,"CompletedSymmetryInputs",{}],
-    "FiniteSeeds"->Select[basis,Length[support[#]]>1&],"Workers"->o["Workers"],"KernelExecutable"->o["KernelExecutable"],
+    "FiniteSeeds"->Select[basis,Length[support[#]]>1&],"Workers"->o["Workers"],"KernelExecutable"->o["KernelExecutable"],"SeedPlanningWorkers"->o["SeedPlanningWorkers"],"SeedPlanningThreshold"->o["SeedPlanningThreshold"],"ProgressFunction"->o["ProgressFunction"],
     "SeedDomain"->o["SeedDomain"],"BlockExpansion"->o["BlockExpansion"]};
    generated=GenerateSystem[f,seedTargets,"SeedCenters"->If[focused,"AllOriginalImages","Raw"],Sequence@@seedOptions];
    (* Widen only after the focused neighborhood contributes no new relation. *)

@@ -1,0 +1,130 @@
+{
+  "version": "0.2.4",
+  "validated_at": "2026-09-20T21:03:12.278892+08:00",
+  "tests": [
+    {
+      "test": "ParallelSeedPlanning",
+      "exit_code": 0,
+      "seconds": 35.116
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 14.773
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 7.494
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 9.951
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 9.859
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 6.858
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 4.541
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 18.192
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 4.641
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 4.452
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 4.453
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 4.454
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 4.322
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 5.18
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 4.223
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 4.31
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 5.754
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 4.935,
+      "log": "FiniteFlowTargetSelection-retry.log",
+      "initial_attempt": "Initialization failed because FINITEFLOW_ROOT was missing from test runner environment"
+    }
+  ],
+  "source_sha256": {
+    "Kernel/ConformalIBP.wl": "7c620d3219401475e56068dc06a1800604e5945f276f06946e8d4aab8301db98",
+    "Kernel/Iteration.wl": "aef3d1e742f61f8021f831a8f27b3e8f35987cdfd01088a56d6e7f8b6f19e91b",
+    "Kernel/Reduction.wl": "41e787dddfd7f302c3c99d76669074c319fe0ea976a36f3936132c0f47b8a75a",
+    "Kernel/SeedPlanning.wl": "7ddd9923aeff0ee270b64c462b92f098ef75f0eef340e6d3fb80d63cc06230cf",
+    "Kernel/TargetReduction.wl": "3e69355789edde0305e64010835c493aa38b6035c5133974e5e8d7d1e3d0f270",
+    "scripts/seed-plan-worker.wls": "170870267c1a057cf08c434589d0c6374ec11e1c1b2210fb952e0779e62ba7e2",
+    "scripts/ibp-worker.wls": "3e31b43a313675ae37f860627e0c2bb86358dc3521ecf8794bbfb998fd9602d8",
+    "scripts/verify-residual-worker.wls": "2f0828d42368809d1ad0c1f403a0f081c228ee897a194b3cb0e443b7f6103802",
+    "Tests/ParallelSeedPlanning.wls": "2dfc473de7e53cc0d507e6dd0b811aaee8afe3a07ff8898c19a88867d095f631"
+  },
+  "test_outputs": {
+    "ParallelSeedPlanning": "PASS complete serial/parallel plan equality Original/Cartesian\nPASS two planning workers and exact center coverage\nPASS complete serial/parallel plan equality Original/SingleBlock\nPASS two planning workers and exact center coverage\nPASS complete serial/parallel plan equality Extended/Cartesian\nPASS two planning workers and exact center coverage\nPASS small plans avoid subprocess overhead\nPASS invalid planning worker count rejected\nPASS planning plus IBP worker pipeline preserves all equations and applications\nPASS global completed ledger applied after merged planning\nPASS no unexpected Wolfram messages\n",
+    "SeedDeduplication": "PASS parallel incremental generation succeeds\nPASS no completed operator-seed pair dispatched again\nPASS incremental applications equal fresh expanded-neighborhood applications\nPASS deduplication preserves the complete relation union\nPASS planning audit counts previously completed and pending applications\nPASS fully overlapping neighborhood launches no workers\nPASS pending finite combinations still dispatch workers\nPASS finite combination dispatch preserves applications and equations\nPASS completed ordinary and finite neighborhoods launch no workers\nPASS duplicate operator applications removed within a plan\nPASS no unexpected Wolfram messages\n",
+    "GapCampaign": "PASS partial pool closes through automatic gap repair\nPASS current unresolved targets trigger focused seeding\nPASS all actual repair seeds stay inside domain\nPASS focused generation records its missing queries\nPASS focused and broad campaigns give identical one-loop DE\nPASS no unexpected Wolfram messages\n",
+    "Workers": "<|IndependentKernels -> 4, SerialEqualsSharded -> True|>\n",
+    "RunTests": "PASS families 1, 2, 4\nPASS four-loop 13 denominators plus 4 cuts; 26 complete slots\nPASS 84 rotations in 11 degree classes\nPASS delta tangency\nPASS every seed is degree matched\nPASS no positive loop ISPs or cubic poles\nPASS factor completion cannot promote a numerator loop ISP\nPASS box finite\nPASS bare double collision divergent\nPASS equal collision residues cancel\nPASS zero coefficient sum alone is not finiteness\nPASS constant finite cover\nPASS unverified differences rejected\nPASS boundary sources are not constants\nPASS coefficient product rule\nPASS kinematic variable names not hard-coded\nPASS user propagator ordering preserved\nPASS external symmetry generators closed under composition\nPASS unsupported dimension rejected\nPASS independent external symmetries on both factors\nPASS factorized free representative preferred in Gaussian columns\nPASS serial IBP generation\nPASS exact Gaussian residual verification\nPASS one-loop automatic DE closure and flatness\nPASS checkpoint resume\nPASS dependent inputs do not cause infinite replay\nPASS budget exhaustion is not closure\nPASS high-power box reduced automatically using local relation neighbors\nPASS no unexpected Wolfram messages\nALL 29 TESTS PASSED\n",
+    "SeedPolicies": "PASS default actual seeds stay in original TopSector\nPASS all original block-symmetry images seed the three real gaps\nPASS extended opt-in strictly enlarges actual seed domain\nPASS single-block expansion is a strict subset for factorized gaps\nPASS ladder-priority canonical representatives stay inside when available\nPASS symmetry seed centers also cover connected targets\nPASS invalid seed policy rejected\nPASS campaign defaults enable original-domain gap repair\nPASS campaign generates on demand\nPASS coefficient extraction matches legacy matrix exactly\nPASS no unexpected Wolfram messages\n",
+    "RelationFrontier": "PASS actual IBP frontier equality for 0 masters\nPASS actual IBP frontier equality for 1 masters\nPASS actual IBP frontier equality for 5 masters\nPASS actual IBP frontier equality for 20 masters\nPASS empty relation pool\nPASS boundary-only row has no same-loop neighbors\nPASS no unexpected Wolfram messages\n",
+    "ParallelResiduals": "PASS parallel exact verification preserves rules and target normal forms\nPASS all exact row checks and idempotence retained\nPASS all valid rows covered\nPASS nonzero exact residuals from every shard retained\nPASS invalid worker count rejected\nPASS no unexpected Wolfram messages\n",
+    "CoefficientParameters": "PASS coefficient inference equals automatic parameters\nPASS parameters survive cancellation between different integral columns\nPASS numeric and empty pools\nPASS actual IBP pool parameter equality\nPASS no unexpected Wolfram messages\n",
+    "SelfReducedTargets": "PASS identity decisions agree with exact rational test\nPASS distinct integral columns cannot equal the target\nPASS recommended worker count rounds four fifths\nPASS positive hardware recommendation\nPASS no unexpected Wolfram messages\n",
+    "LinearNormalization": "PASS rational coefficients collected exactly\nPASS coefficient simplification retained\nPASS zero rows accepted\nPASS same-loop and source terms retained\nPASS constants nonlinear products and nonpolynomial integral expressions rejected\nPASS random exact linear case 1\nPASS random exact linear case 2\nPASS random exact linear case 3\n<|Case -> 4, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 4\nPASS random exact linear case 5\n<|Case -> 6, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 6\n<|Case -> 7, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 7\nPASS random exact linear case 8\n<|Case -> 9, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 9\n<|Case -> 10, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 10\n<|Case -> 11, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 11\n<|Case -> 12, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 12\nPASS random exact linear case 13\n<|Case -> 14, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 14\n<|Case -> 15, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 15\n<|Case -> 16, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 16\n<|Case -> 17, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 17\n<|Case -> 18, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 18\n<|Case -> 19, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 19\n<|Case -> 20, SameAsPreviousImplementation -> True, ExactDifference -> 0|>\nPASS random exact linear case 20\nPASS no unexpected Wolfram messages\n",
+    "BoundaryReduction": "PASS full residuals and source idempotence\nPASS source pivot retained in target images\nPASS separate same-loop and boundary exports\nPASS lower sources do not become same-loop masters\nPASS omitted boundary constraint still fails exact verification\nPASS unconstrained target source retained\nPASS finite basis uses only same-loop support\nPASS no unexpected Wolfram messages\n",
+    "ReductionReuse": "PASS initial solve fully verified\nPASS new queries reuse same full system and refresh images\nPASS cache hit skips coefficient solver\nPASS cached query metadata matches independent fresh solve\nPASS new relation invalidates reduction\nPASS new column invalidates reduction\nPASS custom solver still undergoes full source residual verification\nPASS failed solve cannot poison cache\nPASS changed solver constraints cannot bypass validation through cache\nPASS no unexpected Wolfram messages\n",
+    "TargetReduction": "PASS target reduction retains needed source constraint\nPASS disconnected irrelevant relation excluded\nPASS verification scope explicitly limited to certified subset\nPASS certificate independently verifies every selected original equation\nPASS target images agree with independent full system\nPASS modular rank and exact residuals certify selected row space\nPASS zero solution that imposes spurious constraints rejected despite zero residuals\nPASS new query brings previously unneeded component into subset\nPASS new source constraint invalidates previous image\nPASS historical source queries preserve old identities after system expansion\nPASS empty system preserves unseen target\nPASS no unexpected Wolfram messages\n",
+    "SymmetryReuse": "PASS first generation records symmetry inputs\nPASS portable cache imported with fingerprints\nPASS restored mappings require zero new orbit searches\nPASS repeat generation emits neither IBP applications nor symmetry relations\nPASS new integrals extend symmetry ledger without repeats\nPASS incremental and fresh equation unions exactly match\nPASS wrong family rejected\nPASS wrong implementation rejected\nPASS changed content rejected\nPASS no unexpected Wolfram messages\n",
+    "RelabelCache": "<|FormalIndexPermutationChecks -> 140, AllEqualToUncachedMapping -> True|>\n",
+    "OnDemandDE": "PASS demand-driven one-loop DE closes with exact flatness\nPASS finite cover feeds a subsequent derivative round\nPASS full reduction verification retained\nPASS missing targets trigger actual IBP generation\nPASS final differentiated inputs remain certified finite\nPASS invalid scheduling option rejected\nPASS no unexpected Wolfram messages\n",
+    "FiniteFlowTargetSelection": "PASS FiniteFlow initialization\nPASS automatic loaded FiniteFlow selects verified dependency backend\nPASS symbolic target and source normal forms match full exact system\nPASS full-target comparison plus independent selected rank certificate\nPASS original row provenance survives two-stage selection\nPASS irrelevant component excluded\nPASS free queried variable preserved\nPASS extension and additional component update normal forms\nPASS no unexpected Wolfram messages\n"
+  },
+  "active_campaign": "frozen 0.2.2 with audited prepared-plan dispatch; unchanged by this release"
+}

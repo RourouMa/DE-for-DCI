@@ -6,11 +6,11 @@ InitializeFiniteFlow[lib_String,math_String]:=Module[{},
  If[!MemberQ[$Path,ExpandFileName[math]],AppendTo[$Path,ExpandFileName[math]]];
  Quiet[Check[Needs["FiniteFlow`"],Return[fail["FiniteFlowLoad","FiniteFlow could not be loaded."]]]];True];
 
-Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic}];
+Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,"ProgressFunction"->None}];
 GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{options=Join[Association[Options[GenerateSystem]],Association[{opts}]],plan},
  If[!IntegerQ[options["Workers"]] || options["Workers"]<1,Return[fail["Workers","Workers must be a positive integer."]]];
  If[options["Workers"]>1,Return[generateSharded[f,targets,options]]];
- plan=GenerateSeeds[f,targets,options["Operators"],Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];
+ plan=seedPlan[f,targets,options["Operators"],options];
  If[FailureQ[plan],Return[plan]];
  generatePlannedSystem[f,targets,options,pendingSeedPlan[plan,options["CompletedApplications"]]]];
 (* Deduplicate actual operator/seed applications before dispatching any worker. *)
@@ -39,7 +39,7 @@ generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
   "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
   "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","UnmappedCenters"}],
-  "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],
+  "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 
 simpleKey[f_,g_G]:=Module[{a=List@@g,ps=parts[f,g],ext,boxScore=0},
