@@ -1,0 +1,1660 @@
+{
+  "schema": 1,
+  "repository": "RourouMa/DE-for-DCI",
+  "release": "ordering01-repro-2026-09-21",
+  "branch": "legacy ordering01, not the generic package runs/",
+  "chain": [
+    1,
+    4,
+    12,
+    26,
+    66
+  ],
+  "closed": false,
+  "projection": "G4 quotient; G3 source terms are NOT physically zero",
+  "matrix_rows": 2833280,
+  "matrix_columns": 2850483,
+  "assets": [
+    {
+      "name": "ordering01-runtime.tar.gz",
+      "kind": "runtime",
+      "bytes": 20057152,
+      "sha256": "77c5c513d6a44d9f1f718dff3cc5c1c4a5940ebb691a083921e25ed11ba5e3cb",
+      "files": [
+        {
+          "path": "reference/FinalQA.wl",
+          "bytes": 5163,
+          "sha256": "cc5c516d97339a7a048dfbb5bc8d951578b2732814ccf6510ea754959fb2aa46"
+        },
+        {
+          "path": "reference/Manifest.wl",
+          "bytes": 2291,
+          "sha256": "676ac68ea851d1ca961fb96b199f3dba65902b7095ab64020df6fe6978d9bdbf"
+        },
+        {
+          "path": "reference/Pending.wl",
+          "bytes": 48,
+          "sha256": "d6edc093e764a9a8a090817f4bba99b1521fd7a1935c4acb23b000beee3cdd31"
+        },
+        {
+          "path": "reference/RegressionTests.wl",
+          "bytes": 256,
+          "sha256": "94408ec882760cd6a3245595284bd6e4860559536768ca05f4df7db38defb24a"
+        },
+        {
+          "path": "reference/RequiredRequests.wl",
+          "bytes": 698786,
+          "sha256": "020ca49e10ae7c64aaff1b9fd0e088edab5213a0d25fea5465e19f9dde2e0bef"
+        },
+        {
+          "path": "reference/Summary.wl",
+          "bytes": 2791,
+          "sha256": "a2b8d6bfd7998b98185e3db7b62d1d10288901c2e8c228f99783755a8f3c7d6b"
+        },
+        {
+          "path": "reference/round1/Checks.wl",
+          "bytes": 919,
+          "sha256": "5b9d9876bb71131bd95b778430b5cb58684ca39d327d7553a54fc67200d45304"
+        },
+        {
+          "path": "reference/round1/Closure.wl",
+          "bytes": 563,
+          "sha256": "c344bb602c43a9ed2b65db44f4f6becfcdab22c098f9bde4e4ab66ebc8507151"
+        },
+        {
+          "path": "reference/round1/ConstantBlockCertificates.wl",
+          "bytes": 2429,
+          "sha256": "e640a3cf210ecb4c8f0a18f387c00a3f70bc9f286222be9eacfe97eb8e7fe0cb"
+        },
+        {
+          "path": "reference/round1/Matrices.wl",
+          "bytes": 631,
+          "sha256": "69ff695896b68065b0f9848c63b50d779ea72b4f931e52373d9ea1b340ebb93a"
+        },
+        {
+          "path": "reference/round1/MissingRules.wl",
+          "bytes": 3,
+          "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+        },
+        {
+          "path": "reference/round1/NextInput.wl",
+          "bytes": 2001,
+          "sha256": "d59e9906042df4cba73a4a570b827549a61189a8be25bf0c982c8cdcfd4c60ee"
+        },
+        {
+          "path": "reference/round1/OutputAdmission.wl",
+          "bytes": 417,
+          "sha256": "ea7f0e934a4954f7d9dd4cc033ae20d3a21a6977af2b9776ecb6bd491803a9f9"
+        },
+        {
+          "path": "reference/round1/RawTemporaryMI.wl",
+          "bytes": 423,
+          "sha256": "705da13db76418991a749b7b91433e87465d40ae166b77b39286f169dfde652a"
+        },
+        {
+          "path": "reference/round1/ReducedDEG4.wl",
+          "bytes": 646,
+          "sha256": "295de15fbc94c405e2327a17ce8bff0b6bfbff2ce8e70b010660c01f4db435f8"
+        },
+        {
+          "path": "reference/round1/ReducedPreviousInputsG4.wl",
+          "bytes": 85,
+          "sha256": "4c6c6c79057329a9b465056e59a871dc9940559d6a1d60b133f45c53239c0df0"
+        },
+        {
+          "path": "reference/round1/RewrittenDE.wl",
+          "bytes": 482,
+          "sha256": "7695da5c24828cdefbea7c59f8d88fc3cebfa00712610aabde51082c8d184b40"
+        },
+        {
+          "path": "reference/round1/Summary.wl",
+          "bytes": 656,
+          "sha256": "e39105844f18779a6ac74148c860601739614ba91a6d7403e16417ea2ef2fe6e"
+        },
+        {
+          "path": "reference/round1/TargetReductionsG4.wl",
+          "bytes": 1349,
+          "sha256": "20fcdd1d2aeec60479e38e6515206baf2e83451f8c844ec7e1ec0e7732cc45b2"
+        },
+        {
+          "path": "reference/round1/derivatives/DerivativeSummary.wl",
+          "bytes": 162,
+          "sha256": "13c64ee1996707bdf1dd5a0a8e91536e1f5e9871c1202ad0a80928c6ee4a1665"
+        },
+        {
+          "path": "reference/round1/derivatives/Dx.wl",
+          "bytes": 306,
+          "sha256": "c9999444b821bc2a8a44d1dc7c6ab85fdc888e189282e660df536982a7653e05"
+        },
+        {
+          "path": "reference/round1/derivatives/Dy.wl",
+          "bytes": 901,
+          "sha256": "d1482eeea6f382cded615a59c03763001fc85f8733aecbeca1ffe3207141e376"
+        },
+        {
+          "path": "reference/round1/derivatives/InputBasis.wl",
+          "bytes": 232,
+          "sha256": "4708a6c3e5cbd9fd5fe284af0250e3c7ab87b36b1ca97c47b2f52a950e267c00"
+        },
+        {
+          "path": "reference/round1/derivatives/Targets.wl",
+          "bytes": 929,
+          "sha256": "2ee267d323482c5dc1a83cd9971d2ae830b487bc6fe3fa28e908d9c47fa88053"
+        },
+        {
+          "path": "reference/round2/Checks.wl",
+          "bytes": 919,
+          "sha256": "5b9d9876bb71131bd95b778430b5cb58684ca39d327d7553a54fc67200d45304"
+        },
+        {
+          "path": "reference/round2/Closure.wl",
+          "bytes": 2421,
+          "sha256": "cdf111896ba4b8ee990a20d188b7eb26bd06d039b84909040404cdab7d68d6dd"
+        },
+        {
+          "path": "reference/round2/ConstantBlockCertificates.wl",
+          "bytes": 9523,
+          "sha256": "cf185ae54da3503f8d5e630ad83123ff654472ccc190acf37ff9afdc29518562"
+        },
+        {
+          "path": "reference/round2/Matrices.wl",
+          "bytes": 2216,
+          "sha256": "3484a2a2e6633b3037f5224e6c8fc05cc68ffaaa1e0ef233de263a4a36997b4d"
+        },
+        {
+          "path": "reference/round2/MissingRules.wl",
+          "bytes": 3,
+          "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+        },
+        {
+          "path": "reference/round2/NextInput.wl",
+          "bytes": 5163,
+          "sha256": "03df1f6e4567f819217d79ed52542bac8f7da50abd2650dd6f63ef0f59f52f47"
+        },
+        {
+          "path": "reference/round2/OutputAdmission.wl",
+          "bytes": 969,
+          "sha256": "4c669f71095e76c4e91fdbcf2fcc0695da542bc80ec8cc3b06d0cb7e52351436"
+        },
+        {
+          "path": "reference/round2/RawTemporaryMI.wl",
+          "bytes": 1611,
+          "sha256": "65ccca9ca11c33a7206bb61756806a49dc9df614121f1255d8e9f87393f88030"
+        },
+        {
+          "path": "reference/round2/ReducedDEG4.wl",
+          "bytes": 3983,
+          "sha256": "ee6801a16ff01fa275b98e41fabe58a2cb6e39c38f44dc79d1a63da94dfcc8ba"
+        },
+        {
+          "path": "reference/round2/ReducedPreviousInputsG4.wl",
+          "bytes": 426,
+          "sha256": "42420c21d64b8271ecf69381dbbc9e02d089fc433dc78d0c6a1e399c28a01d89"
+        },
+        {
+          "path": "reference/round2/RewrittenDE.wl",
+          "bytes": 2356,
+          "sha256": "80c275e09becf5eed4386a0d9f7b2314adb0fc842b55cd0568551317253379cb"
+        },
+        {
+          "path": "reference/round2/Summary.wl",
+          "bytes": 669,
+          "sha256": "d0353cc08421b03e920b9b7598dd4832e735067fe6e043e105e2a1550556b59f"
+        },
+        {
+          "path": "reference/round2/TargetReductionsG4.wl",
+          "bytes": 8079,
+          "sha256": "996b7c2d7d0d6946238173782e7c3899b8fb05e928e29760d923a9045b63635a"
+        },
+        {
+          "path": "reference/round2/derivatives/DerivativeSummary.wl",
+          "bytes": 179,
+          "sha256": "45192e265e3c50d46a6341a78f9921f40b97fac1145f984a1c465ab4b50ccf31"
+        },
+        {
+          "path": "reference/round2/derivatives/Dx.wl",
+          "bytes": 1747,
+          "sha256": "4511da2f867ef1bf422efe72a3ed7231a8f76c8f59e85067b8cb85ab042529a9"
+        },
+        {
+          "path": "reference/round2/derivatives/Dy.wl",
+          "bytes": 4025,
+          "sha256": "90e7cad18b86b9ce22c7b97b792a2870996218c4f29ed00b211c67e2753c6c94"
+        },
+        {
+          "path": "reference/round2/derivatives/InputBasis.wl",
+          "bytes": 2001,
+          "sha256": "d59e9906042df4cba73a4a570b827549a61189a8be25bf0c982c8cdcfd4c60ee"
+        },
+        {
+          "path": "reference/round2/derivatives/Targets.wl",
+          "bytes": 4076,
+          "sha256": "01c78e9ce2a2782c430b07009880d075b6b675c6da6cd0b661c5a0e7ee41dc64"
+        },
+        {
+          "path": "reference/round3/Checks.wl",
+          "bytes": 919,
+          "sha256": "5b9d9876bb71131bd95b778430b5cb58684ca39d327d7553a54fc67200d45304"
+        },
+        {
+          "path": "reference/round3/Closure.wl",
+          "bytes": 7292,
+          "sha256": "2f007f43779f9f0ba6f048368b0e47ff666499edf334f72b449eddc368cf64a5"
+        },
+        {
+          "path": "reference/round3/ConstantBlockCertificates.wl",
+          "bytes": 36333,
+          "sha256": "8f543eac074b5cf29927d7ca559f0d41b6fc2d36c270fe95b93ef8eccbc4ed76"
+        },
+        {
+          "path": "reference/round3/Matrices.wl",
+          "bytes": 7199,
+          "sha256": "e7aeda09e054256d04bb0f9f4421fcf14a2784a99e79af091797bcd8cb767be2"
+        },
+        {
+          "path": "reference/round3/MissingRules.wl",
+          "bytes": 3,
+          "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+        },
+        {
+          "path": "reference/round3/NextInput.wl",
+          "bytes": 10604,
+          "sha256": "9a8824def26f697bf6ca21e8dd3b219eb48249c7e9e6a5efac5cddfb1ec15ff6"
+        },
+        {
+          "path": "reference/round3/OutputAdmission.wl",
+          "bytes": 2077,
+          "sha256": "13e03df4ad0680e5abdf0f5d092ee4839ab2564273e9f22a7a7de627dbf9f780"
+        },
+        {
+          "path": "reference/round3/RawTemporaryMI.wl",
+          "bytes": 4252,
+          "sha256": "a1525a20563cfd7cbf09859263fac58d4bd99c6c911f8ab2546068f4517fffae"
+        },
+        {
+          "path": "reference/round3/ReducedDEG4.wl",
+          "bytes": 13483,
+          "sha256": "c86fba7b43845818ab2b41f160caaa55ae745d0941f5c22bc899ce586cf9275a"
+        },
+        {
+          "path": "reference/round3/ReducedPreviousInputsG4.wl",
+          "bytes": 1630,
+          "sha256": "1899ef12b2a3c7f9d389a2323becde72d9e297031d5aff39c8711dada0b02ed1"
+        },
+        {
+          "path": "reference/round3/RewrittenDE.wl",
+          "bytes": 6702,
+          "sha256": "708c951b4254c567c8cee8b5111fdbcfbd812d035077faa7da82b798d7d674b4"
+        },
+        {
+          "path": "reference/round3/Summary.wl",
+          "bytes": 679,
+          "sha256": "6d6b23f92a980b16de0b0f2b876fec1142013f07c7cadce74eb1dd2adf8bbf66"
+        },
+        {
+          "path": "reference/round3/TargetReductionsG4.wl",
+          "bytes": 27790,
+          "sha256": "9a800806be9c48f60b651384960e9796aae439d041302460a17a519fc4d9c6f1"
+        },
+        {
+          "path": "reference/round3/derivatives/DerivativeSummary.wl",
+          "bytes": 183,
+          "sha256": "8bd74f04175aa122da189900703b13fb0cba7eb53bf31f9dd108c3a0ded31b19"
+        },
+        {
+          "path": "reference/round3/derivatives/Dx.wl",
+          "bytes": 6905,
+          "sha256": "0b485d4bd4666eb4be0ce61c2ceee9bf616f363ade32d66e00e8d681001d4cc6"
+        },
+        {
+          "path": "reference/round3/derivatives/Dy.wl",
+          "bytes": 13122,
+          "sha256": "690c0a208fd88f206de082d38f3bbdb13dbd047fb8f52bc20f078ef8866aca7b"
+        },
+        {
+          "path": "reference/round3/derivatives/InputBasis.wl",
+          "bytes": 5163,
+          "sha256": "03df1f6e4567f819217d79ed52542bac8f7da50abd2650dd6f63ef0f59f52f47"
+        },
+        {
+          "path": "reference/round3/derivatives/Targets.wl",
+          "bytes": 10986,
+          "sha256": "3cee48546b223c18f6dd943361e3814cfc02ae4923b11c3df1079540d40d3a0a"
+        },
+        {
+          "path": "reference/round4/Checks.wl",
+          "bytes": 919,
+          "sha256": "5b9d9876bb71131bd95b778430b5cb58684ca39d327d7553a54fc67200d45304"
+        },
+        {
+          "path": "reference/round4/Closure.wl",
+          "bytes": 118956,
+          "sha256": "b79c612e573fb070e7c9862a596023dda974e94c06a037425bd33905e43284bc"
+        },
+        {
+          "path": "reference/round4/ConstantBlockCertificates.wl",
+          "bytes": 785962,
+          "sha256": "5dcb79c7e76acac676769a4f7511fe616f100ddfb7918ba25963f3d2f4e11df5"
+        },
+        {
+          "path": "reference/round4/Matrices.wl",
+          "bytes": 104948,
+          "sha256": "68ee186af9703070397fd031e2e396485fd5df7da8ed075633b6adcfdcae28c5"
+        },
+        {
+          "path": "reference/round4/MissingRules.wl",
+          "bytes": 3,
+          "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+        },
+        {
+          "path": "reference/round4/NextInput.wl",
+          "bytes": 25177,
+          "sha256": "f551ff955bcbc3f931fa3440b4c427f8820c434ee5096ec95483f7c6d4dc7ef0"
+        },
+        {
+          "path": "reference/round4/OutputAdmission.wl",
+          "bytes": 4718,
+          "sha256": "dacede4685dbc6825becbc9a8660d4a5145be843723b4435c45ad18a55cecdc0"
+        },
+        {
+          "path": "reference/round4/RawTemporaryMI.wl",
+          "bytes": 11077,
+          "sha256": "99c9c516e90c46e865610d40a157089e41944ee9371618edbb8d173b474e7b90"
+        },
+        {
+          "path": "reference/round4/ReducedDEG4.wl",
+          "bytes": 157884,
+          "sha256": "ee5e64ccd646ad24896b44d0708d5020cd32bcc856ed031bc9a0f1b91ce2b4ef"
+        },
+        {
+          "path": "reference/round4/ReducedPreviousInputsG4.wl",
+          "bytes": 3700,
+          "sha256": "cb9c3bf1c30d0bbc079d290536bfb238337ee836251b27d037c20726fe6c3fde"
+        },
+        {
+          "path": "reference/round4/RewrittenDE.wl",
+          "bytes": 110544,
+          "sha256": "cf6a525a28f17152cb93a4680552ec59a0a0ee66895906107aefe0030f810cb4"
+        },
+        {
+          "path": "reference/round4/Summary.wl",
+          "bytes": 680,
+          "sha256": "f81a0be9bbe0f06fabac0dac11ac9bcc2671799206bdd16e4fa7d9cfbeb35298"
+        },
+        {
+          "path": "reference/round4/TargetReductionsG4.wl",
+          "bytes": 415986,
+          "sha256": "5e74a5da10b4dbea3a6b5c32c56f50bcbb6842911c61db7db5a24195e2eae8d6"
+        },
+        {
+          "path": "reference/round4/derivatives/DerivativeSummary.wl",
+          "bytes": 206,
+          "sha256": "3a3f3a923aef50acc59382cac30e4c113af06a690dc41c2df7a5ddd015b96315"
+        },
+        {
+          "path": "reference/round4/derivatives/Dx.wl",
+          "bytes": 16095,
+          "sha256": "5f200ddb54f35107af9a9d05201bafcd2794935d2e0f43a56534d985955d69f0"
+        },
+        {
+          "path": "reference/round4/derivatives/Dy.wl",
+          "bytes": 27108,
+          "sha256": "3a74c785778e763eb7535afbfac9001283b30b55b4fddfdc2dbac6657aa411ef"
+        },
+        {
+          "path": "reference/round4/derivatives/InputBasis.wl",
+          "bytes": 10604,
+          "sha256": "9a8824def26f697bf6ca21e8dd3b219eb48249c7e9e6a5efac5cddfb1ec15ff6"
+        },
+        {
+          "path": "reference/round4/derivatives/Targets.wl",
+          "bytes": 21774,
+          "sha256": "e4794ac5139c7b41c60c8696c9ca1fcc64960f401cffa99cc6a48f05abcb581e"
+        },
+        {
+          "path": "reference/round5/MissingRules.wl",
+          "bytes": 7255,
+          "sha256": "46b39c2216c293a90f1df6c115da79d55c13e4861cadfd357505b138ee04f47c"
+        },
+        {
+          "path": "reference/round5/derivatives/DerivativeSummary.wl",
+          "bytes": 296,
+          "sha256": "d17ab46a8019c27a909cc18d64cf8cc1e3dbc5eaea31e3f0857ece5f54b075de"
+        },
+        {
+          "path": "reference/round5/derivatives/Dx.wl",
+          "bytes": 37888,
+          "sha256": "ab9c1b673c5ca3ba8eb087a37984591c0e7708a1c0c6dcf9e11605b431c9a6ef"
+        },
+        {
+          "path": "reference/round5/derivatives/Dy.wl",
+          "bytes": 63514,
+          "sha256": "f05caa798c2f8aa91e5a7ae2626255a48829f4c1c3eb40fea2a43566eb58ae9a"
+        },
+        {
+          "path": "reference/round5/derivatives/InputBasis.wl",
+          "bytes": 25177,
+          "sha256": "f551ff955bcbc3f931fa3440b4c427f8820c434ee5096ec95483f7c6d4dc7ef0"
+        },
+        {
+          "path": "reference/round5/derivatives/Targets.wl",
+          "bytes": 58392,
+          "sha256": "39aa58cfd8cd72d13895360f1fcc6dc0a181aaf2f39763789c419547808800fe"
+        },
+        {
+          "path": "reduction/IBP4ReductionRules.txt",
+          "bytes": 60718799,
+          "sha256": "ef0a5ba82a1c9de10e1a653fd62f5b39f6fdd90d5fadb70db2b960cdb4068e9c"
+        },
+        {
+          "path": "reduction/OrderingSummary.wl",
+          "bytes": 1342,
+          "sha256": "548789c27ddce2dfe34844ca70bb91abc81d8904de0467d98fc1ff6a74d3bf1c"
+        },
+        {
+          "path": "reduction/Projection.wl",
+          "bytes": 72,
+          "sha256": "8356713c33e26bf6cd6f0d18b370d47bf0a9ae31ae77518d573c08a4bacaa963"
+        },
+        {
+          "path": "query01/reduction/IBP4ReductionRules.txt",
+          "bytes": 60736921,
+          "sha256": "dc3b69c135368d6d3b2cef0ec248251057b79cef2faa4e479cb9801d54e3c300"
+        },
+        {
+          "path": "query01/reduction/IBP4TempMI.txt",
+          "bytes": 259040,
+          "sha256": "d0a6990c110eda2f04930ac49cb68c30e8c7de38ad9d14550ed0db8539a1d4dc"
+        },
+        {
+          "path": "query01/reduction/OrderingSummary.wl",
+          "bytes": 1342,
+          "sha256": "548789c27ddce2dfe34844ca70bb91abc81d8904de0467d98fc1ff6a74d3bf1c"
+        },
+        {
+          "path": "query01/reduction/Projection.wl",
+          "bytes": 72,
+          "sha256": "8356713c33e26bf6cd6f0d18b370d47bf0a9ae31ae77518d573c08a4bacaa963"
+        },
+        {
+          "path": "query01/CompositionChecks.wl",
+          "bytes": 284,
+          "sha256": "eff5c5aebe97ff164f9f4b11be8a55c0eb35f9f88b7280aaa0ec066132b18db8"
+        },
+        {
+          "path": "query01/SolveSummary.wl",
+          "bytes": 69,
+          "sha256": "3b574c7a07384ebc9273935f3dfc33393f9494dbf47b180bbc6214e35df5b42f"
+        },
+        {
+          "path": "query01/ComplexIdentityFocus.wl",
+          "bytes": 1552,
+          "sha256": "a032fcca98d06b64719d8a052b278b0ca5dce46284301cff23d4963445a8fd04"
+        },
+        {
+          "path": "system/SystemManifest.wl",
+          "bytes": 1135,
+          "sha256": "75d2f385d45f1a49c47098f4a23dba4eb550fb76dc10c3e96307561d6b96cd08"
+        },
+        {
+          "path": "system/SolveSummary.wl",
+          "bytes": 95,
+          "sha256": "0618531729104d85d2d435bbbab4f2ac4cf6625376e307c463f6909e93da18f2"
+        },
+        {
+          "path": "system/CompositionChecks.wl",
+          "bytes": 335,
+          "sha256": "1fa0ae1929c60aa840f40993e9fe00974fa9e38a115aa376585d6519c0a86cb6"
+        },
+        {
+          "path": "system/OrderingSummary.wl",
+          "bytes": 1342,
+          "sha256": "548789c27ddce2dfe34844ca70bb91abc81d8904de0467d98fc1ff6a74d3bf1c"
+        },
+        {
+          "path": "system/ReferenceFactorOrdering.wl",
+          "bytes": 569,
+          "sha256": "28df26839b04380e70ca4e497668bc50d5dbd5de5039f1c20013f70a0db738f6"
+        }
+      ]
+    },
+    {
+      "name": "ordering01-matrix.tar.gz",
+      "kind": "matrix",
+      "bytes": 158269827,
+      "sha256": "e928a90f9f2a972bbace89e77ecf142ceeb9f095fb98ba2cedb9c76e8bc8b5b9",
+      "files": [
+        {
+          "path": "matrix/BaseEquationsWithSymmetry.wl",
+          "bytes": 833610802,
+          "sha256": "5d17f56429690bad613bdd686c978f28e7b2c797cbc8cedb56dbbc2eb10190b3"
+        },
+        {
+          "path": "matrix/CanonicalAddedEquations.wl",
+          "bytes": 631115125,
+          "sha256": "397f3a5859a46ad2df83826a7241d33687e10029c685a70c45427b4bb4110e8a"
+        },
+        {
+          "path": "matrix/ColumnOrder.wl",
+          "bytes": 250476730,
+          "sha256": "527468c50115976d927e6925de70d46a110d58ccafbc0fb4e1e4ccb5697caf88"
+        },
+        {
+          "path": "matrix/SolverQueries.wl",
+          "bytes": 563756,
+          "sha256": "3e74767c6e21d876d432d385b4ce5f2af265c8e33b3bdeacaa850726e670b46c"
+        },
+        {
+          "path": "matrix/QueryMap.wl",
+          "bytes": 1417684,
+          "sha256": "5d99d00ca62e1168b5f50106310549f4cb23ce45bcbb7829f9a914e9439bb16a"
+        },
+        {
+          "path": "matrix/CanonicalReductionRules.wl",
+          "bytes": 80725118,
+          "sha256": "42cb1ced9f819d7cec7c2f01e2ddbab256ad466b8727df98f160851ecca6a2bc"
+        }
+      ]
+    },
+    {
+      "name": "ordering01-seeds.tar.gz",
+      "kind": "seeds",
+      "bytes": 27320799,
+      "sha256": "d469176c4ce84cbfcae3a2f278419c0292564e00165145b709d17492c119e791",
+      "files": [
+        {
+          "path": "provenance/campaign/block_locality_guard_test/SeedData.wl",
+          "bytes": 7265,
+          "sha256": "af77256f1feee92fbbb3007b63ca5ca6d4aea8cf59b68388d93739a01949e75f"
+        },
+        {
+          "path": "provenance/campaign/coupled_all_probe/IndependentQA.wl",
+          "bytes": 2980,
+          "sha256": "af943ce15cecfad53bfe64179cbb7d652f76c107aedcadc041187629998b2fa8"
+        },
+        {
+          "path": "provenance/campaign/coupled_all_probe/README.md",
+          "bytes": 1851,
+          "sha256": "23f7dfe8ee54fcf1cb18f347ea88b221eab9b54b2416f30ccb51c99b61ad0dd2"
+        },
+        {
+          "path": "provenance/campaign/expanded01/GenerationAudit.wl",
+          "bytes": 324,
+          "sha256": "24b34811f115db4c15a372039a6f7b730883565d8a43969ee5cdaa39a123b796"
+        },
+        {
+          "path": "provenance/campaign/expanded01/SystemManifest.wl",
+          "bytes": 609,
+          "sha256": "eb0b753b19250b3111650ce83131c1fb3bfb68a4b191d525a0035aa89752cd50"
+        },
+        {
+          "path": "provenance/campaign/expanded02/GenerationAudit.wl",
+          "bytes": 303,
+          "sha256": "20810b4f907e3be732a241d71117d63155eab2a6cbd94082b8f2d68c9081301b"
+        },
+        {
+          "path": "provenance/campaign/expanded02/SystemManifest.wl",
+          "bytes": 943,
+          "sha256": "39b4700c76f2b534ba6b5918edf5f3cf63762d6499cbfffcf1711ce83a2f2dec"
+        },
+        {
+          "path": "provenance/campaign/expanded03/GenerationAudit.wl",
+          "bytes": 443,
+          "sha256": "4f6d9cc382b05692924e5fbd9c657a9e775a507c6746cabb8c684b8901607eb0"
+        },
+        {
+          "path": "provenance/campaign/expanded03/SystemManifest.wl",
+          "bytes": 926,
+          "sha256": "34e5dbf15cb9a214fbe8c4d68ddeddc8fd525421e6d72196df3546853d329ea0"
+        },
+        {
+          "path": "provenance/campaign/expanded04/GenerationAudit.wl",
+          "bytes": 306,
+          "sha256": "2fcd420fb02ebd8f7ee454f1cfb4ee5c3f830b98055e16547008dc49e2483112"
+        },
+        {
+          "path": "provenance/campaign/expanded04/SystemManifest.wl",
+          "bytes": 944,
+          "sha256": "ad4d95913a66568837fb4e7a121b776ab27f270d600903d7b09cc3cd1bfcc57b"
+        },
+        {
+          "path": "provenance/campaign/expanded05/GenerationAudit.wl",
+          "bytes": 476,
+          "sha256": "fee280aa7faf231ec99323ef75669cfb49fe4a7b195967062ebb92512ae3478f"
+        },
+        {
+          "path": "provenance/campaign/expanded05/RESULTS.md",
+          "bytes": 6050,
+          "sha256": "63296422f580449fa485d1b4d9c66c85b953d5c3605b9b4fcac433896675c696"
+        },
+        {
+          "path": "provenance/campaign/expanded05/SystemManifest.wl",
+          "bytes": 933,
+          "sha256": "ac7f8bdd1248d6c500e83ba769fdc7228729847109f28e1b95c8a8f1068ed014"
+        },
+        {
+          "path": "provenance/campaign/expanded06/FocusTargets.wl",
+          "bytes": 1652,
+          "sha256": "52a93cea98ab6232973f38c8afcc91233e8b3846f4c76246eb9046f7bc55d9d2"
+        },
+        {
+          "path": "provenance/campaign/expanded06/GenerationAudit.wl",
+          "bytes": 609,
+          "sha256": "06be4109aa100a759b663ad440fc9c47b20613c79329c8047678f0a05798493c"
+        },
+        {
+          "path": "provenance/campaign/expanded06/SystemManifest.wl",
+          "bytes": 943,
+          "sha256": "79189f91f2ded79fc25c96e5e642304158a33f96e2bf5a0b36f137552349e2ee"
+        },
+        {
+          "path": "provenance/campaign/expanded07/FocusTargets.wl",
+          "bytes": 2348,
+          "sha256": "560c89888bcaa1a977a4f596da24ec867f25b27c331801388a9a8d61aae869cc"
+        },
+        {
+          "path": "provenance/campaign/expanded07/GenerationAudit.wl",
+          "bytes": 604,
+          "sha256": "d48caafbd98e4c844c7081c70ee6bdfad2541e2d50b2ae91f6c116cac56ef2ff"
+        },
+        {
+          "path": "provenance/campaign/expanded07/RESULTS.md",
+          "bytes": 6315,
+          "sha256": "a0101dbd38014efcb94abea415ed0bc05dd9dee026e14826dc4d016d112f0b6f"
+        },
+        {
+          "path": "provenance/campaign/expanded07/SystemManifest.wl",
+          "bytes": 932,
+          "sha256": "d4aa7ef3ae3bca604a0789eebe5ff88ea10fa3432d6d29feb7583589d8ee7148"
+        },
+        {
+          "path": "provenance/campaign/expanded08/GenerationAudit.wl",
+          "bytes": 604,
+          "sha256": "b0812255b7cddce5a665153244e540884ea849cb24eb4800807f185e4d3ab8f6"
+        },
+        {
+          "path": "provenance/campaign/expanded08/RESULTS.md",
+          "bytes": 3542,
+          "sha256": "78c6caa2db9c33a835d832648da1314a0dd96a6fe4b45b19956f962e37b8cd9b"
+        },
+        {
+          "path": "provenance/campaign/expanded08/SystemManifest.wl",
+          "bytes": 940,
+          "sha256": "4e3bf5ff04581f33854ceb5ad3fb6532d34f89b17843a1f7b9d594632f160fb0"
+        },
+        {
+          "path": "provenance/campaign/expanded09/GenerationAudit.wl",
+          "bytes": 603,
+          "sha256": "f3eccd684f4afad5dd8aefcac68772d0be671e231fe6c36f08f8ff068307fe5e"
+        },
+        {
+          "path": "provenance/campaign/expanded09/RESULTS.md",
+          "bytes": 6841,
+          "sha256": "1cdffa6b6b5da9985d1ffd765154b226764a4985537c719b13ee79592ff315b3"
+        },
+        {
+          "path": "provenance/campaign/expanded09/SystemManifest.wl",
+          "bytes": 951,
+          "sha256": "45c157a8c7ee1e330de7eb989ccffb2ba2e8a04cc47ce1ae45faeec97c17f4b6"
+        },
+        {
+          "path": "provenance/campaign/expanded10/GenerationAudit.wl",
+          "bytes": 666,
+          "sha256": "da09023009ed272e534142193d7c3e4ceae646e5687c40d844b042411e561527"
+        },
+        {
+          "path": "provenance/campaign/expanded11/GenerationAudit.wl",
+          "bytes": 666,
+          "sha256": "764e834ac4b28a421851850c78c48696c427baeda166cc90ddc304c9dbd24a34"
+        },
+        {
+          "path": "provenance/campaign/expanded11/RESULTS.md",
+          "bytes": 3642,
+          "sha256": "1bcb40ed705525705a8f7fb787d509c553b0f03a3ed81bcb079cd571d3090bdc"
+        },
+        {
+          "path": "provenance/campaign/expanded11/SystemManifest.wl",
+          "bytes": 1179,
+          "sha256": "b0fba76a7a698702c188d45751aa6e4fcebe90bd41442b20534893f383753585"
+        },
+        {
+          "path": "provenance/campaign/expanded12/GenerationAudit.wl",
+          "bytes": 471,
+          "sha256": "76626e78f943b24b783dab7f0579932399ee0e927a41d6b218e1c992a192a212"
+        },
+        {
+          "path": "provenance/campaign/expanded12/RESULTS.md",
+          "bytes": 3550,
+          "sha256": "722d459d06f6479788cc42e4d5928b0075bbf65e394576afc85bf2c6d14c95f6"
+        },
+        {
+          "path": "provenance/campaign/expanded12/SystemManifest.wl",
+          "bytes": 1155,
+          "sha256": "75ef56ecdabe48eb8a02f0cfedafb0f57990c942191e92965ae80841aba98ee6"
+        },
+        {
+          "path": "provenance/campaign/expanded13/GenerationAudit.wl",
+          "bytes": 601,
+          "sha256": "8dc804a1ecac68d4114070ba12ede41096d175b89885a5b6cc343d9920ba5e99"
+        },
+        {
+          "path": "provenance/campaign/expanded13/RESULTS.md",
+          "bytes": 3653,
+          "sha256": "266ab26f79408dcc6b6d8082c5a15823961b6f7bbf142a11b2d7bfadff676985"
+        },
+        {
+          "path": "provenance/campaign/expanded13/SystemManifest.wl",
+          "bytes": 1156,
+          "sha256": "000acb7ab2936c9c35fd07a6dfd09533a6bff0e4c2c5498a1d113f5a67164081"
+        },
+        {
+          "path": "provenance/campaign/expanded14/CoupledActionProvenance.wl",
+          "bytes": 335466,
+          "sha256": "b00fdfb1ac6ec3844f4d90d42007bf0e06639c4d3f046b60d76e7d7ddce90b0e"
+        },
+        {
+          "path": "provenance/campaign/expanded14/GenerationAudit.wl",
+          "bytes": 722,
+          "sha256": "dd42313c2093273f0fbc34626a43c1c426977904fb073d8a217e09fa5227c9ea"
+        },
+        {
+          "path": "provenance/campaign/expanded14/RESULTS.md",
+          "bytes": 3066,
+          "sha256": "f7cb2061b0c7161b67bd60c569947009b90649f2483ed5a961d1a7fb2fbb8811"
+        },
+        {
+          "path": "provenance/campaign/expanded14/SystemManifest.wl",
+          "bytes": 1136,
+          "sha256": "a7ce0b68f382424596f63ed07b16a0abfb9fe48ec44c53796fde76c87f79b638"
+        },
+        {
+          "path": "provenance/campaign/gram_diagnostic/README.md",
+          "bytes": 1238,
+          "sha256": "262bac8dd37a15f3832b9bc9d28a98a59bb665f7e6f740dd11275516ca35bfec"
+        },
+        {
+          "path": "provenance/campaign/integrability01/SystemManifest.wl",
+          "bytes": 1050,
+          "sha256": "6be292ab729ac839e25042073966e73204d87c2c1f9af8c682223b43c882bd89"
+        },
+        {
+          "path": "provenance/campaign/missing_degree_module_audit/README.md",
+          "bytes": 1144,
+          "sha256": "36162cc0a85f559cc9152283274dc1e984de87579de219b0e9354c9fdc332add"
+        },
+        {
+          "path": "provenance/campaign/ordering01/GenerationAudit.wl",
+          "bytes": 183,
+          "sha256": "92329f1546e6bcc7090150df9196b52acc07192ff0d1e0e216602f0034541c96"
+        },
+        {
+          "path": "provenance/campaign/ordering01/RESULTS.md",
+          "bytes": 2919,
+          "sha256": "e4ccdb8f9b87caa66c4892b1c26c9c21d6bf8c24facb6c326756e1b9917a07b7"
+        },
+        {
+          "path": "provenance/campaign/ordering01/SystemManifest.wl",
+          "bytes": 1135,
+          "sha256": "75d2f385d45f1a49c47098f4a23dba4eb550fb76dc10c3e96307561d6b96cd08"
+        },
+        {
+          "path": "provenance/campaign/residue_alignment/IndependentQA.wl",
+          "bytes": 323,
+          "sha256": "a12ff6a2baf49a96f5998fd2725ec23ec5358b2398657517e1547ce933db32f3"
+        },
+        {
+          "path": "provenance/campaign/residue_alignment/README.md",
+          "bytes": 2739,
+          "sha256": "3a34f8cbee0d73d22ed04bb3e842b5bdad1cfe70175b9b59f13c1c21ac7d4407"
+        },
+        {
+          "path": "provenance/campaign/target_range_audit/README.md",
+          "bytes": 5464,
+          "sha256": "5caebaf071ec710edd5a5467a6276d5a2b3e8d64f963207dbefe4005f89188bb"
+        },
+        {
+          "path": "provenance/campaign/targeted01/SeedData.wl",
+          "bytes": 6359187,
+          "sha256": "ace9fc49232cb4324c289638f27aa4b03dd149f42b03a37925684041845c1d20"
+        },
+        {
+          "path": "provenance/campaign/targeted01/SeedProvenance.wl",
+          "bytes": 63061,
+          "sha256": "b314891b976af1556d290db0a558d98c2ca368c0c340c8f0a622837df30346d7"
+        },
+        {
+          "path": "provenance/campaign/targeted01/SeedSummary.wl",
+          "bytes": 588,
+          "sha256": "9cadc9ed840663514c3ae46bd5f9d62d3cdca11c653ebb43022fc4f92296c029"
+        },
+        {
+          "path": "provenance/campaign/targeted02/SeedData.wl",
+          "bytes": 5504814,
+          "sha256": "749fdcf405148edcb575f637087d7faef335ea01ef4e45a8bd9f3e2c28c4943a"
+        },
+        {
+          "path": "provenance/campaign/targeted02/SeedProvenance.wl",
+          "bytes": 56036,
+          "sha256": "8025e79fcce43b5a97b50a1706758a06b3d19d28e81c9c2e86bc1e174e575562"
+        },
+        {
+          "path": "provenance/campaign/targeted02/SeedSummary.wl",
+          "bytes": 540,
+          "sha256": "07e30b2f5f207d1d88d3ac6c8776cb22526fb0d03403f63475f766de5ad18b1f"
+        },
+        {
+          "path": "provenance/campaign/targeted03/SeedData.wl",
+          "bytes": 17696037,
+          "sha256": "d0f8df0d15fb12b580482d4c36ff0fa944b25cd70b8b791ede7373980c14f5ce"
+        },
+        {
+          "path": "provenance/campaign/targeted03/SeedProvenance.wl",
+          "bytes": 195164,
+          "sha256": "5bca2db3d3d870574789b176c44b0aebd81f28ce8a66ee1b0062406ed3a6eb65"
+        },
+        {
+          "path": "provenance/campaign/targeted03/SeedSummary.wl",
+          "bytes": 502,
+          "sha256": "655a90abcfd540fbe3e64f81e9e2f87fef1d9f013e1a5f0ec141902f9791246c"
+        },
+        {
+          "path": "provenance/campaign/targeted04/SeedData.wl",
+          "bytes": 2807827,
+          "sha256": "85e61952a817aa45fcbf48f68c48332638eee73038500edc047368e6aa4083c1"
+        },
+        {
+          "path": "provenance/campaign/targeted04/SeedProvenance.wl",
+          "bytes": 70119,
+          "sha256": "69bec8e69f433a05dba2e45a7163a6b922f35bd848f46265fc97ae28695d326b"
+        },
+        {
+          "path": "provenance/campaign/targeted04/SeedSummary.wl",
+          "bytes": 511,
+          "sha256": "c251708e9ad6d77eafa8156bbf71ad055babf60d509164b873f1708137018550"
+        },
+        {
+          "path": "provenance/campaign/targeted05/SeedData.wl",
+          "bytes": 6122239,
+          "sha256": "3c1d3c68c3a4c40cd73e4924b342873f8e714abf5dc535c9fadb948b655047e6"
+        },
+        {
+          "path": "provenance/campaign/targeted05/SeedProvenance.wl",
+          "bytes": 66788,
+          "sha256": "4ec0a7db748d25ed3206268088f6dd7aeac9296676c4f01a6cbc4feac8449057"
+        },
+        {
+          "path": "provenance/campaign/targeted05/SeedSummary.wl",
+          "bytes": 504,
+          "sha256": "e5c14edb9f8afa5dd87d4ab841179471990a3f55311cfe04007af33a0c0d47ee"
+        },
+        {
+          "path": "provenance/campaign/targeted06/SeedData.wl",
+          "bytes": 2597374,
+          "sha256": "2c297a76cbc3e4a5c4b186c3ebbff544e7400389aee517f656fc5748a5f1f536"
+        },
+        {
+          "path": "provenance/campaign/targeted06/SeedProvenance.wl",
+          "bytes": 84863,
+          "sha256": "102bdb81332a9bb1bb08b4664d3a02a5ad3bb6af147a82969e4a032ef241f6b7"
+        },
+        {
+          "path": "provenance/campaign/targeted06/SeedSummary.wl",
+          "bytes": 536,
+          "sha256": "778ab4128526b3bc1a6427fdcef6c4d2fe78d1838a85621c689063845e52ab25"
+        },
+        {
+          "path": "provenance/campaign/targeted07/SeedData.wl",
+          "bytes": 18093979,
+          "sha256": "0e6ce8b4455b5c9c4029642dcf6cb5725f3d130ee1634f72a90696148a089da9"
+        },
+        {
+          "path": "provenance/campaign/targeted07/SeedProvenance.wl",
+          "bytes": 203487,
+          "sha256": "9754c7a6e69f3522583eab52ac7a5032968721b56cf10eb1aa7ee8707bf8ee8d"
+        },
+        {
+          "path": "provenance/campaign/targeted07/SeedSummary.wl",
+          "bytes": 549,
+          "sha256": "ed5e68d8a10d5a0034d35db095e53a036be0b6915927e6a3e6851d9c716d6582"
+        },
+        {
+          "path": "provenance/campaign/targeted08/SeedData.wl",
+          "bytes": 7328530,
+          "sha256": "4d465e94d3e5fd2e0e8790a1e45767133d21cb19003016ad5686a38910ef3799"
+        },
+        {
+          "path": "provenance/campaign/targeted08/SeedSummary.wl",
+          "bytes": 1228,
+          "sha256": "c73f4505120ea049fc5fc42950eb5b5c74d37f8217249f53a50b39ace10707fc"
+        },
+        {
+          "path": "provenance/campaign/targeted09/SeedData.wl",
+          "bytes": 110080926,
+          "sha256": "a8a7120a9a5a8f0b423ce02c0992e26a78b0e20b98add609491a5bc095c343df"
+        },
+        {
+          "path": "provenance/campaign/targeted09/SeedProvenance.wl",
+          "bytes": 1635016,
+          "sha256": "80b81ba71cad48e9f85069bd08fd4eb0c58bd3eb196c94d23f4c81cfb913bca3"
+        },
+        {
+          "path": "provenance/campaign/targeted09/SeedSummary.wl",
+          "bytes": 931,
+          "sha256": "0f94105655ca3f1494f80a26609be7f2b322bd62d40cb352d7b40f9b509b8aed"
+        },
+        {
+          "path": "provenance/campaign/targeted10/FocusTargets.wl",
+          "bytes": 697,
+          "sha256": "7e50edb2adef881ae92ebf335e00f006c4a51244079ff3fcbea4d72d316cca54"
+        },
+        {
+          "path": "provenance/campaign/targeted10/SeedData.wl",
+          "bytes": 10102864,
+          "sha256": "34f4bafc2e59b61f71ed7efc82b69722c9a51a631f1bffc80190dfe386a6deaa"
+        },
+        {
+          "path": "provenance/campaign/targeted10/SeedSummary.wl",
+          "bytes": 633,
+          "sha256": "bd62e690f6f50b8aae04f0b59d252fb98f1e82dfd3f150cf98b73dbe88ebc80f"
+        },
+        {
+          "path": "provenance/campaign/targeted11/ComponentCatalogues.wl",
+          "bytes": 479805,
+          "sha256": "06c2d0589abe47294b4a509dc70fde73de0ec6f0711c47b2e174c20b07af83ed"
+        },
+        {
+          "path": "provenance/campaign/targeted11/ComponentSourceMap.wl",
+          "bytes": 18941,
+          "sha256": "c82b10c58d63859a2eb67d8ae8f36e0c23e9a39a1724f5e3830e252d5d1621f6"
+        },
+        {
+          "path": "provenance/campaign/targeted11/FocusTargets.wl",
+          "bytes": 6023,
+          "sha256": "d5ef5f08c7d4f1fe6e28a3e8f2b1386147c7752546d7c5a79d89d3e8b72dfa3b"
+        },
+        {
+          "path": "provenance/campaign/targeted11/HistoricalChecks.wl",
+          "bytes": 333,
+          "sha256": "9578117b85b905582b0f090861d83c35c6511e5307ff9a0b0298811277eb92c2"
+        },
+        {
+          "path": "provenance/campaign/targeted11/IndependentQA.wl",
+          "bytes": 406,
+          "sha256": "342c36cc89a0eb1dcc083c23945a524e35b2a94eb992bd260a1d7a91516c6e8f"
+        },
+        {
+          "path": "provenance/campaign/targeted11/SeedData.wl",
+          "bytes": 15531727,
+          "sha256": "ca7075092ccbd8236038be448593601bc5e7dda603b55e00db0305046c151ec3"
+        },
+        {
+          "path": "provenance/campaign/targeted11/SeedSummary.wl",
+          "bytes": 6828,
+          "sha256": "e5e209400852dc30a28002156f5bab17ce08eab1552f6be63c1318ac9167cf86"
+        },
+        {
+          "path": "provenance/campaign/targeted12/ComponentCatalogues.wl",
+          "bytes": 3870046,
+          "sha256": "e34f95126e9a0d68547c5a4c7e688b9c1966e6b07ee6ff5039f41706c8db134c"
+        },
+        {
+          "path": "provenance/campaign/targeted12/ComponentSourceMap.wl",
+          "bytes": 190815,
+          "sha256": "0a426174b6d78cafc160e0a2243109287e2c58c1b4487b451dea49db98bf3f4c"
+        },
+        {
+          "path": "provenance/campaign/targeted12/FocusTargets.wl",
+          "bytes": 61336,
+          "sha256": "8e7eb354dd8d51fe7dd893ff25a605062d8ce66df7e482b924758dc7881d7aef"
+        },
+        {
+          "path": "provenance/campaign/targeted12/HistoricalChecks.wl",
+          "bytes": 501,
+          "sha256": "294aed2fc997e14080c6a9310d315c0df58c0eff1d11f9710d338cd41f89038c"
+        },
+        {
+          "path": "provenance/campaign/targeted12/IndependentQA.wl",
+          "bytes": 508,
+          "sha256": "48efc395e50102369b835a76f6af428a26da5b161832f9bf2769e92a83e4f69f"
+        },
+        {
+          "path": "provenance/campaign/targeted12/SeedData.wl",
+          "bytes": 28099903,
+          "sha256": "d9c78662cc98265ee093e5a76239434d9a112b970876e1c10ae47242e8009001"
+        },
+        {
+          "path": "provenance/campaign/targeted12/SeedSummary.wl",
+          "bytes": 7682,
+          "sha256": "fc3f9f31410671857b0e84ffd9d2acecbeb154a9a15c134f2807f8a0dd479571"
+        },
+        {
+          "path": "provenance/campaign/targeted13/ComponentCatalogues.wl",
+          "bytes": 336293,
+          "sha256": "0ee92967167a972132960bfd2d12902213cb7e501407ddb0e391f2836c45e539"
+        },
+        {
+          "path": "provenance/campaign/targeted13/ComponentSourceMap.wl",
+          "bytes": 50519,
+          "sha256": "4cac2a987edd5dbbf7caecbf9bff699a73f83ece6ccbc65bb96a40affa310574"
+        },
+        {
+          "path": "provenance/campaign/targeted13/FocusTargets.wl",
+          "bytes": 16089,
+          "sha256": "06014b5badf7ca2a63365ff839eeebb2e4b1b8f5c541cea2b3fc1c164c79115a"
+        },
+        {
+          "path": "provenance/campaign/targeted13/HistoricalChecks.wl",
+          "bytes": 667,
+          "sha256": "7832f5358d6d05abd75cfa4c2a21c152f60f7c6a1d9623494b6bf9980e61ee40"
+        },
+        {
+          "path": "provenance/campaign/targeted13/IndependentQA.wl",
+          "bytes": 508,
+          "sha256": "820545c2e234d5df3b68bd4df2289ceca60b50db6c43efe515294474fbdce1f0"
+        },
+        {
+          "path": "provenance/campaign/targeted13/SeedData.wl",
+          "bytes": 93605689,
+          "sha256": "26ca64d2a0111041c332ca6b0fb9cebc8957f574af92f586da0a1c66d9798a2f"
+        },
+        {
+          "path": "provenance/campaign/targeted13/SeedSummary.wl",
+          "bytes": 9617,
+          "sha256": "127886a98e4b094c06fddc2a9c5e6123d4a483eb6b592a6d8fbfb039583e0029"
+        },
+        {
+          "path": "provenance/campaign/targeted14/ComponentCatalogues.wl",
+          "bytes": 336293,
+          "sha256": "0ee92967167a972132960bfd2d12902213cb7e501407ddb0e391f2836c45e539"
+        },
+        {
+          "path": "provenance/campaign/targeted14/ComponentSourceMap.wl",
+          "bytes": 50519,
+          "sha256": "4cac2a987edd5dbbf7caecbf9bff699a73f83ece6ccbc65bb96a40affa310574"
+        },
+        {
+          "path": "provenance/campaign/targeted14/FocusTargets.wl",
+          "bytes": 16089,
+          "sha256": "06014b5badf7ca2a63365ff839eeebb2e4b1b8f5c541cea2b3fc1c164c79115a"
+        },
+        {
+          "path": "provenance/campaign/targeted14/GeneratorUpgrade.wl",
+          "bytes": 774,
+          "sha256": "0990ce365dcb382bad849b0d0c49b09be8d64b8e9863e833889d1aa384f3d020"
+        },
+        {
+          "path": "provenance/campaign/targeted14/HistoricalChecks.wl",
+          "bytes": 843,
+          "sha256": "5e45bde8537ba1601be8a9ba195da6ae675531a2e85ad00713dc91954c48e6ee"
+        },
+        {
+          "path": "provenance/campaign/targeted14/IndependentQA.wl",
+          "bytes": 508,
+          "sha256": "820545c2e234d5df3b68bd4df2289ceca60b50db6c43efe515294474fbdce1f0"
+        },
+        {
+          "path": "provenance/campaign/targeted14/SeedData.wl",
+          "bytes": 93605689,
+          "sha256": "26ca64d2a0111041c332ca6b0fb9cebc8957f574af92f586da0a1c66d9798a2f"
+        },
+        {
+          "path": "provenance/campaign/targeted14/SeedSummary.wl",
+          "bytes": 9893,
+          "sha256": "58f5f91ba18212c952da641306e0dd16064e4a396df6ac75f6b42aa3b3237110"
+        },
+        {
+          "path": "provenance/campaign/targeted15/ComponentCatalogues.wl",
+          "bytes": 23117,
+          "sha256": "80b7c9cfcae913f4a56f0191d40360b62e326a18f3614ffd8b0ac249ec69798d"
+        },
+        {
+          "path": "provenance/campaign/targeted15/ComponentSourceMap.wl",
+          "bytes": 1882,
+          "sha256": "9d8a11e69ca448ced608eaad5f38b1743965de7f40fd201b9d114aa0892b802a"
+        },
+        {
+          "path": "provenance/campaign/targeted15/FocusTargets.wl",
+          "bytes": 596,
+          "sha256": "70edeb271748e2465282056d37acfa7fd5c16355bbe62a395ec4276adeb8a782"
+        },
+        {
+          "path": "provenance/campaign/targeted15/HistoricalChecks.wl",
+          "bytes": 209,
+          "sha256": "a779d48e11624c78b4cba842ee43fe9c460fdfd529015b793479540e2ff32bbd"
+        },
+        {
+          "path": "provenance/campaign/targeted15/IndependentQA.wl",
+          "bytes": 509,
+          "sha256": "624b31880bc11478348f2b78d4992e7cdedb951651c387cbab27e0772ed59bf3"
+        },
+        {
+          "path": "provenance/campaign/targeted15/README.md",
+          "bytes": 4296,
+          "sha256": "f84c52680c7761420dd4a597ea8731b8c3d07dc2d6199ee0f504e4285f355416"
+        },
+        {
+          "path": "provenance/campaign/targeted15/SeedData.wl",
+          "bytes": 139947,
+          "sha256": "e0920b513590eae66fb69541c68d0f582b5af289edd2d413759e603643529db5"
+        },
+        {
+          "path": "provenance/campaign/targeted15/SeedSummary.wl",
+          "bytes": 3406,
+          "sha256": "de77914eb00995b147c7e69a9b02a237f2191e97d8eb33c7619493b491206e4a"
+        },
+        {
+          "path": "provenance/campaign/targeted16/ComponentCatalogues.wl",
+          "bytes": 129451,
+          "sha256": "dbb00569dd763a4187c3265a263f5645f949b8260a54cc692ff74bd8e07d0e81"
+        },
+        {
+          "path": "provenance/campaign/targeted16/ComponentSourceMap.wl",
+          "bytes": 19164,
+          "sha256": "b53378bdc3c901af653a4f636e277f7f2d21d2a631944a948336f2f539dc3c84"
+        },
+        {
+          "path": "provenance/campaign/targeted16/FocusTargets.wl",
+          "bytes": 6073,
+          "sha256": "8042d036b99448aae8a33b79b22fc916474831722e7a185e377b8f923609692f"
+        },
+        {
+          "path": "provenance/campaign/targeted16/HistoricalChecks.wl",
+          "bytes": 420,
+          "sha256": "f85ef0808c0ab5c1f47d7cd91b61786909172b3b17e2a535e16823f5f46876bc"
+        },
+        {
+          "path": "provenance/campaign/targeted16/IndependentQA.wl",
+          "bytes": 508,
+          "sha256": "8fa8c5a59496d73ed1d61efacd467335774626d0cece58d6468b8b6db724693e"
+        },
+        {
+          "path": "provenance/campaign/targeted16/SeedData.wl",
+          "bytes": 6586599,
+          "sha256": "cf6745a3d25b7b374934d1acffcdfcdeb29e4bd97d7154ab40a6fdbe5559dc33"
+        },
+        {
+          "path": "provenance/campaign/targeted16/SeedSummary.wl",
+          "bytes": 7345,
+          "sha256": "73822be6438ce7374791684bd41f8961e830085f22a249ee65534ac3993a3079"
+        },
+        {
+          "path": "provenance/scripts/Closure116Focus.wl",
+          "bytes": 3466,
+          "sha256": "5574c093cc2c0c7405057dcf6066d1d9a251c6877312243a5d5db815c7a3a789"
+        },
+        {
+          "path": "provenance/scripts/Closure116OpenRows.wl",
+          "bytes": 3133,
+          "sha256": "8414fc2f006377a36e542a7c4ab790d3227cec16f61d46c7f09d0cf8a9341b44"
+        },
+        {
+          "path": "provenance/scripts/Closure116Report.wl",
+          "bytes": 6926,
+          "sha256": "de125a3ea21da696d7bdc76321084413abf360bc237c30a33e5b407890727674"
+        },
+        {
+          "path": "provenance/scripts/ClosureActualFactorTargets.wl",
+          "bytes": 3412,
+          "sha256": "24a966ca3e0a4eb5db4c277ed99bfef473a67b3ee8989eebd6f582fc1a25f800"
+        },
+        {
+          "path": "provenance/scripts/ClosureAlignFiniteResidues.wl",
+          "bytes": 4627,
+          "sha256": "cd6b79a6862d9cd4c37b28c163bfd96d7627a282b17838aa89f5f219b69b7c8f"
+        },
+        {
+          "path": "provenance/scripts/ClosureAlignedProbeOutcome.wl",
+          "bytes": 910,
+          "sha256": "bad35dc0eed66d59a85af6b2395785e4d73926ce010c122eb47057c4738b96d5"
+        },
+        {
+          "path": "provenance/scripts/ClosureAlignedProbeQA.wl",
+          "bytes": 2723,
+          "sha256": "9965323424a94f2ad507b231f3dbbae9132cc5be1464c9f2356f0245671b8f8b"
+        },
+        {
+          "path": "provenance/scripts/ClosureAlignedReductionQA.wl",
+          "bytes": 1800,
+          "sha256": "d79fb8f9ce9634fd554db99a81dbd1e8c63ffc4e2d2753a297fb180015b861aa"
+        },
+        {
+          "path": "provenance/scripts/ClosureAuditFiniteActions.wl",
+          "bytes": 2083,
+          "sha256": "8e4dac18054ad956f8cb50f3a3e779adf04a102e9dca443edb870b50017476d7"
+        },
+        {
+          "path": "provenance/scripts/ClosureAutomaticFactorPairProof.wl",
+          "bytes": 6343,
+          "sha256": "04fe5160def36d7e0e4144aca9d7814648089ec8acc4847d67eb2bb050eda47c"
+        },
+        {
+          "path": "provenance/scripts/ClosureAxialImpact.wl",
+          "bytes": 3458,
+          "sha256": "796547f11d984022032e19318640d78309a671be23b2e977eb553594aebd03a2"
+        },
+        {
+          "path": "provenance/scripts/ClosureBoxOrderingQA.wl",
+          "bytes": 1583,
+          "sha256": "1f407d6b11ecb1053561e6a8b0924915eb623faf6fc4e0caf48a1745ac8f4286"
+        },
+        {
+          "path": "provenance/scripts/ClosureCampaign.wl",
+          "bytes": 11394,
+          "sha256": "81e4adbd263cd826e689f7964317231e8be79705dc0532787dee1cee97832cf2"
+        },
+        {
+          "path": "provenance/scripts/ClosureCandidateResidualAudit.wl",
+          "bytes": 1737,
+          "sha256": "dbc8fb40f6477a45c398071f28ac52c2b921018b11796b038cbd3de161419767"
+        },
+        {
+          "path": "provenance/scripts/ClosureCartesianImpact.wl",
+          "bytes": 4210,
+          "sha256": "d9e8f3aacd24027478ef883b1720a07c550427aa2c420140ae69ff7b58c44e10"
+        },
+        {
+          "path": "provenance/scripts/ClosureCartesianResults.wl",
+          "bytes": 7311,
+          "sha256": "0174e95d111a540a9ee652b38066637c3110ac4b2e71f7da421d0888c1110eba"
+        },
+        {
+          "path": "provenance/scripts/ClosureComponentCartesianQA.wl",
+          "bytes": 4599,
+          "sha256": "de19a55474e351928b48159f79d2206969cb2370db3d28925ad99407e19d074e"
+        },
+        {
+          "path": "provenance/scripts/ClosureComponentCartesianSeeds.wl",
+          "bytes": 11111,
+          "sha256": "25755a1747d16abb16829f188c5e97fb33381881a2bbcb6c810f86ffcca736b2"
+        },
+        {
+          "path": "provenance/scripts/ClosureContactLocalityQA.wl",
+          "bytes": 4005,
+          "sha256": "a105dde35b56913d8fb4469fe6dd97680cfaa55c1f036b9c4d7ca95e29cffa6d"
+        },
+        {
+          "path": "provenance/scripts/ClosureContactPublicationQA.wl",
+          "bytes": 2680,
+          "sha256": "a9a48a0e10193baecc5a2319158c4ce6ecccbc1a63aa53e654053e015f95bb6e"
+        },
+        {
+          "path": "provenance/scripts/ClosureContactRecoveryAudit.wl",
+          "bytes": 3046,
+          "sha256": "f72b82e988ab7a3768253bc8e2eaf0352aff470982b42a7f3696273c7b90116c"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledAssemblyAudit.wl",
+          "bytes": 3712,
+          "sha256": "b326423b879fe2057260d1f0b559ce241bffc8a556dcbca36fa2fa6311aee7dd"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledFocusInventory.wl",
+          "bytes": 945,
+          "sha256": "52ae321c36e683115e58e2a5dfd8be2afa9de2af40c2ef81bcc8918af0cbb699"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledIncrement.wl",
+          "bytes": 2290,
+          "sha256": "26cfbadfd5d721e38c8e9d83dc7a6d48244753bbd7184e064fc769ab5849ea97"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledNovelty.wl",
+          "bytes": 3598,
+          "sha256": "bb57f9b9a5c3894702920b8f65db4d19e4eab73b45f8e7dcd15182ff1651fdcb"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledRemaining.wl",
+          "bytes": 853,
+          "sha256": "1f4bfb233de7d87c65b6b876999f709b3664d99a20e9ae465da1c079c423f3e1"
+        },
+        {
+          "path": "provenance/scripts/ClosureCoupledSeedProbe.wl",
+          "bytes": 5422,
+          "sha256": "cb75ae48d06604fa2f13f788981e90d45c8430db61bbd2c1fc8c10ab83b7be48"
+        },
+        {
+          "path": "provenance/scripts/ClosureCrossRoundPairAudit.wl",
+          "bytes": 7874,
+          "sha256": "ce8a11336b548d11bf3a2b2c30c98ebeeef2ea62ccd3b2db394774b5e5b6a3a0"
+        },
+        {
+          "path": "provenance/scripts/ClosureCurrentImpact.wl",
+          "bytes": 3172,
+          "sha256": "269e663b8d71215f32a27b1b8118e84d1fbcaeb468ee1b3020d64303dff760b4"
+        },
+        {
+          "path": "provenance/scripts/ClosureExpandedImpact.wl",
+          "bytes": 3533,
+          "sha256": "7e618ffef4a609b24429c3986d25386e431aac89743e9758ab2a6d1c2ffd801d"
+        },
+        {
+          "path": "provenance/scripts/ClosureExpandedSystem.wl",
+          "bytes": 14518,
+          "sha256": "cf73b4ca337ee5dedf60b6ef593f701478d0e73e3f08cf2dae5c2046ab89d354"
+        },
+        {
+          "path": "provenance/scripts/ClosureExpansionComparison.wl",
+          "bytes": 4021,
+          "sha256": "b6f03a124288e692f91356576719e692658de14a794f82aca0c268219f2ecefe"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorControlQA.wl",
+          "bytes": 2109,
+          "sha256": "15712f013e75d9fcfc60ecca7b93d48b769137f231b5836ed2ae1e40272efae0"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorPairInspection.wl",
+          "bytes": 4193,
+          "sha256": "12e3d7b99a2da6e316c75f457dd48a8db10760d0cebefc95adcb8d3f76cf3941"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorReferenceReachability.wl",
+          "bytes": 4633,
+          "sha256": "9597d3e90f0c04ad618a4d00b43e9d92d12c2d20dd33104e71a3dcad701fcd25"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorRelationAudit.wl",
+          "bytes": 6677,
+          "sha256": "ca29737392878e90b80745bd2466241b94ebf1f09d45f229722c0e8512cb08bb"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorizedContinuation.wl",
+          "bytes": 11884,
+          "sha256": "2628dcb2092fc1d222d30e4ffbe1734af5d0a833c6010f2ee7c425c7713995e2"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorizedFiniteBoxRelations.wl",
+          "bytes": 5963,
+          "sha256": "f33570ca6ec97d9d500263fc4ce680dec7a62e1777ceef6fbec6ee1d48f76fc3"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorizedResidualFocus.wl",
+          "bytes": 1932,
+          "sha256": "66bf60152dc00f3dde7899170636de805a400983134076894790ab19ae948ecc"
+        },
+        {
+          "path": "provenance/scripts/ClosureFactorizedTensorSeeds.wl",
+          "bytes": 4210,
+          "sha256": "b698775925a96f21896d19c28abfa1e6a7ce5e9cbaccf0a32cfd6b0dc7eed8f5"
+        },
+        {
+          "path": "provenance/scripts/ClosureFiniteFailureAudit.wl",
+          "bytes": 3184,
+          "sha256": "b953d68e208bca901d0c387e8e94e5fa39b3cebb38eab510ee9a611e2cbe42d1"
+        },
+        {
+          "path": "provenance/scripts/ClosureFocusedIncrementImpact.wl",
+          "bytes": 1984,
+          "sha256": "1fbd88c29941cdf265950bba8bf5015ee260bac77e70c8c61588ebc30b0a2eb1"
+        },
+        {
+          "path": "provenance/scripts/ClosureFocusedResidueReference.wl",
+          "bytes": 3837,
+          "sha256": "cbc5ed8d4455c6fd8722cf18cfebc7acfd1c9b2d2887abfc634182919e87a659"
+        },
+        {
+          "path": "provenance/scripts/ClosureFocusedWholeAction.wl",
+          "bytes": 3480,
+          "sha256": "bed28811afbdce4649dec76859fc9fe71c9385cf1a727760e0a4cebf16e1e28d"
+        },
+        {
+          "path": "provenance/scripts/ClosureFrom116.wl",
+          "bytes": 1465,
+          "sha256": "4b8609eff21ed1e3fffeecd0c31629865ada6aeba226e37c4ee15f3db7b55bf9"
+        },
+        {
+          "path": "provenance/scripts/ClosureGramDiagnostic.wl",
+          "bytes": 3385,
+          "sha256": "147a7db0739364704c4ff1f866b7b80b3bb7107a4df8693620073c23d131ca1d"
+        },
+        {
+          "path": "provenance/scripts/ClosureIncrementalSystem.wl",
+          "bytes": 13377,
+          "sha256": "e344f4d333e5a71842718a492c949376e6278eaf777f949fe40e43143c8b10f7"
+        },
+        {
+          "path": "provenance/scripts/ClosureIntegrabilityAudit.wl",
+          "bytes": 3913,
+          "sha256": "52d895c0ef06b76450e95e321f59d8001b7a2a98885170c342e0017af38064be"
+        },
+        {
+          "path": "provenance/scripts/ClosureKnownRelationOverlay.wl",
+          "bytes": 5503,
+          "sha256": "2653e9248d8ccf5e388b522b7af985ffc779696fa0c25356660b404701bf1937"
+        },
+        {
+          "path": "provenance/scripts/ClosureLocalOperatorDiagnostic.wl",
+          "bytes": 3520,
+          "sha256": "e15b988a30eac19f70e3ce1994531e927d683e8f3330cf81c24fa2badd663092"
+        },
+        {
+          "path": "provenance/scripts/ClosureLocalityGuardFixture.wl",
+          "bytes": 830,
+          "sha256": "6e58094c8c797c01bb1c3cf411768d970ccd37ed215defc68d101be673e6a7c0"
+        },
+        {
+          "path": "provenance/scripts/ClosureMissingDegreeModuleAudit.wl",
+          "bytes": 5171,
+          "sha256": "5e87fd2a2f769198920161a0e5d895e92401148834dbdf61ebf41791bdad57f5"
+        },
+        {
+          "path": "provenance/scripts/ClosureMissingDegreePlan.wl",
+          "bytes": 2892,
+          "sha256": "16f7ae461ff0dbf0d830fbf301c5d91a510d2bf3ff19cd119d0df8ba6ee27433"
+        },
+        {
+          "path": "provenance/scripts/ClosureNextFocus.wl",
+          "bytes": 1815,
+          "sha256": "bd7f7573f2f6047b9f5188d7d0baf21e2a7cf45281fe5e31894ec9f1f68a01e3"
+        },
+        {
+          "path": "provenance/scripts/ClosureOrderingControlQA.wl",
+          "bytes": 1763,
+          "sha256": "6b355f87941a23d99596cc0c7fc43481af1e1b9a8d67cb748b63769ca4ff05cf"
+        },
+        {
+          "path": "provenance/scripts/ClosureOrderingOnlyIncrement.wl",
+          "bytes": 738,
+          "sha256": "a8f36b9d515fc81bd6276798ed64543fa4338e919a009991d8270089fbaa62c3"
+        },
+        {
+          "path": "provenance/scripts/ClosureOutputAdmission.wl",
+          "bytes": 862,
+          "sha256": "1c9af76b11a2767920ddde1e175928f38043074e6cd0d2ef2b2ebe01aca16e03"
+        },
+        {
+          "path": "provenance/scripts/ClosurePrepareAxialSeeds.wl",
+          "bytes": 5059,
+          "sha256": "03d0491e82ecfc40628e030a2e71c30c4134e22141eeeb178c0e3b29c0245d0b"
+        },
+        {
+          "path": "provenance/scripts/ClosureQueryExtension.wl",
+          "bytes": 9657,
+          "sha256": "72ad76ab6a39dcfc45cb25524caa704a00f968b8db12d656c401f94d7d2f4f08"
+        },
+        {
+          "path": "provenance/scripts/ClosureReaderRegression.wl",
+          "bytes": 6952,
+          "sha256": "6e4af94028610a215d6fe71804833b63d390b054a6f7e42afb41655c2bd343ff"
+        },
+        {
+          "path": "provenance/scripts/ClosureReferenceFactorAudit.wl",
+          "bytes": 3350,
+          "sha256": "26735da90b908433d32696c79d77667f9ce70bbc768fbda6c8c2472d68ccd61e"
+        },
+        {
+          "path": "provenance/scripts/ClosureReferenceFactorOrdering.wl",
+          "bytes": 2323,
+          "sha256": "652c0fc5591dd9911258324843e7b701b424ecf3be0f85e5eaf15a807772e9d0"
+        },
+        {
+          "path": "provenance/scripts/ClosureRegenerateContactCampaign.wl",
+          "bytes": 2196,
+          "sha256": "44a64ed70a66928018988ef80a899bc795a9a002735c6184e8c5dd8a0c08070d"
+        },
+        {
+          "path": "provenance/scripts/ClosureRegeneratedImpact.wl",
+          "bytes": 9816,
+          "sha256": "40de206c9bfeb7dce3f64cef1c59f2b137f0c74738366dcf03a3cbadcb9c8d97"
+        },
+        {
+          "path": "provenance/scripts/ClosureRegeneratedReport.wl",
+          "bytes": 10967,
+          "sha256": "f744498bec35eaba3b72e80cf9de6cbf61cdff054d3c9f545bc9fafbaa3004f7"
+        },
+        {
+          "path": "provenance/scripts/ClosureResidueCalibration.wl",
+          "bytes": 2718,
+          "sha256": "1f0eb70f24137804c616c7733552a13e453507de978c7b1fbea66d49fb9ca452"
+        },
+        {
+          "path": "provenance/scripts/ClosureResidueClosedBasisAudit.wl",
+          "bytes": 1447,
+          "sha256": "33925f87d6631d2b6a8cb93c39fa8949eac280533a3f00d5f2ad4977381bb9a3"
+        },
+        {
+          "path": "provenance/scripts/ClosureResidueSourceAudit.wl",
+          "bytes": 2285,
+          "sha256": "6f4ea050f5df88861e1627338877105c9d381a74f066b49218c82ab8505aec58"
+        },
+        {
+          "path": "provenance/scripts/ClosureResidueTransportAudit.wl",
+          "bytes": 2943,
+          "sha256": "8acb9c182efccd6b8687a4226bf913c9ef82134dfbc30e26d6ba95606b1e1712"
+        },
+        {
+          "path": "provenance/scripts/ClosureResidueTransportFocus.wl",
+          "bytes": 582,
+          "sha256": "efb05f533e3823e50fb0d32f9ef24a43e616cfb748fb5f851bdae5b66440c735"
+        },
+        {
+          "path": "provenance/scripts/ClosureScriptSyntaxQA.wl",
+          "bytes": 652,
+          "sha256": "cae4c3df8ccfe441bf8ef60bf3e6c46ade50d93f654bbde033401cc12f1db489"
+        },
+        {
+          "path": "provenance/scripts/ClosureSeedDomainQA.wl",
+          "bytes": 2074,
+          "sha256": "a3f32b3af0d21bc53e283a87288cbe65dc5e13902c566c5af1546a09900ccb37"
+        },
+        {
+          "path": "provenance/scripts/ClosureSeedWorker.wl",
+          "bytes": 447,
+          "sha256": "e8791dee1b4e21e17ea2c775b3fa6c2896c35f75d135b715cfd5fcc45fc1d43e"
+        },
+        {
+          "path": "provenance/scripts/ClosureSelectedInput.wl",
+          "bytes": 933,
+          "sha256": "99f0c41bf3791a6a33e1b41af6911c681d14d4c3c2467838bf4f333700519dec"
+        },
+        {
+          "path": "provenance/scripts/ClosureSelectedInputComparison.wl",
+          "bytes": 3244,
+          "sha256": "d7828edd1240576abf3fd7eaa6a4a6791bf8ee979e546a733afe178a20e3d4a3"
+        },
+        {
+          "path": "provenance/scripts/ClosureSplitNextFocus.wl",
+          "bytes": 1844,
+          "sha256": "f44f8a68477440033d01b21fb5f794a7d223850b9620b72677a290d59ff2a4a3"
+        },
+        {
+          "path": "provenance/scripts/ClosureSymmetryBridge.wl",
+          "bytes": 3039,
+          "sha256": "3cf785e7115af73a7ed20d5b88ba2437f8d71d44d5bf0bee231819b632222d5f"
+        },
+        {
+          "path": "provenance/scripts/ClosureTargetRangeAudit.wl",
+          "bytes": 6204,
+          "sha256": "d80cab06e8da826c78ddc7cc3c7647c583f3e4b8ecf16a7e805e0693aa69487a"
+        },
+        {
+          "path": "provenance/scripts/ClosureTargetedSeeds.wl",
+          "bytes": 6659,
+          "sha256": "e15dd81eade7931d2280fc6c3e883f531c7abf6ed12db522fdf699a277fcf4c8"
+        },
+        {
+          "path": "provenance/scripts/ClosureThreeLoopResidualFocus.wl",
+          "bytes": 3411,
+          "sha256": "964a6386547e91a460c01aea45e453ae99efe351812b8230e013c3ddbf183a12"
+        },
+        {
+          "path": "provenance/scripts/ClosureTwoLoopResidueProbe.wl",
+          "bytes": 5839,
+          "sha256": "8cab46a0a96a995f37bb0fa794624413bd5a43e89b9f6c135b02fe85a21db443"
+        },
+        {
+          "path": "provenance/scripts/ClosureZeroDegreeKernelProbe.wl",
+          "bytes": 5695,
+          "sha256": "ed1e9066b93e942a2f73e9670a636276ea5074da0143935a7b9bfc9f2806a06e"
+        },
+        {
+          "path": "provenance/scripts/ClosureZeroDegreeSpanQA.wl",
+          "bytes": 1466,
+          "sha256": "8e9b23f5b1282438e6e43b567a57e54cdb45e4402ed7e4fe5d2af96d85f84cfc"
+        },
+        {
+          "path": "provenance/scripts/closure_export_units.cpp",
+          "bytes": 3106,
+          "sha256": "923db3c075b1dd959cd8e855a4dc1d3bff6ecc948366a34465a1d0794348990c"
+        },
+        {
+          "path": "provenance/scripts/closure_orbit_compact.cpp",
+          "bytes": 10331,
+          "sha256": "23d1599d341ce8039989248c94e7e650a5de4b4aec4630975c47c7b6552e032b"
+        },
+        {
+          "path": "provenance/scripts/closure_orbit_support.cpp",
+          "bytes": 3026,
+          "sha256": "0b3ba39146c8f21b708fe8315b0203e48026b62503958e6240811b0dd499b850"
+        },
+        {
+          "path": "provenance/scripts/closure_sparse_map.cpp",
+          "bytes": 4114,
+          "sha256": "d09cd2ab17a8d3e45f28ec5c3c40a9be2557a5d42d0a073638b48c88b027e2fd"
+        },
+        {
+          "path": "provenance/scripts/closure_symmetry_audit.cpp",
+          "bytes": 4507,
+          "sha256": "bbcba63126e7d00b6e865e4220cab8eea0b8d6bb9abfab1eb29718d0dea1f92b"
+        },
+        {
+          "path": "operators/IBP4SyzygyBlocks.mx",
+          "bytes": 6296,
+          "sha256": "c8050ecb427d3956b3269204d5d9ed08b7ad4973d8c0d96b1f01cd32d5c6a365"
+        },
+        {
+          "path": "operators/IBP4SyzygySummary.txt",
+          "bytes": 297,
+          "sha256": "0bfd5b8eb092627d772d4a23280410b6ee00f0d25ab10325855da2c65a5ddc85"
+        },
+        {
+          "path": "provenance/native/ibp4_stream_symmetry.cpp",
+          "bytes": 15376,
+          "sha256": "eb5552b0695d18ad586d9a47ea27e8e3d93da0835cfeef1f62bc23dccc55d89e"
+        },
+        {
+          "path": "provenance/native/ibp4_unit_quotient.cpp",
+          "bytes": 20914,
+          "sha256": "875fa171c67fd78b2cb748eead4f58c4e231e051b3fbce26f70a48a42f013026"
+        }
+      ]
+    }
+  ],
+  "legacy_sources": {
+    "legacy/ClosureOutputAdmission.wl": "1c9af76b11a2767920ddde1e175928f38043074e6cd0d2ef2b2ebe01aca16e03",
+    "legacy/CollisionResidueSymmetry.wl": "76894d155a3d58fdbbdf4fe19b0be2446aca38840512a541a9238d95bcc54584",
+    "legacy/IBP4ActualDECombinationAudit.wl": "511d5c3b6cf9b90e0dc33dc0a24b78d913c1d0ea49f207e26435a5a865325082",
+    "legacy/IBP4ConstantDECoefficientBlocks.wl": "20d76b525e5d40290fe129bfbb4cf1cfaa1a5193296c00d2b493aef304122617",
+    "legacy/IBP4ConstantFromTop.wl": "6543609cb37c028dcef94293623571feab2806f608cc767727ba7f911e673fce",
+    "legacy/IBP4ContactLaurentCache.wl": "6d68c1c5d6cb4768cc112b238930f46652dfce78f7e694358320c2d269482fe8",
+    "legacy/IBP4FactorCache.wl": "1496c98dcef64a421f49f112ba1eee321bb7b5c4fd3b4c40d9a2493059dc8aea",
+    "legacy/IBP4FactorizedOrdering.wl": "2c2cc6cbea1ee128875326b200113bc473dab46dd0dcc3bc9f6045b1a30f2921",
+    "legacy/IBP4GeneratorVersion.wl": "b926c632f29cd324e08c2d71bdd06c413e4649bb912d1b5c56d7b37b696f3ec6",
+    "legacy/IBP4IterationTools.wl": "02c153db1e2867c7703c458f6f7467010cf559812a87a844600cac8c3f8b86bc",
+    "legacy/IBP4LaurentOperatorCache.wl": "71e3f5d59cf392a63e81c0b3424b124587833e0f35c5b0af67495d14042990e0",
+    "legacy/IBP4LocalSmallBlocks.wl": "55f2cd9db0a86830b2eae8205bec16862ed82255481f05dad9f1bd54c5e6fbb9",
+    "legacy/IBP4SeedDomain.wl": "985a31db85db4671552f8645410a8eebe23b936951f5bfc4f8622cbc2c2a98a8",
+    "legacy/IBP4ShortConstantBasis.wl": "ae43db8da67ab4957cd21d8ad35514d9aade3fa65e1c9da9638055e2cd536323",
+    "legacy/IBP4loop.wl": "01d9b8d25c63e0af9f01de50e71a90bd56b17b707002fef1f05ab3a869611c43"
+  }
+}

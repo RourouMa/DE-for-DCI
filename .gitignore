@@ -6,6 +6,9 @@
 /.DS_Store
 **/.DS_Store
 /runs/
+/release-artifacts/
+/reproduction/ordering01/data/
+/reproduction/ordering01/work/
 *.mx
 *.wxf
 *.log

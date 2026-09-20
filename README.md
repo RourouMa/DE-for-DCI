@@ -6,6 +6,8 @@ Version 0.1.0 is an experimental, tested extraction of the ladder workflow. It d
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
+**Reproduce the legacy fourth round (66 finite elements):** use the [frozen ordering01 snapshot](reproduction/ordering01/README.zh-CN.md). Its private Release assets include the complete solved linear system, exact column order, seed/operator records, reduction rules and finite combinations. A normal `git pull` does not download these assets; run its `fetch.py` first. This is a separate reproducibility fixture, not a claim that the generic package or the four-loop DE is closed.
+
 ## Quick Start
 
 Wolfram Language 13 or newer is required. Development tests were run with the local Wolfram installation; a license permitting multiple simultaneous kernels is needed only for multi-process generation. The small exact solver needs no external software.
