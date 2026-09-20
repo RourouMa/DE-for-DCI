@@ -1,0 +1,102 @@
+{
+  "version": "0.2.2",
+  "date": "2026-09-20",
+  "tests": [
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 7.344
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 5.677
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 8.128
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 5.871
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 3.868
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 15.643
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 4.398
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 3.707
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 4.23
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.809
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.816
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 4.411
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.793
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 3.864
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 5.502
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 9.4
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 5.262
+    }
+  ],
+  "all_passed": true,
+  "seeding_deduplication": "Parent plans once; filters completed and duplicate operator/seed pairs before worker dispatch; exact serial/incremental/parallel equation-union regressions passed.",
+  "source_sha256": {
+    "Kernel/ConformalIBP.wl": "bcf63f33b6e48dad3cd84eebd6162c0d3a23981d6df3b2656b66e7873dc98993",
+    "Kernel/Reduction.wl": "de4ecb1ab25ad58ccfa82c6c66c6446427787472bf7212a93288b1a7ca65a2cb",
+    "Kernel/Iteration.wl": "0005785b27d95af0ca99c2a2a9e9326a27a0b556696b7fb09c92c3bc939901a9",
+    "Kernel/TargetReduction.wl": "3e69355789edde0305e64010835c493aa38b6035c5133974e5e8d7d1e3d0f270",
+    "scripts/ibp-worker.wls": "3e31b43a313675ae37f860627e0c2bb86358dc3521ecf8794bbfb998fd9602d8",
+    "scripts/verify-residual-worker.wls": "2f0828d42368809d1ad0c1f403a0f081c228ee897a194b3cb0e443b7f6103802",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914"
+  }
+}

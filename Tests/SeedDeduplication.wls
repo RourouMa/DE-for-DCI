@@ -1,0 +1,17 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[1,kinematics,{x,y}];a=G[1,1,1,1,1];b=G[2,0,1,1,1];
+first=GenerateSystem[f,{a}];full=GenerateSystem[f,{a,b}];
+Needs["ProcessLink`"];streams=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"seed-dedup-test-"<>CreateUUID[]}]];
+next=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},GenerateSystem[f,{a,a,b},"Workers"->4,"CompletedApplications"->first["Applications"],"CompletedSymmetryInputs"->first["NewSymmetryInputs"]]];
+assert[AssociationQ[next],"parallel incremental generation succeeds"];
+assert[Intersection[first["Applications"],next["Applications"]]==={},"no completed operator-seed pair dispatched again"];
+assert[Union[first["Applications"],next["Applications"]]===Union[full["Applications"]],"incremental applications equal fresh expanded-neighborhood applications"];
+assert[Union[first["Equations"],next["Equations"]]===Union[full["Equations"]],"deduplication preserves the complete relation union"];
+audit=next["SeedingDeduplication"];
+assert[audit["SkippedCompletedOrdinaryApplications"]>0 && audit["PendingOrdinaryApplications"]===Length[next["Applications"]],"planning audit counts previously completed and pending applications"];
+again=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},GenerateSystem[f,{a,b},"Workers"->4,"CompletedApplications"->full["Applications"],"CompletedSymmetryInputs"->full["NewSymmetryInputs"]]];
+assert[again["Applications"]==={} && again["Equations"]==={} && again["IndependentKernels"]===0,"fully overlapping neighborhood launches no workers"];
+ops=GenerateOperators[f];p=GenerateSeeds[f,{a},{First[ops],First[ops]}];q=ConformalIBP`Private`pendingSeedPlan[p,{}];
+assert[q["SeedingDeduplication"]["SkippedDuplicateOrdinaryApplications"]>0,"duplicate operator applications removed within a plan"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

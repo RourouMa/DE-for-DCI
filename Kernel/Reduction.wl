@@ -7,29 +7,39 @@ InitializeFiniteFlow[lib_String,math_String]:=Module[{},
  Quiet[Check[Needs["FiniteFlow`"],Return[fail["FiniteFlowLoad","FiniteFlow could not be loaded."]]]];True];
 
 Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic}];
-GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{plan,done=Association[(#->True)& /@ OptionValue["CompletedApplications"]],
- equations={},attempted={},rejected={},r,key,ops,syms,raw,newSymmetry},
- If[(!IntegerQ[OptionValue["Workers"]] || OptionValue["Workers"]<1),Return[fail["Workers","Workers must be a positive integer."]]];
- If[OptionValue["Workers"]>1,Return[generateSharded[f,targets,Join[Association[Options[GenerateSystem]],Association[{opts}]]]]];
- plan=GenerateSeeds[f,targets,OptionValue["Operators"],Sequence@@FilterRules[Normal[Association[Join[Options[GenerateSystem],{opts}]]],Options[GenerateSeeds]]];If[FailureQ[plan],Return[plan]];ops=plan["Operators"];
+GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{options=Join[Association[Options[GenerateSystem]],Association[{opts}]],plan},
+ If[!IntegerQ[options["Workers"]] || options["Workers"]<1,Return[fail["Workers","Workers must be a positive integer."]]];
+ If[options["Workers"]>1,Return[generateSharded[f,targets,options]]];
+ plan=GenerateSeeds[f,targets,options["Operators"],Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];
+ If[FailureQ[plan],Return[plan]];
+ generatePlannedSystem[f,targets,options,pendingSeedPlan[plan,options["CompletedApplications"]]]];
+(* Deduplicate actual operator/seed applications before dispatching any worker. *)
+pendingSeedPlan[plan_Association,completed_List]:=Module[{done=Association[(#->True)& /@ completed],seen=<||>,prior=0,overlap=0,total=0,batches,key,ops=plan["Operators"]},
+ batches=Table[Join[batch,<|"Seeds"->Select[batch["Seeds"],Function[seed,
+  total++;key={Hash[ops[[batch["OperatorIndex"]]],"SHA256"],seed};
+  Which[KeyExistsQ[done,key],prior++;False,KeyExistsQ[seen,key],overlap++;False,True,AssociateTo[seen,key->True];True]]]|>],{batch,plan["Batches"]}];
+ Join[plan,<|"Batches"->batches,"SeedingDeduplication"-><|"CandidateOrdinaryApplications"->total,"SkippedCompletedOrdinaryApplications"->prior,"SkippedDuplicateOrdinaryApplications"->overlap,"PendingOrdinaryApplications"->(total-prior-overlap)|>|>]];
+generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->True)& /@ options["CompletedApplications"]],
+ equations={},attempted={},rejected={},r,key,ops=plan["Operators"],syms,raw,newSymmetry},
  Do[Do[key={Hash[ops[[b["OperatorIndex"]]],"SHA256"],seed};If[KeyExistsQ[done,key],Continue[]];
-  r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];AppendTo[attempted,key];
+  r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];AppendTo[attempted,key];AssociateTo[done,key->True];
   If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],
   {seed,b["Seeds"]}],{b,plan["Batches"]}];
- Do[If[OptionValue["SeedDomain"]==="Original" && !originalDomainExpressionQ[f,seed],Continue[]];
+ Do[If[options["SeedDomain"]==="Original" && !originalDomainExpressionQ[f,seed],Continue[]];
   If[!FiniteIntegralQ[f,seed],Continue[]];
   Do[If[ops[[k]]["Degree"]=!=ConstantArray[0,f["LoopCount"]],Continue[]];
    key={Hash[ops[[k]],"SHA256"],seed};If[KeyExistsQ[done,key] || MemberQ[attempted,key],Continue[]];
-   r=IBPRelation[f,ops[[k]],seed];AppendTo[attempted,key];
+   r=IBPRelation[f,ops[[k]],seed];AppendTo[attempted,key];AssociateTo[done,key->True];
    If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],{k,Length[ops]}],
-  {seed,OptionValue["FiniteSeeds"]}];
+  {seed,options["FiniteSeeds"]}];
  raw=Union[support[targets],support[equations]];
- newSymmetry=Complement[raw,OptionValue["CompletedSymmetryInputs"]];
+ newSymmetry=Complement[raw,options["CompletedSymmetryInputs"]];
  syms=Table[r=CanonicalIntegral[f,g];If[FailureQ[r],Return[r]];g-r,{g,newSymmetry}];
  equations=DeleteCases[DeleteDuplicates[canonicalLinear /@ Join[equations,syms]],0];
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
   "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
   "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","UnmappedCenters"}],
+  "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],
   "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 
 simpleKey[f_,g_G]:=Module[{a=List@@g,ps=parts[f,g],ext,boxScore=0},

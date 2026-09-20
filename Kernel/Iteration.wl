@@ -1,16 +1,20 @@
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
-generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages},
+generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages,plan,active,ids,subplan},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
- ops=Replace[options["Operators"],Automatic:>GenerateOperators[f]];
- n=Min[n,Length[ops]];If[n===0,Return[fail["Operators","No operators supplied."]]];
+ ops=DeleteDuplicates[Replace[options["Operators"],Automatic:>GenerateOperators[f]]];
+ plan=GenerateSeeds[f,targets,ops,Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];If[FailureQ[plan],Return[plan]];
+ plan=pendingSeedPlan[plan,options["CompletedApplications"]];
+ active=Select[Range[Length[ops]],plan["Batches"][[#]]["Seeds"]=!={} || (options["FiniteSeeds"]=!={} && ops[[#]]["Degree"]===ConstantArray[0,f["LoopCount"]])&];
+ n=Min[n,Length[active]];If[n===0,Return[Join[generatePlannedSystem[f,targets,options,plan],<|"IndependentKernels"->0|>]]];
  kernel=Replace[options["KernelExecutable"],Automatic:>First[$CommandLine]];
  runner=FileNameJoin[{DirectoryName[DirectoryName[$packageFile]],"scripts","ibp-worker.wls"}];
  dir=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"conformal-ibp-"<>CreateUUID[]}]];
  sharedImages=CanonicalIntegral[f,#]& /@ support[targets];
  If[AnyTrue[sharedImages,FailureQ],Return[First[Select[sharedImages,FailureQ]]]];
  cacheFile=FileNameJoin[{dir,"SymmetryCache.wl"}];Put[exportSymmetryCache[f],cacheFile];
- Do[shards=ops[[Range[i,Length[ops],n]]];
-  Put[<|"Family"->f,"Targets"->targets,"SymmetryCacheFile"->cacheFile,"Options"->Normal[Join[options,<|"Workers"->1,"Operators"->shards|>]]|>,
+ Do[ids=active[[Range[i,Length[active],n]]];shards=ops[[ids]];
+  subplan=Join[plan,<|"Operators"->shards,"Batches"->MapIndexed[Join[#1,<|"OperatorIndex"->First[#2]|>]&,plan["Batches"][[ids]]]|>];
+  Put[<|"Family"->f,"Targets"->targets,"SeedPlan"->subplan,"SymmetryCacheFile"->cacheFile,"Options"->Normal[Join[options,<|"Workers"->1,"Operators"->shards|>]]|>,
     FileNameJoin[{dir,"input"<>ToString[i]<>".wl"}]];
   AppendTo[jobs,StartProcess[{kernel,"-script",runner,FileNameJoin[{dir,"input"<>ToString[i]<>".wl"}],FileNameJoin[{dir,"output"<>ToString[i]<>".wl"}]}]],{i,n}];
  If[AnyTrue[jobs,Head[#]=!=ProcessObject&],Scan[If[Head[#]===ProcessObject,KillProcess[#]]&,jobs];Return[fail["KernelLaunch","Could not launch independent workers.",<|"Directory"->dir|>]]];
@@ -28,6 +32,7 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "NewSymmetryInputs"->Union[Flatten[Lookup[results,"NewSymmetryInputs"]]],
   "AllActualSeedsInsideOriginalDomain"->And@@Lookup[results,"AllActualSeedsInsideOriginalDomain"],
   "SeedPolicy"->Lookup[First[results],"SeedPolicy",<||>],
+  "SeedingDeduplication"->plan["SeedingDeduplication"],
   "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"JobDirectory"->dir|>];
 
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
