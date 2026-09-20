@@ -108,13 +108,13 @@
   "source_sha256": {
     "Kernel/Reduction.wl": "90d2b5af205190cc8c0f049c01b37474fe802128f3b9e2c0f3068a38137a84fd",
     "Kernel/Iteration.wl": "4b280359ce8718760d82049a0b218efa5f9b6ce2545327530214a6194d8b42ad",
-    "Kernel/ConformalIBP.wl": "ef139e26a4151bd08b89e0e339cebf41dae92541cd9370064245511788b9a795",
+    "Kernel/ConformalIBP.wl": "50114ce7140c418c3378f81f45da920e76bd1fb5f0d67140271d45bd2e9e4240",
     "Kernel/TargetReduction.wl": "3e69355789edde0305e64010835c493aa38b6035c5133974e5e8d7d1e3d0f270",
     "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
     "scripts/ibp-worker.wls": "136a3c01d1bd3376a2ce42b426989aba6b9574bb7a78b3eae9f4f0081f0c00a9",
     "scripts/verify-residual-worker.wls": "2f0828d42368809d1ad0c1f403a0f081c228ee897a194b3cb0e443b7f6103802"
   },
-  "note": "All 16 test groups passed on the final 0.2.1 source. Archived large-system benchmarks have the scopes stated below; no four-loop closure claim.",
+  "note": "All 16 groups passed at commit 812b99b. Subsequent resource detection fix changes only RecommendedWorkerCount[]; its six checks passed with EXPECTED_LOGICAL_CPUS=32. Solver and seeding implementation unchanged by that follow-up.",
   "self_target_benchmark": {
     "Queries": 125,
     "NewSeconds": 0.001262,
@@ -128,5 +128,21 @@
     "logical_processors": 32,
     "recommended_workers": 26,
     "library_default_workers": 1
+  },
+  "full_suite_source_sha256": {
+    "Kernel/Reduction.wl": "90d2b5af205190cc8c0f049c01b37474fe802128f3b9e2c0f3068a38137a84fd",
+    "Kernel/Iteration.wl": "4b280359ce8718760d82049a0b218efa5f9b6ce2545327530214a6194d8b42ad",
+    "Kernel/ConformalIBP.wl": "ef139e26a4151bd08b89e0e339cebf41dae92541cd9370064245511788b9a795",
+    "Kernel/TargetReduction.wl": "3e69355789edde0305e64010835c493aa38b6035c5133974e5e8d7d1e3d0f270",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
+    "scripts/ibp-worker.wls": "136a3c01d1bd3376a2ce42b426989aba6b9574bb7a78b3eae9f4f0081f0c00a9",
+    "scripts/verify-residual-worker.wls": "2f0828d42368809d1ad0c1f403a0f081c228ee897a194b3cb0e443b7f6103802"
+  },
+  "resource_detection_regression": {
+    "test": "SelfReducedTargets",
+    "exit_code": 0,
+    "expected_logical_cpus": 32,
+    "checks": 6,
+    "recommended_workers": 26
   }
 }

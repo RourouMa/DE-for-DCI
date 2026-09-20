@@ -24,7 +24,11 @@ $ConformalIBPVersion::usage="Package version used in checkpoint compatibility ch
 Begin["`Private`"];
 $ConformalIBPVersion="0.2.1";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
-RecommendedWorkerCount[]:=RecommendedWorkerCount[$ProcessorCount];
+RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
+ If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
+  osCount=Length[StringCases[ReadString["/proc/cpuinfo"],RegularExpression["(?m)^processor\\s*:"]]];If[osCount>0,n=osCount]];
+ If[$OperatingSystem==="Windows" && StringQ[Environment["NUMBER_OF_PROCESSORS"]] && StringMatchQ[Environment["NUMBER_OF_PROCESSORS"],DigitCharacter..],n=FromDigits[Environment["NUMBER_OF_PROCESSORS"]]];
+ RecommendedWorkerCount[n]];
 SetAttributes[SP,Orderless];
 $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},

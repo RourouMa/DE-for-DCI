@@ -35,3 +35,5 @@ FiniteFlow 的线程数单独设置。三个阶段通常先后执行，不把线
 
 不可约目标的恒等判断改用独立积分列的系数判断，避免对包含大量不同 G 的表达式
 计算一个共同分母；不改变 ordering、IBP 行空间或约化结果。
+
+Linux 核数从 `/proc/cpuinfo` 获取，Windows 从 `NUMBER_OF_PROCESSORS` 获取，其他平台回退到 `$ProcessorCount`；也可显式传入硬件核数。某些 Wolfram 运行环境的 `$ProcessorCount` 只报告 1，不可据此认定机器只有单核。本机已独立核验 32 个逻辑核与推荐值 26。
