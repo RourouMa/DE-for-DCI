@@ -1,5 +1,11 @@
 # Validation Record
 
+## 0.2.6 shared worker options
+
+Parallel generation writes common options (including completed application and symmetry ledgers) once to `WorkerOptions.wl`; each worker input contains only its operator override and seed plan. Worker loading merges the shared association with local overrides; legacy inline-option jobs remain readable. A missing or malformed shared options file fails the worker.
+
+`Workers`, `SeedDeduplication`, and `FailurePropagation` pass, including serial/parallel equation and application equivalence, completed-application exclusion, and finite-combination deduplication. On a real four-loop payload, exact reconstructed options and seed-plan equality pass: the old input was 161,628,958 bytes, the new per-worker input is 205,999 bytes, and shared options are 158,611,640 bytes written once. This measures serialization, not end-to-end speedup. See `VALIDATION_0.2.6.json`. Active four-loop runs remain on their frozen 0.2.5 sources; implementation hashes still prevent unverified checkpoint migration.
+
 ## 0.2.5 correctness correction
 
 A reproduced Wolfram control-flow error allowed `Return` inside `Do` to exit the loop without returning failure from the enclosing function. This affected rejection of overlapping contact boundaries and unsupported multiple collision clusters. The correction explicitly propagates those failures. Similar error paths in coefficient extraction, differentiation, worker cache import, symmetry generation, and optional Gram candidates are also corrected.

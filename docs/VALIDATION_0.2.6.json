@@ -1,0 +1,32 @@
+{
+  "version": "0.2.6",
+  "scope": "Shared worker-option serialization; no seeding or reduction algebra changed",
+  "tests": [
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 9.473
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 12.189
+    },
+    {
+      "test": "FailurePropagation",
+      "exit_code": 0,
+      "seconds": 8.082
+    }
+  ],
+  "real_four_loop_payload_benchmark": {
+    "ReconstructedOptionsExactlyEqual": true,
+    "SeedPlanExactlyEqual": true,
+    "OldInputBytes": 161628958,
+    "SharedOptionsBytes": 158611640,
+    "ThinInputBytes": 205999,
+    "SharedWriteSeconds": 14.286866,
+    "ThinWriteSeconds": 0.017841,
+    "Scope": "Serialization benchmark on a real four-loop worker payload; full generation equivalence separately covered by Workers and SeedDeduplication tests"
+  },
+  "active_four_loop_calculation": "continues with frozen 0.2.5; old checkpoints are not automatically migrated"
+}

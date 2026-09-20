@@ -1,5 +1,5 @@
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
-generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages,plan,active,ids,subplan,done},
+generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,optionsFile,imported,sharedImages,plan,active,ids,subplan,done},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
  ops=DeleteDuplicates[Replace[options["Operators"],Automatic:>GenerateOperators[f]]];
  plan=seedPlan[f,targets,ops,options];If[FailureQ[plan],Return[plan]];
@@ -16,9 +16,10 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
  sharedImages=CanonicalIntegral[f,#]& /@ support[targets];
  If[AnyTrue[sharedImages,FailureQ],Return[First[Select[sharedImages,FailureQ]]]];
  cacheFile=FileNameJoin[{dir,"SymmetryCache.wl"}];Put[exportSymmetryCache[f],cacheFile];
+ optionsFile=FileNameJoin[{dir,"WorkerOptions.wl"}];Put[KeyDrop[Join[options,<|"Workers"->1|>],"Operators"],optionsFile];
  Do[ids=active[[Range[i,Length[active],n]]];shards=ops[[ids]];
   subplan=Join[plan,<|"Operators"->shards,"Batches"->MapIndexed[Join[#1,<|"OperatorIndex"->First[#2]|>]&,plan["Batches"][[ids]]]|>];
-  Put[<|"Family"->f,"Targets"->targets,"SeedPlan"->subplan,"SymmetryCacheFile"->cacheFile,"Options"->Normal[Join[options,<|"Workers"->1,"Operators"->shards|>]]|>,
+  Put[<|"Family"->f,"Targets"->targets,"SeedPlan"->subplan,"SymmetryCacheFile"->cacheFile,"OptionsFile"->optionsFile,"Options"->{"Operators"->shards}|>,
     FileNameJoin[{dir,"input"<>ToString[i]<>".wl"}]];
   AppendTo[jobs,StartProcess[{kernel,"-script",runner,FileNameJoin[{dir,"input"<>ToString[i]<>".wl"}],FileNameJoin[{dir,"output"<>ToString[i]<>".wl"}]}]],{i,n}];
  If[AnyTrue[jobs,Head[#]=!=ProcessObject&],Scan[If[Head[#]===ProcessObject,KillProcess[#]]&,jobs];Return[fail["KernelLaunch","Could not launch independent workers.",<|"Directory"->dir|>]]];
