@@ -41,6 +41,8 @@ export DCI_REPLAY_OUT="$PWD/reproduction/ordering01/work/replay2"
 
 四轮均未闭合。第四轮还有 28 条导数行不属于其原输入的张成空间，不能将 66 当作已证明的最终 MI 数。整个快照只处理 **G4 quotient**；忽略 G3 是投影，不是令低圈源项在物理上等于零。
 
+本机验证记录见 `validation/`：本地重放及从 GitHub 全新克隆、下载后的重放均通过；额外完整矩阵计算得到的 6518 条 canonical 规则与原文件逐字节一致，经紧凑导出后的 7995 条 raw 规则也逐字节一致。完整计算中修复过 raw 导出膨胀，恢复步骤及验证边界记录在 `validation/FullSolve.json`。这些是 Mac 上的实测，不冒充 Ubuntu 上已运行。
+
 ## 完整 IBP 系统重新求解
 
 矩阵包含所有已经并入 ordering01 的 IBP / symmetry 关系，保存原有列顺序，优先留下 factorized 自由代表元。装配方式必须保持：

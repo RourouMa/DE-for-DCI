@@ -31,3 +31,14 @@ clone obtained from GitHub, after downloading all three private Release
 assets with `fetch.py --all`. All 320 extracted payload checksums passed,
 and every round again matched the exact saved basis, targets and reduced
 DE. This clean-clone check ran on the Mac, not on the remote Ubuntu host.
+
+`FullSolve.json` records the additional fresh full-matrix computation:
+2,833,280 assembled rows, 2,850,483 columns, 6518 requested canonical rules.
+The saved canonical rules are byte-identical to the reference. The initial
+raw serialization used an overly expansive `Expand` and was interrupted
+after the canonical save; `compose.wls` resumed from that save using compact
+per-integral rational coefficients. All 7995 raw rules compare exactly,
+and the resulting 60,718,799-byte file is also byte-identical to the frozen
+reference. `solve.wls` now uses that tested collector. This is a verified
+two-stage solve/composition test, not a claim that the original interrupted
+process exited successfully or that a second full solve was performed.
