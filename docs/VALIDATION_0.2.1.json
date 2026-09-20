@@ -1,0 +1,132 @@
+{
+  "version": "0.2.1",
+  "date": "2026-09-20",
+  "tests": [
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 7.761
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 5.891
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 6.494
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 4.163
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 20.355
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 4.707
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 4.031
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.995
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 4.071
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 4.034
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 4.878
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 4.123
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 4.073
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 5.299
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 10.188
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 4.794
+    }
+  ],
+  "all_passed": true,
+  "frontier_benchmark": {
+    "Rows": 49688,
+    "Masters": 181,
+    "NewSeconds": 1.34847,
+    "OldSeconds": 16.526063,
+    "OldCompleted": true,
+    "FullAgreement": true,
+    "ThreeMasterAgreement": true,
+    "FrontierCount": 1034,
+    "Scope": "Identical saved raw equations; not canonicalization or complete-campaign timing"
+  },
+  "parallel_residual_benchmark": {
+    "Rows": 5929,
+    "Rules": 8158,
+    "Workers": 4,
+    "Seconds": 310.813285,
+    "EveryRowExactlyZero": true,
+    "OriginalVerifiedCertificate": true,
+    "PoolHashMatched": true,
+    "Scope": "Archived legacy four-loop third-round certificate; current campaign unchanged"
+  },
+  "source_sha256": {
+    "Kernel/Reduction.wl": "90d2b5af205190cc8c0f049c01b37474fe802128f3b9e2c0f3068a38137a84fd",
+    "Kernel/Iteration.wl": "4b280359ce8718760d82049a0b218efa5f9b6ce2545327530214a6194d8b42ad",
+    "Kernel/ConformalIBP.wl": "ef139e26a4151bd08b89e0e339cebf41dae92541cd9370064245511788b9a795",
+    "Kernel/TargetReduction.wl": "3e69355789edde0305e64010835c493aa38b6035c5133974e5e8d7d1e3d0f270",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
+    "scripts/ibp-worker.wls": "136a3c01d1bd3376a2ce42b426989aba6b9574bb7a78b3eae9f4f0081f0c00a9",
+    "scripts/verify-residual-worker.wls": "2f0828d42368809d1ad0c1f403a0f081c228ee897a194b3cb0e443b7f6103802"
+  },
+  "note": "All 16 test groups passed on the final 0.2.1 source. Archived large-system benchmarks have the scopes stated below; no four-loop closure claim.",
+  "self_target_benchmark": {
+    "Queries": 125,
+    "NewSeconds": 0.001262,
+    "OldSeconds": 46.357853,
+    "OldCompleted": false,
+    "Agreement": "Timed out",
+    "SelfReduced": 63
+  },
+  "worker_recommendation": {
+    "formula": "max(1, round(4 * logical_processors / 5))",
+    "logical_processors": 32,
+    "recommended_workers": 26,
+    "library_default_workers": 1
+  }
+}

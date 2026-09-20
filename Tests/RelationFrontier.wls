@@ -1,0 +1,11 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[2,kinematics,{x,y}];top=G@@Join[f["TopSector"],{1,1}];sys=GenerateSystem[f,{top}];
+rows=ConformalIBP`Private`canonExpr[f,#]& /@ sys["Equations"];atoms=ConformalIBP`Private`support[rows];
+legacy[masters_,pool_]:=Union[Flatten[Table[Select[ConformalIBP`Private`support[Select[pool,!FreeQ[#,master]&]],#=!=master && OrderedQ[{ConformalIBP`Private`simpleKey[f,master],ConformalIBP`Private`simpleKey[f,#]}]&],{master,masters}]]];
+SeedRandom[8823];
+Do[masters=RandomSample[atoms,Min[n,Length[atoms]]];assert[ConformalIBP`Private`relationFrontier[f,masters,rows]===legacy[masters,rows],"actual IBP frontier equality for "<>ToString[n]<>" masters"],{n,{0,1,5,20}}];
+assert[ConformalIBP`Private`relationFrontier[f,{top},{}]==={},"empty relation pool"];
+assert[ConformalIBP`Private`relationFrontier[f,{top},{BoundaryIntegral[1,{1,1,1,1,1}]}]==={},"boundary-only row has no same-loop neighbors"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

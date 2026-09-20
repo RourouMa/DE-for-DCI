@@ -2,7 +2,7 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.2.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.2.1 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
@@ -214,3 +214,11 @@ FINITEFLOW_ROOT=/path/to/finiteflow python3 scripts/run-tests.py --kernel /path/
 
 Archive comparison scripts in `Tests/` additionally require the baseline/job
 files described at their beginning; they are not part of the portable suite.
+
+For expensive exact residual checks, `"VerificationWorkers" -> 4` uses independent
+kernels to verify every selected original equation. It defaults to 1 and does
+not change the mathematical acceptance checks. Relation-frontier construction
+is also deferred until broad seeding is needed and uses a single support scan.
+See [the verification notes](docs/PARALLEL_VERIFICATION.zh-CN.md).
+
+Recommended hardware allocation: `RecommendedWorkerCount[]` returns four fifths of logical CPUs, rounded to the nearest integer (32 → 26). Set both `"Workers"` and `"VerificationWorkers"` explicitly; FiniteFlow threads are configured separately. See [parallel configuration](docs/PARALLEL_VERIFICATION.zh-CN.md).

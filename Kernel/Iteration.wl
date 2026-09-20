@@ -31,7 +31,7 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"JobDirectory"->dir|>];
 
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
- "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"Workers"->1,
+ "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"Workers"->1,"VerificationWorkers"->1,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
  "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets",
  "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ProgressFunction"->Print};
@@ -61,6 +61,12 @@ ResumeRun[dir_String]:=Module[{data=Get[FileNameJoin[{dir,"Checkpoint.wl"}]],s},
   Return[fail["ImplementationMismatch","Package source changed. Start a new campaign; old application ledgers must not be reused."]]];
  If[familyHash[s["Family"]]=!=s["FamilyHash"],Return[fail["FamilyMismatch","Checkpoint family changed."]]];
  runCampaign[s]];
+(* Build exact equation neighbors in one support traversal, only when needed. *)
+relationFrontier[f_,masters_List,rows_List]:=Module[{groups,atoms,keys},
+ groups=Association[Last[Reap[Do[atoms=support[row];
+   Scan[(Sow[atoms,#])&,Intersection[atoms,masters]],{row,rows}],_G,(#1->Union[Flatten[#2]])&]]];
+ keys=Association[(#->simpleKey[f,#])& /@ Union[masters,Flatten[Values[groups]]]];
+ Union[Flatten[Table[Select[Lookup[groups,master,{}],#=!=master && OrderedQ[{keys[master],keys[#]}]&],{master,masters}]]]];
 runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initial["Options"],basis,pass,der,rows,targets,
  reduction,query,generated,new,finite,records,historyRules={},oldResidual,ci,cd,vars,r,p,cl,coordinates,
  fullInput,fullDE,input,de,boundary,matrices,sourcesRows,reason,changed,replay=True,epoch,startEpoch,
@@ -86,7 +92,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    s["HistoricalTargets"]=Union[s["HistoricalTargets"],targets];
    query=Union[s["HistoricalTargets"],s["PreviousRepresentatives"],targets];
    If[o["ReductionScope"]==="Targets",query=Union[query,support[Lookup[s,"HistoricalRules",{}]],sources[Lookup[s,"HistoricalRules",{}]]]];
-   reduction=If[o["ReductionScope"]==="Targets",ReduceTargetIntegrals,ReduceIntegrals][f,query,s["Equations"],"Solver"->o["Solver"],"MaxExactColumns"->o["MaxExactColumns"],"MaxPrimes"->o["MaxPrimes"],
+   reduction=If[o["ReductionScope"]==="Targets",ReduceTargetIntegrals,ReduceIntegrals][f,query,s["Equations"],"Solver"->o["Solver"],"MaxExactColumns"->o["MaxExactColumns"],"MaxPrimes"->o["MaxPrimes"],"VerificationWorkers"->o["VerificationWorkers"],"KernelExecutable"->o["KernelExecutable"],
     "ProgressFunction"->Function[event,progress[o,Join[<|"Epoch"->s["Epoch"],"Round"->pass|>,event]]]];
    If[FailureQ[reduction],reason=reduction;Break[]];
    historyRules=Lookup[s,"HistoricalRules",{}];
@@ -107,19 +113,21 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
     finite=BuildFiniteBasis[f,Join[fullInput,fullDE]];
     generationNeeded=FailureQ[finite] || reduction["UnseenTargets"]=!={}];
    If[generationNeeded,
-   canonicalRows=canonExpr[f,#]& /@ s["Equations"];
-   (* Local equation neighbors supply conformal centers unavailable to a single unconstrained axial move. *)
-   frontier=Union[Flatten[Table[Select[support[Select[canonicalRows,!FreeQ[#,master]&]],
-     #=!=master && OrderedQ[{simpleKey[f,master],simpleKey[f,#]}]&],{master,masters}]]];
    gapTargets=Union[reduction["UnseenTargets"],If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite],masters,{}]];
    focused=TrueQ[o["GapSeeding"]] && s["Equations"]=!={} && gapTargets=!={};
+   If[!focused,
+    progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Building relation frontier for broad seeding"|>];
+    canonicalRows=canonExpr[f,#]& /@ s["Equations"];frontier=relationFrontier[f,masters,canonicalRows]];
    seedTargets=If[focused,gapTargets,Union[targets,masters,frontier]];
+   progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Generating IBP seeds","FocusedGapSeeding"->focused,"GapTargetCount"->Length[gapTargets],"CenterCount"->Length[seedTargets]|>];
    seedOptions={"CompletedApplications"->s["CompletedApplications"],"CompletedSymmetryInputs"->Lookup[s,"CompletedSymmetryInputs",{}],
     "FiniteSeeds"->Select[basis,Length[support[#]]>1&],"Workers"->o["Workers"],"KernelExecutable"->o["KernelExecutable"],
     "SeedDomain"->o["SeedDomain"],"BlockExpansion"->o["BlockExpansion"]};
    generated=GenerateSystem[f,seedTargets,"SeedCenters"->If[focused,"AllOriginalImages","Raw"],Sequence@@seedOptions];
    (* Widen only after the focused neighborhood contributes no new relation. *)
    If[!FailureQ[generated] && focused && Complement[generated["Equations"],s["Equations"]]==={},
+    progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Focused seeds added no relations; building fallback frontier"|>];
+    canonicalRows=canonExpr[f,#]& /@ s["Equations"];frontier=relationFrontier[f,masters,canonicalRows];
     fallback=GenerateSystem[f,Union[targets,masters,frontier],"SeedCenters"->"AllOriginalImages",
      Sequence@@Normal[Join[Association[seedOptions],<|"CompletedApplications"->Union[s["CompletedApplications"],generated["Applications"]]|>]]];
     If[FailureQ[fallback],generated=fallback,

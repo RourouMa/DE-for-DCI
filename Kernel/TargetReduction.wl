@@ -2,7 +2,7 @@
 $lastTargetSampling=<||>;
 Options[ReduceTargetIntegrals]=Join[Options[ReduceIntegrals],{"MinimumSelectionRows"->500,"PythonExecutable"->"python3","ReuseTargetSampling"->True,"TargetSelector"->Automatic}];
 ReduceTargetIntegrals[f_Association,targets_List,equations_List,opts:OptionsPattern[]]:=Module[
- {rows,ct,atoms,all,position,triples={},gs,values,samples={},sample,prime,point,numeric,attempt,
+ {rows,ct,atoms,all,position,triples={},gs,values,samples={},sample,prime,point,numeric,attempt,samplingParameters,
   dir,inputFile,outputFile,script,process,selection,ids,red,needed,keep,images,rules,result,report=OptionValue["ProgressFunction"],
   started=AbsoluteTime[],selectionSeconds,baseOptions,certificate,nontrivial,rankWitness=Missing["UnprunedSystem"],rankCertified=False,samplingKey,samplingReused=False},
  If[!MemberQ[{Automatic,"Python","FiniteFlow"},OptionValue["TargetSelector"]],Return[fail["TargetSelector","Unknown target selector."]]];
@@ -20,9 +20,9 @@ ReduceTargetIntegrals[f_Association,targets_List,equations_List,opts:OptionsPatt
  If[samplingReused,samples=$lastTargetSampling["Samples"],
  triples=Flatten[Table[gs=Join[support[rows[[i]]],sources[rows[[i]]]];
   Table[{i,position[g],Together[Coefficient[rows[[i]],g]]},{g,gs}],{i,Length[rows]}],1];
- values=If[triples==={},{},triples[[All,3]]];
+ values=If[triples==={},{},triples[[All,3]]];samplingParameters=Union[Flatten[Variables /@ values]];
  Do[prime={1000003,1000033}[[sample]];numeric=$Failed;
-  Do[point=Thread[f["Variables"]->Prime[Range[Length[f["Variables"]]]+sample+attempt-2]];
+  Do[point=Thread[samplingParameters->Prime[Range[Length[samplingParameters]]+sample+attempt-2]];
    numeric=Quiet[Check[Together /@ (values/.point),$Failed]];
    If[ListQ[numeric] && VectorQ[numeric,MatchQ[#,_Integer|_Rational]&] &&
      !AnyTrue[numeric,Mod[Denominator[#],prime]===0&],Break[],numeric=$Failed],{attempt,1,10}];
@@ -71,7 +71,7 @@ ReduceTargetIntegrals[f_Association,targets_List,equations_List,opts:OptionsPatt
    full-pool target solve must agree before returning the selected reduction. *)
 reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
  {rows,ct,atoms,all,graph,in,sys,learn,ids,count,inner,certificate,mapped,reference,diff,
-  start=AbsoluteTime[],selectedSeconds,innerOptions,report=o["ProgressFunction"],fullSeconds},
+  start=AbsoluteTime[],selectedSeconds,innerOptions,parameters,report=o["ProgressFunction"],fullSeconds},
  If[!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowNotLoaded","FiniteFlow selector requires FiniteFlow."]]];
  rows=DeleteCases[canonExpr[f,#]& /@ equations,0];ct=canonExpr[f,#]& /@ targets;
  If[AnyTrue[Join[rows,ct],FailureQ],Return[First[Select[Join[rows,ct],FailureQ]]]];
@@ -79,8 +79,9 @@ reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
  all=Join[SortBy[Union[support[rows],support[ct]],simpleKey[f,#]&],sources[{rows,ct}]];
  innerOptions=Join[o,<|"TargetSelector"->"Python","MinimumSelectionRows"->0|>];
  If[rows==={} || atoms==={},Return[ReduceTargetIntegrals[f,targets,equations,Sequence@@Normal[innerOptions]]]];
- FiniteFlow`FFNewGraph[graph];FiniteFlow`FFGraphInputVars[graph,in,f["Variables"]];
- FiniteFlow`FFAlgSparseSolver[graph,sys,{in},f["Variables"],#==0& /@ rows,all,"NeededVars"->atoms];
+ parameters=coefficientParameters[rows];
+ FiniteFlow`FFNewGraph[graph];FiniteFlow`FFGraphInputVars[graph,in,parameters];
+ FiniteFlow`FFAlgSparseSolver[graph,sys,{in},parameters,#==0& /@ rows,all,"NeededVars"->atoms];
  FiniteFlow`FFGraphOutput[graph,sys];learn=FiniteFlow`FFSparseSolverLearn[graph,all];
  If[!ListQ[learn],FiniteFlow`FFDeleteGraph[graph];
   Return[ReduceTargetIntegrals[f,targets,equations,Sequence@@Normal[innerOptions]]]];
@@ -94,8 +95,10 @@ reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
  inner=ReduceTargetIntegrals[f,targets,rows[[ids]],Sequence@@Normal[innerOptions]];
  If[FailureQ[inner],Return[inner]];
  start=AbsoluteTime[];
- reference=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->inner["ColumnOrder"],"SparseOutput"->True,"MaxPrimes"->o["MaxPrimes"]];
+ If[report=!=None,report[<|"Action"->"Starting full-pool target reference","Parameters"->parameters,"Queries"->Length[inner["ColumnOrder"]]|>]];
+ reference=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->inner["ColumnOrder"],"Parameters"->parameters,"SparseOutput"->True,"MaxPrimes"->o["MaxPrimes"]];
  If[!ListQ[reference] || !And@@(MatchQ[#,_Rule]& /@ reference),Return[fail["FullPoolTargetSolve","Full-pool target reference failed."]]];
+ If[report=!=None,report[<|"Action"->"Full-pool target solve returned; comparing exact normal forms","Seconds"->AbsoluteTime[]-start|>]];
  diff=canonicalLinear /@ ((inner["ColumnOrder"]/.Dispatch[reference])-(inner["ColumnOrder"]/.Dispatch[inner["Rules"]]));
  If[!And@@(zero /@ diff),Return[fail["FullPoolTargetMismatch","Selected target normal forms differ from the full pool.",<|"Residuals"->DeleteCases[diff,0]|>]]];
  fullSeconds=AbsoluteTime[]-start;

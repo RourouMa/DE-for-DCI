@@ -1,0 +1,8 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+args=Take[If[Length[$ScriptCommandLine]>=3,$ScriptCommandLine,$CommandLine],-2];job=Get[First[args]];
+If[job["ImplementationHash"]=!=ConformalIBP`Private`$implementationHash,Quit[1]];
+rules=Get[job["RulesFile"]];dispatch=Dispatch[rules];bad={};
+Do[r=ConformalIBP`Private`canonicalLinear[row/.dispatch];If[FailureQ[r],Put[r,Last[args]];Quit[1]];
+ If[!ConformalIBP`Private`zero[r],AppendTo[bad,r]],{row,job["Rows"]}];
+Put[<|"ImplementationHash"->ConformalIBP`Private`$implementationHash,"CheckedIndices"->job["Indices"],"NonzeroResiduals"->bad|>,Last[args]];Quit[0];

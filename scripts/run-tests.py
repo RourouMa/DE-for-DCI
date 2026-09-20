@@ -14,7 +14,7 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 output = args.output or Path(tempfile.mkdtemp(prefix='conformal-ibp-tests-'))
 output.mkdir(parents=True, exist_ok=True)
-tests = ['RunTests', 'SeedPolicies', 'GapCampaign', 'LinearNormalization', 'BoundaryReduction',
+tests = ['RunTests', 'SeedPolicies', 'GapCampaign', 'RelationFrontier', 'ParallelResiduals', 'CoefficientParameters', 'SelfReducedTargets', 'LinearNormalization', 'BoundaryReduction',
          'ReductionReuse', 'TargetReduction', 'SymmetryReuse', 'RelabelCache',
          'OnDemandDE', 'Workers']
 if os.environ.get('FINITEFLOW_ROOT'):

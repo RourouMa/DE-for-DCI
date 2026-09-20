@@ -19,15 +19,18 @@ RunReduction::usage="RunReduction[family,targets,options] generates and iterates
 RunDE::usage="RunDE[family,inputs,options] restarts from the original inputs after every system extension and tests actual derivative closure.";
 ResumeRun::usage="ResumeRun[directory] resumes a versioned, hash-checked trusted local checkpoint.";
 InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirectory] loads an optional FiniteFlow installation without hard-coded paths.";
+RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.2.0";
+$ConformalIBPVersion="0.2.1";
+RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
+RecommendedWorkerCount[]:=RecommendedWorkerCount[$ProcessorCount];
 SetAttributes[SP,Orderless];
 $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","../scripts/select-equation-rows.py"},"SHA256"];
+ {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
