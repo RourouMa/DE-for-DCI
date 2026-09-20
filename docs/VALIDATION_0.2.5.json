@@ -1,0 +1,35 @@
+{
+  "version": "0.2.5",
+  "checks": [
+    {
+      "test": "RunTests",
+      "exit_code": 0
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0
+    },
+    {
+      "test": "FailurePropagation",
+      "exit_code": 0,
+      "assertions": 13
+    }
+  ],
+  "scope": "Failure propagation and core, boundary, gap, worker, deduplication regressions; not four-loop closure certification"
+}

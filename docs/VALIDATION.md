@@ -1,5 +1,13 @@
 # Validation Record
 
+## 0.2.5 correctness correction
+
+A reproduced Wolfram control-flow error allowed `Return` inside `Do` to exit the loop without returning failure from the enclosing function. This affected rejection of overlapping contact boundaries and unsupported multiple collision clusters. The correction explicitly propagates those failures. Similar error paths in coefficient extraction, differentiation, worker cache import, symmetry generation, and optional Gram candidates are also corrected.
+
+The new `Tests/FailurePropagation.wls` passes 13 assertions, including actual four-loop overlapping/disjoint collision examples and injected nested failures. Core, linear normalization, boundary reduction, gap campaign, workers, and seed deduplication suites also pass; see `VALIDATION_0.2.5.json`.
+
+**Earlier finite-basis claims involving multiple collision clusters require revalidation.** On a saved four-loop 61-integral support, 11 formerly accepted bare integrals lose finite certification; two of 14 saved inputs are affected. Failure of this conservative validator is not itself proof of divergence. Do not resume old implementation checkpoints or treat earlier exact matrix residual checks as proof of physical validity of all relations. Four-loop closure remains unverified.
+
 Local development validation, 2026-09-20. These checks validate the package interfaces and selected algebra, not the completeness of the four-loop IBP system.
 
 | Check | Result |

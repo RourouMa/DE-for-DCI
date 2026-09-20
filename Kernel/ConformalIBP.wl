@@ -22,7 +22,7 @@ InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirec
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.2.4";
+$ConformalIBPVersion="0.2.5";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -230,16 +230,16 @@ dotVector[f_,op_,z_]:=With[{yi=f["Loops"][[op["Loop"]]],a=op["A"],b=op["B"]},SP[
 ordinary[f_,op_,g_]:=Module[{yi=f["Loops"][[op["Loop"]]],a=List@@g,p=f["Propagators"],der},
  der=Table[If[MemberQ[List@@q,yi],dotVector[f,op,First[DeleteCases[List@@q,yi]]],0],{q,p}];
  Together[-integrand[f,g] Total[Take[a,Length[p]] der/p]/.scalarRules[f]]];
-contacts[f_,op_,g_]:=Module[{yi=f["Loops"][[op["Loop"]]],terms,result=0,a,b,c,vector,eff,hits,pair,expr},
+contacts[f_,op_,g_]:=Module[{yi=f["Loops"][[op["Loop"]]],terms,result=0,a,b,c,vector,eff,hits,pair,expr,failure=None},
  terms={{SP[yi,op["A"]],op["B"]},{-SP[yi,op["B"]],op["A"]}};
  Do[c=t[[1]];vector=t[[2]];eff=Take[List@@g,Length[f["Propagators"]]];
   Do[eff[[j]]-=Exponent[c,f["Propagators"][[j]]],{j,Length[eff]}];
   hits=Select[f["LoopLoopIDs"],eff[[#]]===2 && MemberQ[List@@f["Propagators"][[#]],yi]&];
-  If[Length[hits]>1,Return[fail["OverlappingContact","A vector component has multiple endpoint collision boundaries."]]];
+  If[Length[hits]>1,failure=fail["OverlappingContact","A vector component has multiple endpoint collision boundaries."];Break[]];
   Do[pair=List@@f["Propagators"][[j]];
    expr=Cancel[f["Propagators"][[j]]^2 integrand[f,g] c] SP[infinity,vector]/SP[infinity,yi];
    result-=2 Together[expr/.Last[pair]->First[pair]],{j,hits}],{t,terms}];
- Together[result/.scalarRules[f]]];
+ If[FailureQ[failure],failure,Together[result/.scalarRules[f]]]];
 toIntegral[f_,rat_]:=Module[{e=Together[rat],p=f["Propagators"],dr,nr,terms},
  If[e===0,Return[0]];
  If[!FreeQ[e,infinity] || Complement[Cases[e,_SP,Infinity],p]=!={},Return[fail["OutsideScalarProducts","Uncancelled infinity or out-of-family scalar products remain."]]];
@@ -274,16 +274,18 @@ shiftIBPRelation[f_Association,op_Association,seed_]:=Module[{gs=support[seed],c
 
 IBPRelation[f_Association,op_Association,seed_]:=shiftIBPRelation[f,op,seed];
 
-DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["Propagators"],rat,dp,out},
+DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["Propagators"],rat,dp,out,failures},
  If[sources[expressions]=!={},Return[fail["BoundaryInput","Differentiate lower-loop sources in their own family; they cannot be treated as constants."]]];
  If[!And@@(validIntegral[f,#]& /@ support[expressions]),Return[fail["IntegralShape","Malformed differentiation input."]]];
+ failures=Select[canonicalLinear /@ expressions,FailureQ];If[failures=!={},Return[First[failures]]];
  rows=Association@Table[z->Table[gs=support[e];cs=First[coeff[{e},gs]];
   dp=Table[Total[Table[If[MemberQ[List@@q,f["External"][[i]]],
     Sum[f["ExternalDerivatives"][z][[i,j]] SP[f["External"][[j]],First[DeleteCases[List@@q,f["External"][[i]]]]],{j,Length[f["External"]]}],0],{i,Length[f["External"]]}]],{q,p}];
   out=Table[rat=Together[-integrand[f,g] Total[Take[List@@g,Length[p]] dp/p]/.scalarRules[f]];toIntegral[f,rat],{g,gs}];
-  If[AnyTrue[out,FailureQ],Return[First[Select[out,FailureQ]]]];
-  canonicalLinear[D[cs,z].gs+cs.out],{e,expressions}],{z,f["Variables"]}];
+  If[AnyTrue[out,FailureQ],First[Select[out,FailureQ]],
+   canonicalLinear[D[cs,z].gs+cs.out]],{e,expressions}],{z,f["Variables"]}];
  If[FailureQ[rows],Return[rows]];
+ failures=Cases[Values[rows],_Failure,Infinity];If[failures=!={},Return[First[failures]]];
  <|"Rows"->rows,"Targets"->support[Values[rows]],"WholeCombinationsSimplifiedFirst"->True|>];
 
 Get[FileNameJoin[{DirectoryName[$InputFileName],"SeedPlanning.wl"}]];

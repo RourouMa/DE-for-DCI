@@ -27,7 +27,8 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   Return[fail["WorkerFailure","Worker failed; inspect the retained job directory.",<|"Directory"->dir,"Output"->(ReadString[#,EndOfBuffer]& /@ jobs),"Processes"->(ProcessInformation /@ jobs)|>]]];
  results=Get /@ Table[FileNameJoin[{dir,"output"<>ToString[i]<>".wl"}],{i,n}];
  If[AnyTrue[results,FailureQ],Return[First[Select[results,FailureQ]]]];
- Do[imported=importSymmetryCache[f,result["SymmetryCache"]];If[FailureQ[imported],Return[imported]],{result,results}];
+ Do[imported=importSymmetryCache[f,result["SymmetryCache"]];If[FailureQ[imported],Break[]],{result,results}];
+ If[FailureQ[imported],Return[imported]];
  <|"Equations"->Union[Flatten[Lookup[results,"Equations"]]],
   "Applications"->Union[Flatten[Lookup[results,"Applications"],1]],
   "RejectedApplications"->Flatten[Lookup[results,"RejectedApplications"]],

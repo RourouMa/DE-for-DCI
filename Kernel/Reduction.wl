@@ -20,7 +20,7 @@ pendingSeedPlan[plan_Association,completed_List]:=Module[{done=Association[(#->T
   Which[KeyExistsQ[done,key],prior++;False,KeyExistsQ[seen,key],overlap++;False,True,AssociateTo[seen,key->True];True]]]|>],{batch,plan["Batches"]}];
  Join[plan,<|"Batches"->batches,"SeedingDeduplication"-><|"CandidateOrdinaryApplications"->total,"SkippedCompletedOrdinaryApplications"->prior,"SkippedDuplicateOrdinaryApplications"->overlap,"PendingOrdinaryApplications"->(total-prior-overlap)|>|>]];
 generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->True)& /@ options["CompletedApplications"]],
- equations={},attempted={},rejected={},r,key,ops=plan["Operators"],syms,raw,newSymmetry},
+ equations={},attempted={},rejected={},r,key,ops=plan["Operators"],syms,raw,newSymmetry,images},
  Do[Do[key={Hash[ops[[b["OperatorIndex"]]],"SHA256"],seed};If[KeyExistsQ[done,key],Continue[]];
   r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];AppendTo[attempted,key];AssociateTo[done,key->True];
   If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],
@@ -34,7 +34,9 @@ generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->
   {seed,options["FiniteSeeds"]}];
  raw=Union[support[targets],support[equations]];
  newSymmetry=Complement[raw,options["CompletedSymmetryInputs"]];
- syms=Table[r=CanonicalIntegral[f,g];If[FailureQ[r],Return[r]];g-r,{g,newSymmetry}];
+ images=CanonicalIntegral[f,#]& /@ newSymmetry;
+ If[AnyTrue[images,FailureQ],Return[First[Select[images,FailureQ]]]];
+ syms=newSymmetry-images;
  equations=DeleteCases[DeleteDuplicates[canonicalLinear /@ Join[equations,syms]],0];
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
   "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
@@ -146,26 +148,26 @@ residueKey[f_,g_,edge_]:=Module[{a=List@@g,pair=f["Supports"][[edge]],ys,keep,p,
   "TopSector"->ConstantArray[1,Length[p]],"MaxLoopPower"->Infinity,
   "ExternalPermutations"->f["ExternalPermutations"]|>];
  residueAtom[List@@CanonicalIntegral[low,G@@Join[out,ConstantArray[1,Length[ys]]]]]];
-FiniteIntegralQ[f_Association,e_]:=Module[{gs=support[e],bad,rrs=0,a},
+FiniteIntegralQ[f_Association,e_]:=Module[{gs=support[e],bad,rrs=0,a,supported=True},
  If[sources[e]=!={},Return[False]];
  If[f["FiniteValidator"]=!=Automatic,Return[TrueQ[f["FiniteValidator"][f,e]]]];
  If[FailureQ[canonicalLinear[e]] || !And@@(validIntegral[f,#] && weights[f,List@@#]===ConstantArray[4,f["LoopCount"]]& /@ gs),Return[False]];
  Do[bad=badClusters[f,g];If[bad==={},Continue[]];a=List@@g;
-  If[Length[bad]!=1 || Length[First[bad]]!=2,Return[False]];
-  With[{edge=First[FirstPosition[f["Supports"],First[bad]]]},If[a[[edge]]=!=2,Return[False]];
+  If[Length[bad]!=1 || Length[First[bad]]!=2,supported=False;Break[]];
+  With[{edge=First[FirstPosition[f["Supports"],First[bad]]]},If[a[[edge]]=!=2,supported=False;Break[]];
    rrs+=Together[Coefficient[Expand[e],g]] residueKey[f,g,edge]],{g,gs}];
- zero[rrs]];
+ supported && zero[rrs]];
 
 primitive[v_]:=Module[{a=v,d,g},If[!VectorQ[a,MatchQ[#,_Integer|_Rational]&],Return[$Failed]];
  If[And@@(zero /@ a),Return[a]];d=LCM@@(Denominator /@ a);a=d a;g=GCD@@Abs[a];Sign[First[Select[a,#!=0&]]] a/g];
-constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons},
+constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons,failed=False},
  Do[den=If[vars==={},LCM@@(Denominator /@ row),PolynomialLCM@@(Denominator /@ row)];
   poly=Expand[Cancel[den #]]& /@ row;
   If[vars==={},AppendTo[atoms,poly],
-   If[!And@@(PolynomialQ[#,vars]& /@ poly),Return[$Failed]];
+   If[!And@@(PolynomialQ[#,vars]& /@ poly),failed=True;Break[]];
    mons=Union[Flatten[First /@ CoefficientRules[#,vars]& /@ poly,1]];
    Do[AppendTo[atoms,Fold[Coefficient[#1,First[#2],Last[#2]]&,#,Transpose[{vars,mon}]]& /@ poly],{mon,mons}]],{row,c}];
- atoms];
+ If[failed,$Failed,atoms]];
 BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,
  basis,m,bp,w,residue,den,definitions},
  safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];c=coeff[rows,div];
