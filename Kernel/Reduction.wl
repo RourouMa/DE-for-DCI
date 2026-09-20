@@ -6,65 +6,96 @@ InitializeFiniteFlow[lib_String,math_String]:=Module[{},
  If[!MemberQ[$Path,ExpandFileName[math]],AppendTo[$Path,ExpandFileName[math]]];
  Quiet[Check[Needs["FiniteFlow`"],Return[fail["FiniteFlowLoad","FiniteFlow could not be loaded."]]]];True];
 
-Options[GenerateSystem]={"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"Workers"->1,"KernelExecutable"->Automatic};
-GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{plan,done=OptionValue["CompletedApplications"],
- equations={},attempted={},rejected={},r,key,ops,syms,raw},
- If[!MemberQ[Range[4],OptionValue["Workers"]],Return[fail["Workers","Workers must be one, two, three or four."]]];
+Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic}];
+GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{plan,done=Association[(#->True)& /@ OptionValue["CompletedApplications"]],
+ equations={},attempted={},rejected={},r,key,ops,syms,raw,newSymmetry},
+ If[(!IntegerQ[OptionValue["Workers"]] || OptionValue["Workers"]<1),Return[fail["Workers","Workers must be a positive integer."]]];
  If[OptionValue["Workers"]>1,Return[generateSharded[f,targets,Join[Association[Options[GenerateSystem]],Association[{opts}]]]]];
- plan=GenerateSeeds[f,targets,OptionValue["Operators"]];If[FailureQ[plan],Return[plan]];ops=plan["Operators"];
- Do[Do[key={Hash[ops[[b["OperatorIndex"]]],"SHA256"],seed};If[MemberQ[done,key],Continue[]];
+ plan=GenerateSeeds[f,targets,OptionValue["Operators"],Sequence@@FilterRules[Normal[Association[Join[Options[GenerateSystem],{opts}]]],Options[GenerateSeeds]]];If[FailureQ[plan],Return[plan]];ops=plan["Operators"];
+ Do[Do[key={Hash[ops[[b["OperatorIndex"]]],"SHA256"],seed};If[KeyExistsQ[done,key],Continue[]];
   r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];AppendTo[attempted,key];
   If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],
   {seed,b["Seeds"]}],{b,plan["Batches"]}];
- Do[If[!FiniteIntegralQ[f,seed],Continue[]];
+ Do[If[OptionValue["SeedDomain"]==="Original" && !originalDomainExpressionQ[f,seed],Continue[]];
+  If[!FiniteIntegralQ[f,seed],Continue[]];
   Do[If[ops[[k]]["Degree"]=!=ConstantArray[0,f["LoopCount"]],Continue[]];
-   key={Hash[ops[[k]],"SHA256"],seed};If[MemberQ[done,key] || MemberQ[attempted,key],Continue[]];
+   key={Hash[ops[[k]],"SHA256"],seed};If[KeyExistsQ[done,key] || MemberQ[attempted,key],Continue[]];
    r=IBPRelation[f,ops[[k]],seed];AppendTo[attempted,key];
    If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],{k,Length[ops]}],
   {seed,OptionValue["FiniteSeeds"]}];
  raw=Union[support[targets],support[equations]];
- syms=Table[r=CanonicalIntegral[f,g];If[FailureQ[r],Return[r]];g-r,{g,raw}];
+ newSymmetry=Complement[raw,OptionValue["CompletedSymmetryInputs"]];
+ syms=Table[r=CanonicalIntegral[f,g];If[FailureQ[r],Return[r]];g-r,{g,newSymmetry}];
  equations=DeleteCases[DeleteDuplicates[canonicalLinear /@ Join[equations,syms]],0];
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
   "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
-  "AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"]|>];
+  "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","UnmappedCenters"}],
+  "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 
 simpleKey[f_,g_G]:=Module[{a=List@@g,ps=parts[f,g],ext,boxScore=0},
  ext=Complement[Range[Length[f["Propagators"]]],f["LoopLoopIDs"]];
  Do[With[{v=a[[Select[ext,MemberQ[f["Supports"][[#]],First[block]]&]]]},
   If[Count[v,_?Positive]>1,boxScore+=Total[Max[Abs[#]-2,0]& /@ v]]],{block,Select[ps,Length[#]===1&]}];
- {Boole[Length[ps]>1],-Total[Abs[Pick[a[[f["LoopLoopIDs"]]],f["TopSector"][[f["LoopLoopIDs"]]],0]]],
-  -boxScore,-Total[Abs[Take[a,Length[f["Propagators"]]]]],-Max[Abs[a]],a}];
-Options[ReduceIntegrals]={"Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80};
+ Join[If[Lookup[f,"IntegralOrdering","LadderFirst"]==="LadderFirst",{Boole[originalDomainIntegralQ[f,g]]},{}],{Boole[Length[ps]>1],-Total[Abs[Pick[a[[f["LoopLoopIDs"]]],f["TopSector"][[f["LoopLoopIDs"]]],0]]],
+  -boxScore,-Total[Abs[Take[a,Length[f["Propagators"]]]]],-Max[Abs[a]],a}]];
+$lastVerifiedReduction=<||>;
+reductionTargets[result_,targets_,rows_]:=Module[{dispatch=Dispatch[result["Rules"]],images},
+ images=canonicalLinear /@ (targets/.dispatch);
+ Join[result,<|"ReducedTargets"->images,"RawMasters"->support[images],"BoundarySources"->sources[images],
+  "SelfReducedTargets"->Select[support[targets],zero[(#/.dispatch)-#]&],
+  "UnseenTargets"->Complement[support[targets],support[rows]]|>]];
+Options[ReduceIntegrals]={"Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"ProgressFunction"->None,"ReuseVerifiedReduction"->True};
 ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Module[
- {rows,cols,boundary,all,solver=OptionValue["Solver"],matrix,reduced,pivs,rules,raw,images,residual,canonTargets},
+ {rows,cols,boundary,all,solver=OptionValue["Solver"],matrix,reduced,pivs,rules,raw,images,residual,canonTargets,stageStart=AbsoluteTime[],timings=<||>,report=OptionValue["ProgressFunction"],stage,cacheKey,reuse,result},
+ stage[name_]:=(AssociateTo[timings,name->(AbsoluteTime[]-stageStart)];If[report=!=None,report[<|"Action"->"Reduction stage completed","Stage"->name,"Seconds"->timings[name]|>]];stageStart=AbsoluteTime[]);
  rows=DeleteCases[canonExpr[f,#]& /@ equations,0];If[AnyTrue[rows,FailureQ],Return[First[Select[rows,FailureQ]]]];
  canonTargets=canonExpr[f,#]& /@ targets;If[AnyTrue[canonTargets,FailureQ],Return[First[Select[canonTargets,FailureQ]]]];
- cols=SortBy[Union[support[rows],support[canonTargets]],simpleKey[f,#]&];boundary=sources[rows];all=Join[cols,boundary];
+ stage["Canonicalization"];
+ cols=SortBy[Union[support[rows],support[canonTargets]],simpleKey[f,#]&];boundary=sources[{rows,canonTargets}];all=Join[cols,boundary];
+ stage["ColumnOrdering"];
  If[solver===Automatic,solver=If[MemberQ[$Packages,"FiniteFlow`"],"FiniteFlow","Exact"]];
+ (* Only a fully verified, identical system and ordered column set may be reused.
+    Keep one entry in memory; checkpoint rules are never trusted as this cache. *)
+ reuse=TrueQ[OptionValue["ReuseVerifiedReduction"]] && MemberQ[{"Exact","FiniteFlow"},solver];
+ cacheKey=Hash[{f["Hash"],$implementationHash,rows,all,solver,OptionValue["MaxExactColumns"],OptionValue["MaxPrimes"]},"SHA256"];
+ If[reuse && Lookup[$lastVerifiedReduction,"Key",None]===cacheKey,
+  If[report=!=None,report[<|"Action"->"Reusing verified full reduction","Rows"->Length[rows],"Columns"->Length[all]|>]];
+  Return[reductionTargets[Join[$lastVerifiedReduction["Result"],<|"StageTimings"->timings,"ReductionReused"->True|>],canonTargets,rows]]];
+ If[report=!=None,report[<|"Action"->"Starting coefficient solve","Rows"->Length[rows],"Columns"->Length[all],"Solver"->solver|>]];
  If[rows==={},rules={},
   Switch[solver,
    "Exact",If[Length[all]>OptionValue["MaxExactColumns"],Return[fail["ExactSizeLimit","Load FiniteFlow or explicitly increase MaxExactColumns.",<|"Columns"->Length[all]|>]]];
     matrix=coeff[rows,all];reduced=rr[matrix];pivs=pivots[reduced];
-    If[AnyTrue[pivs,#>Length[cols]&],Return[fail["BoundaryConstraints","The system contains pure lower-loop constraints; reduce these in a lower-loop family first."]]];
     rules=MapThread[all[[#1]]->canonicalLinear[-#2.all+all[[#1]]]&,{pivs,reduced}],
    "FiniteFlow",If[!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowNotLoaded","Call InitializeFiniteFlow or Needs[\"FiniteFlow`\"] first."]]];
-    rules=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->cols,"SparseOutput"->True,"MaxPrimes"->OptionValue["MaxPrimes"]],
+    rules=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->all,"SparseOutput"->True,"MaxPrimes"->OptionValue["MaxPrimes"]],
    _,If[Head[solver]=!=Function,Return[fail["Solver","Use Exact, FiniteFlow, Automatic, or Function[{equations,columns,queries},rules]."]]];
-    rules=solver[rows,all,cols]]];
+    rules=solver[rows,all,all]]];
+ stage["CoefficientSolve"];
  If[!ListQ[rules] || !And@@(MatchQ[#,_Rule]& /@ rules),Return[fail["SolverFailure","The solver did not return replacement rules."]]];
- images=canonicalLinear /@ (cols/.Dispatch[rules]);rules=Thread[cols->images];
+ (* Keep source constraints already implied by this system. No lower-loop IBP
+    generation occurs here; dropping these rules invalidates full residuals. *)
+ (* FiniteFlow already returns linear combinations with rational-function
+    coefficients. Avoid re-expanding every reconstructed auxiliary rule;
+    full exact equation residuals and idempotence are still checked below. *)
+ images=If[solver==="FiniteFlow",all/.Dispatch[rules],canonicalLinear /@ (all/.Dispatch[rules])];rules=Thread[all->images];
+ stage["NormalizeRules"];
  residual=canonicalLinear /@ (rows/.Dispatch[rules]);
  If[!And@@(zero /@ residual),Return[fail["UnverifiedReduction","Exact residual check failed; no reduction accepted.",<|"Residuals"->DeleteCases[residual,0]|>]]];
- raw=support[images];
+ stage["EquationResiduals"];
+ raw=Join[support[images],sources[images]];
  If[!And@@(zero /@ (canonicalLinear /@ ((raw/.Dispatch[rules])-raw))),Return[fail["NonIdempotentReduction","Reduction images are not normal forms."]]];
- <|"Rules"->rules,"ReducedTargets"->(canonicalLinear /@ (canonTargets/.Dispatch[rules])),
+ stage["Idempotence"];
+ result=<|"StageTimings"->timings,"ReductionReused"->False,"Rules"->rules,"ReducedTargets"->(canonicalLinear /@ (canonTargets/.Dispatch[rules])),
+  "SameLoopRules"->Take[rules,Length[cols]],"BoundaryRules"->Drop[rules,Length[cols]],
+  "ColumnOrder"->all,"BoundaryConstraintOrigin"->"Existing input equations only",
   "RawMasters"->support[canonTargets/.Dispatch[rules]],"BoundarySources"->sources[canonTargets/.Dispatch[rules]],
   "SelfReducedTargets"->Select[support[canonTargets],zero[(#/.Dispatch[rules])-#]&],
   "UnseenTargets"->Complement[support[canonTargets],support[rows]],
   "ExactEquationResidualsZero"->True,"Idempotent"->True,"Solver"->solver,
-  "Ordering"->"Prefer factorized free representatives, zero loop ISP, simple isolated boxes; tadpoles exempt",
-  "Columns"->Length[all],"EquationCount"->Length[rows]|>];
+  "Ordering"->Lookup[f,"IntegralOrdering","LadderFirst"],
+  "Columns"->Length[all],"EquationCount"->Length[rows]|>;
+ If[reuse,$lastVerifiedReduction=<|"Key"->cacheKey,"Result"->result|>];result];
 
 badClusters[f_,g_G]:=With[{a=List@@g},Select[Subsets[Range[f["LoopCount"]],{2,f["LoopCount"]}],
  Function[block,Total[a[[Select[f["LoopLoopIDs"],SubsetQ[block,f["Supports"][[#]]]&]]]]>=2(Length[block]-1)]]];

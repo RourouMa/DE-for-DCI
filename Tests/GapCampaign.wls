@@ -1,0 +1,13 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[test_,name_]:=If[TrueQ[test],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[1,kinematics,{x,y}];top=G[1,1,1,1,1];pool=GenerateSystem[f,{top}];
+run=RunDE[f,top,"InitialEquations"->Take[pool["Equations"],1],"Solver"->"Exact","ProgressFunction"->None];
+assert[run["Closed"] && run["FlatnessVerified"],"partial pool closes through automatic gap repair"];
+h=run["GenerationHistory"];
+assert[AnyTrue[h,TrueQ[Lookup[#,"FocusedGapSeeding",False]]&],"current unresolved targets trigger focused seeding"];
+assert[And@@(ConformalIBP`Private`originalDomainExpressionQ[f,Last[#]]& /@ run["CompletedApplications"]),"all actual repair seeds stay inside domain"];
+assert[And@@(Lookup[#,"GapTargets",{}]=!={}& /@ Select[h,TrueQ[Lookup[#,"FocusedGapSeeding",False]]&]),"focused generation records its missing queries"];
+reference=RunDE[f,top,"InitialEquations"->pool["Equations"],"Solver"->"Exact","GapSeeding"->False,"ProgressFunction"->None];
+assert[run["Basis"]===reference["Basis"] && run["Matrices"]===reference["Matrices"],"focused and broad campaigns give identical one-loop DE"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

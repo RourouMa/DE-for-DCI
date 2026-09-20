@@ -1,0 +1,25 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+assert[x_,label_]:=If[TrueQ[x],Print["PASS ",label],Print["FAIL ",label];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialization"];
+Needs["ProcessLink`"];
+streams=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"ff-target-test-"<>CreateUUID[]}]];
+Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},
+ kin={SP[X1,X1]->2 x,SP[X3,X3]->2 x,SP[X2,X2]->2 y,SP[X4,X4]->2 y,SP[X1,X3]->1+x^2,SP[X2,X4]->1+y^2,SP[X1,X2]->0,SP[X1,X4]->0,SP[X2,X3]->0,SP[X3,X4]->0};
+ f=LadderFamily[2,kin,{x,y}];g=CanonicalIntegral[f,G@@Join[f["TopSector"],{1,1}]];
+ b1=BoundaryIntegral[1,{1,1,1,1,1}];b2=BoundaryIntegral[1,{2,0,2,0,1}];b3=BoundaryIntegral[1,{3,0,1,0,1}];b4=BoundaryIntegral[1,{4,0,0,0,1}];
+ eq={g-b1,b1-x b2,b3-3 b4};
+ red=ReduceTargetIntegrals[f,{g,b1},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlow"];
+ automatic=ReduceTargetIntegrals[f,{g,b1},eq,"Solver"->Automatic,"MinimumSelectionRows"->0];
+ assert[AssociationQ[automatic] && TrueQ[automatic["FullPoolTargetAgreement"]],"automatic loaded FiniteFlow selects verified dependency backend"];
+ full=ReduceIntegrals[f,{g,b1},eq,"Solver"->"Exact"];
+ assert[AssociationQ[red] && red["ReducedTargets"]===full["ReducedTargets"],"symbolic target and source normal forms match full exact system"];
+ cert=red["VerificationCertificate"];assert[cert["FullPoolTargetAgreement"] && cert["ExactSelectedRowSpaceCertified"],"full-target comparison plus independent selected rank certificate"];
+ rows=ConformalIBP`Private`canonExpr[f,#]& /@ eq;
+ assert[And@@(ConformalIBP`Private`zero /@ (rows[[cert["OriginalRowIndices"]]]/.Dispatch[cert["Rules"]])),"original row provenance survives two-stage selection"];
+ assert[Length[cert["OriginalRowIndices"]]===2,"irrelevant component excluded"];
+ free=ReduceTargetIntegrals[f,{b4},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlow"];
+ If[!AssociationQ[free],Print[free]];
+ assert[AssociationQ[free] && free["ReducedTargets"]==={b4},"free queried variable preserved"];
+ stronger=ReduceTargetIntegrals[f,{g,b3},Append[eq,b2-b4],"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlow"];
+ assert[AssociationQ[stronger] && stronger["ReducedTargets"]==={x b4,3 b4},"extension and additional component update normal forms"];
+ assert[$MessageList==={},"no unexpected Wolfram messages"]];Quit[0];

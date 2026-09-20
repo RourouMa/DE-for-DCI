@@ -2,7 +2,7 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.1.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.2.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
@@ -79,7 +79,7 @@ Supported integrands have integer powers of scalar products and unit delta indic
 ## What Is Automated
 
 1. Analytic delta-tangent rotation operators, classified by all loop-scaling degrees. Four loops give 84 rotations in 11 degree classes. This backend does not need Singular and is not an arbitrary protected-propagator syzygy solver.
-2. Component-local **axial +1/-1** seed neighborhoods and seed/operator degree matching. Independent factor neighborhoods are combined by Cartesian products. All degree classes are considered, and empty classes are reported.
+2. Component-local **axial +1/-1** seed neighborhoods and seed/operator degree matching. Independent factor neighborhoods use Cartesian products by default; `"BlockExpansion" -> "SingleBlock"` enables the measured smaller alternative. All degree classes are considered, and empty classes are reported.
 3. IBP actions including endpoint-local isolated double-collision contact terms. Whole finite combinations are additionally acted on by degree-zero operators before checking infinity cancellation.
 4. All loop permutations and Gram-preserving external permutations. Distinct factor blocks undergo independent external transformations, including simultaneous transformations on every block. Every generated support is canonicalized.
 5. Gaussian column ordering that prefers factorized free representatives, zero loop-loop ISP indices, and simple isolated boxes. High powers in an isolated tadpole are not, by themselves, a complexity failure.
@@ -154,3 +154,63 @@ WolframKernel -script Tests/CompareLegacy.wls /path/to/IBP4loop.wl
 ```
 
 The repository excludes original research inputs, PDFs, large relation caches and computed campaign outputs. No four-loop closure result is bundled or implied.
+
+## Optimized reduction and default seeding (0.2.0)
+
+`RunDE` and `RunReduction` now default to original `TopSector` seeds,
+`"GapSeeding" -> True`, `"GenerationPolicy" -> "OnDemand"`, and
+`"ReductionScope" -> "Targets"`. DE generation is skipped when queries are covered
+and a finite cover exists. For an existing pool, uncovered queries and failures
+of finite-cover construction trigger local seeding around **all original-domain
+symmetry images** of the unresolved integrals, including connected targets.
+If this adds no new equation, the same-domain search widens to the current
+queries, representatives and neighboring equation terms. Every extension
+replays the original inputs; an exhausted search is not a closure certificate.
+`GenerationHistory` records centers, gaps, policy, rejected applications and work.
+
+Families default to `"IntegralOrdering" -> "LadderFirst"`: prefer original-domain
+symmetry representatives and eliminate outside-domain columns first. Use
+`CreateFamily[Join[KeyDrop[family, {"Hash"}],
+<|"IntegralOrdering" -> "Legacy"|>]]` for the previous ordering.
+
+Explicit alternatives:
+
+```wolfram
+RunDE[family, top, "SeedDomain" -> "Extended"]; (* permit completion/supersector seeds *)
+RunDE[family, top, "BlockExpansion" -> "SingleBlock"];
+RunDE[family, top, "GapSeeding" -> False];        (* broad centers on generation *)
+GenerateSystem[family, targets, "SeedCenters" -> "AllOriginalImages"];
+GenerateSeeds[family, targets, Automatic, "SeedCenters" -> "Representative"];
+```
+
+`SeedCenters` accepts `Raw`, `Representative`, or `AllOriginalImages` on direct
+seed/system generation. Missing original-domain images are reported as
+`UnmappedCenters`. Direct `IBPRelation` remains a low-level evaluator; the
+seed-domain policy governs `GenerateSeeds`, `GenerateSystem`, and campaigns.
+Changing seed policy does not erase declared completion domains needed to
+represent generated equations. `SingleBlock` remains opt-in because its
+combination with every domain-only closure problem is not yet established.
+
+Included implementation optimizations: compiled ordinary IBP shifts; shared
+operator-degree seed geometry; coefficient-wise rational normalization and
+one expansion per coefficient-matrix row; sparse FiniteFlow output; dependency
+selection of original equation rows; exact residual/idempotence checks;
+full-pool target comparison for the FiniteFlow selector; sampling, permutation,
+symmetry-orbit, application and verified-reduction caches; worker cache transfer
+and checkpoint fingerprints. See [the optimization and strategy report](docs/OPTIMIZATIONS_20260920.zh-CN.md).
+
+Gram relations remain an explicitly loaded candidate extension in
+`Extensions/GramCandidates.wl`; campaigns never add them automatically.
+Old checkpoints intentionally fail implementation/version checks: start a new
+campaign rather than transplanting an old application ledger into changed code.
+
+Run the portable regression suite with:
+
+```sh
+python3 scripts/run-tests.py --kernel /path/to/WolframKernel
+# Include the optional FiniteFlow tests:
+FINITEFLOW_ROOT=/path/to/finiteflow python3 scripts/run-tests.py --kernel /path/to/WolframKernel
+```
+
+Archive comparison scripts in `Tests/` additionally require the baseline/job
+files described at their beginning; they are not part of the portable suite.

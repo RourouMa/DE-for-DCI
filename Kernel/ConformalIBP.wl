@@ -13,29 +13,32 @@ CanonicalIntegral::usage="CanonicalIntegral[family,G[...]] canonicalizes exact e
 DifferentiateIntegrals::usage="DifferentiateIntegrals[family,expressions] differentiates complete expressions before collecting targets.";
 FiniteIntegralQ::usage="FiniteIntegralQ[family,expression] applies a conservative collision-cancellation test, not an arbitrary zero-sum rule.";
 BuildFiniteBasis::usage="BuildFiniteBasis[family,rows] constructs a minimal constant-coefficient divergent block cover and verifies it.";
-ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verified Gaussian reduction, with factorized free representatives preferred.";
+ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verified Gaussian reduction, with original-domain and then factorized free representatives preferred.";
+ReduceTargetIntegrals::usage="ReduceTargetIntegrals[family,targets,equations] verifies a target reduction using a dependency-selected subset of original equations and returns its certificate.";
 RunReduction::usage="RunReduction[family,targets,options] generates and iterates a target reduction campaign.";
 RunDE::usage="RunDE[family,inputs,options] restarts from the original inputs after every system extension and tests actual derivative closure.";
 ResumeRun::usage="ResumeRun[directory] resumes a versioned, hash-checked trusted local checkpoint.";
 InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirectory] loads an optional FiniteFlow installation without hard-coded paths.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.1.0";
+$ConformalIBPVersion="0.2.0";
 SetAttributes[SP,Orderless];
 $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"ConformalIBP.wl","Reduction.wl","Iteration.wl"},"SHA256"];
+ {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","../scripts/select-equation-rows.py"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
 sources[e_]:=Union[Cases[{e},_BoundaryIntegral,Infinity]];
-canonicalLinear[e_]:=Module[{atoms=Join[support[e],sources[e]],a=Expand[e],c},
- c=Together[Coefficient[a,#]]& /@ atoms;
- If[!zero[a-c.atoms],Return[fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]];
- c.atoms];
-coeff[rows_,vars_]:=Table[Together[Coefficient[Expand[r],g]],{r,rows},{g,vars}];
+canonicalLinear[e_]:=Module[{atoms=Join[support[e],sources[e]],terms},
+ If[atoms==={},Return[If[zero[e],0,fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]]];
+ terms=Quiet[Check[CoefficientRules[Expand[e],atoms],$Failed]];
+ If[!ListQ[terms] || !And@@(Total[First[#]]===1 && FreeQ[Last[#],_G|_BoundaryIntegral]& /@ terms),
+  Return[fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]];
+ Total[(Together[Last[#]] atoms[[First[FirstPosition[First[#],1]]]])& /@ terms]];
+coeff[rows_,vars_]:=Table[With[{expanded=Expand[r]},Together[Coefficient[expanded,#]]& /@ vars],{r,rows}];
 rr[m_]:=If[m==={} || First[m]==={},{},Select[RowReduce[m],!And@@(zero /@ #)&]];
 pivots[m_]:=First[FirstPosition[#,a_/;!zero[a],Missing[],{1},Heads->False]]& /@ m;
 edges[l_]:=Join[Partition[Range[l],2,1],Complement[Subsets[Range[l],{2}],Partition[Range[l],2,1]]];
@@ -48,8 +51,9 @@ CreateFamily[spec_Association]:=Module[{f,xs,ys,p,expected,top,kin,vars,gram,per
  f=Join[<|"Name"->"ConformalFamily","Variables"->{},"Kinematics"->{},
  "Propagators"->Automatic,"ExternalDerivatives"->Automatic,
  "ExternalPermutations"->Automatic,"SuperSectors"->{},"Completion"->"FamilyOnly",
- "MaxLoopPower"->2,"Dimension"->4,"FiniteValidator"->Automatic|>,spec];
+ "IntegralOrdering"->"LadderFirst","MaxLoopPower"->2,"Dimension"->4,"FiniteValidator"->Automatic|>,spec];
  If[f["Dimension"]=!=4,Return[fail["Dimension","The built-in conformal weights and contact normalization currently require dimension four."]]];
+ If[!MemberQ[{"LadderFirst","Legacy"},f["IntegralOrdering"]],Return[fail["IntegralOrdering","Use LadderFirst or Legacy."]]];
  xs=Lookup[f,"External",{}];ys=Lookup[f,"Loops",{}];vars=f["Variables"];kin=f["Kinematics"];
  If[xs==={} || ys==={} || !DuplicateFreeQ[Join[xs,ys]] || !VectorQ[Join[xs,ys,vars],MatchQ[#,_Symbol]&],
   Return[fail["InvalidVectors","External, Loops and Variables must be lists of distinct symbolic vectors/parameters."]]];
@@ -118,43 +122,99 @@ domainQ[f_,g_G]/;validIntegral[f,g]:=With[{a=List@@g},
 GenerateOperators[f_Association]:=Flatten[Table[With[{rest=DeleteCases[Join[f["External"],f["Loops"]],f["Loops"][[i]]]},
  Table[<|"Loop"->i,"A"->ab[[1]],"B"->ab[[2]],
  "Degree"->(-Table[Count[ab,f["Loops"][[j]]],{j,f["LoopCount"]}])|>,{ab,Subsets[rest,{2}]}]],{i,f["LoopCount"]}],1];
-relabel[f_,g_,rule_]:=Module[{a=List@@g,new=FamilyPropagators[f]/.rule,ids},
- ids=First[FirstPosition[FamilyPropagators[f],#]]& /@ new;
+relabelIDs[h_,f_,rule_]:=relabelIDs[h,f,rule]=With[{p=FamilyPropagators[f]},
+ First[FirstPosition[p,#]]& /@ (p/.rule)];
+relabel[f_,g_,rule_]:=Module[{a=List@@g,ids=relabelIDs[f["Hash"],f,rule]},
  G@@ReplacePart[ConstantArray[0,Length[a]],Thread[ids->a]]];
-CanonicalIntegral[f_Association,g_G]:=canonMemo[f["Hash"],f,g];
-canonMemo[h_,f_,g_]:=canonMemo[h,f,g]=Module[{ps,variants,rule,b},
+(* Portable, family-scoped mappings complement the in-kernel orbit memo.
+   Workers and checkpoints carry only mappings actually requested, not full orbits. *)
+symmetryKnown[h_]:=symmetryKnown[h]=<||>;
+CanonicalIntegral[f_Association,g_G]:=Module[{h=f["Hash"],r},
+ If[KeyExistsQ[symmetryKnown[h],g],Return[symmetryKnown[h][g]]];
+ r=canonMemo[h,f,g];
+ If[MatchQ[r,_G],AssociateTo[symmetryKnown[h],{g->r,r->r}]];r];
+exportSymmetryCache[f_,exclude_:{}]:=Module[{m=KeyDrop[symmetryKnown[f["Hash"]],exclude],a},
+ a=<|"FamilyHash"->f["Hash"],"ImplementationHash"->$implementationHash,"Mappings"->m|>;
+ Append[a,"Hash"->Hash[a,"SHA256"]]];
+importSymmetryCache[f_,a_Association]:=Module[{m,known=symmetryKnown[f["Hash"]],overlap,merged},
+ If[Lookup[a,"FamilyHash",None]=!=f["Hash"] || Lookup[a,"ImplementationHash",None]=!=$implementationHash ||
+  Lookup[a,"Hash",None]=!=Hash[KeyDrop[a,"Hash"],"SHA256"],
+  Return[fail["SymmetryCacheMismatch","Symmetry cache family, implementation or content changed."]]];
+ m=Lookup[a,"Mappings",None];
+ If[!AssociationQ[m] || !And@@(MatchQ[#,_G] && validIntegral[f,#]& /@ Join[Keys[m],Values[m]]),
+  Return[fail["SymmetryCacheShape","Invalid symmetry cache mappings."]]];
+ overlap=Intersection[Keys[known],Keys[m]];merged=Join[known,m];
+ If[!And@@(known[#]===m[#]& /@ overlap) ||
+  !And@@(Lookup[merged,#,None]===#& /@ DeleteDuplicates[Values[m]]),
+  Return[fail["SymmetryCacheConflict","Conflicting or non-idempotent symmetry mappings."]]];
+ symmetryKnown[f["Hash"]]=merged;True];
+(* Reuse exact index permutations and allowed-domain masks by component partition. *)
+orbitIndexMaps[h_,f_,ps_]:=orbitIndexMaps[h,f,ps]=Module[{base=Range[Length[FamilyPropagators[f]]],maps,ids,extIDs,permIDs},
+ extIDs=Table[First[FirstPosition[f["Propagators"],SP[f["External"][[a]],f["Loops"][[i]]]]],{i,f["LoopCount"]},{a,Length[f["External"]]}];
+ permIDs=Ordering[relabelIDs[h,f,Thread[f["Loops"]->f["Loops"][[#]]]]]& /@ Permutations[Range[f["LoopCount"]]];
+ maps=Table[ids=base;
+ Do[Do[Do[ids[[extIDs[[i,choice[[k,a]]]]]]=extIDs[[i,a]],{a,Length[f["External"]]}],{i,ps[[k]]}],{k,Length[ps]}];
+ (ids[[#]]& /@ permIDs),{choice,Tuples[f["ExternalPermutations"],Length[ps]]}];
+ DeleteDuplicates[Flatten[maps,1]]];
+orbitDomainRecords[h_,f_,ps_]:=orbitDomainRecords[h,f,ps]=Module[{ids,example,gs,ts},
+ ids=orbitIndexMaps[h,f,ps];
+ example=G@@Join[ConstantArray[0,Length[f["Propagators"]]],ConstantArray[1,f["LoopCount"]]];
+ Do[Do[example=G@@ReplacePart[List@@example,First[FirstPosition[f["Propagators"],SP@@f["Loops"][[pair]]]]->1],{pair,Partition[block,2,1]}],{block,ps}];
+ Table[gs=G@@(List@@example)[[id]];ts=templates[f,gs];
+ {id, (Total[2^(id[[#]]-1)]& /@ ts)}, {id,ids}]];
+canonMemo[h_,f_,g_]:=canonMemo[h,f,g]=Module[{a=List@@g,records,positive,ids,variants,representative},
  If[!validIntegral[f,g],Return[fail["IntegralShape","Invalid integral index vector."]]];
- ps=parts[f,g];
- variants=Flatten[Table[b=g;
-  Do[Do[rule=Thread[f["External"]->f["External"][[choice[[k]]]]];
-   b=G@@ReplacePart[List@@b,Table[With[{old=First[FirstPosition[f["Propagators"],SP[x,f["Loops"][[i]]]]],
-    dest=First[FirstPosition[f["Propagators"],SP[x/.rule,f["Loops"][[i]]]]]},dest->(List@@g)[[old]]],{x,f["External"]}]],{i,ps[[k]]}],{k,Length[ps]}];
-  Table[relabel[f,b,Thread[f["Loops"]->f["Loops"][[perm]]]],{perm,Permutations[Range[f["LoopCount"]]]}],
-  {choice,Tuples[f["ExternalPermutations"],Length[ps]]}],1];
- variants=Select[DeleteDuplicates[variants],domainQ[f,#]&];
+ If[AnyTrue[a[[f["LoopLoopIDs"]]],#>f["MaxLoopPower"]&],Return[fail["OutsideFamily","No symmetry image lies in the declared family/supersector domains."]]];
+ records=orbitDomainRecords[h,f,parts[f,g]];
+ positive=Total[2^(Flatten[Position[Take[a,Length[f["Propagators"]]],_?Positive]]-1)];
+ ids=First /@ Select[records,Function[rec,AnyTrue[rec[[2]],BitAnd[positive,#]===positive&]]];
+ variants=DeleteDuplicates[G@@a[[#]]& /@ ids];
  If[variants==={},Return[fail["OutsideFamily","No symmetry image lies in the declared family/supersector domains."]]];
- First[Sort[variants]]];
+ representative=If[Lookup[f,"IntegralOrdering","LadderFirst"]==="LadderFirst",
+  First[SortBy[variants,{Boole[!originalDomainIntegralQ[f,#]]&,Identity}]],First[Sort[variants]]];
+ Scan[(canonMemo[h,f,#]=representative)&,variants];representative];
 canonExpr[f_,e_]:=Module[{gs=support[e],images},images=CanonicalIntegral[f,#]& /@ gs;
  If[AnyTrue[images,FailureQ],Return[First[Select[images,FailureQ]]]];
  canonicalLinear[e/.Dispatch[Thread[gs->images]]]];
 
-GenerateSeeds[f_Association,targets_List,ops_:Automatic]:=Module[{operators=Replace[ops,Automatic:>GenerateOperators[f]],centers,records},
- centers=DeleteDuplicates[support[targets]];
- If[!And@@(validIntegral[f,#]& /@ centers),Return[fail["IntegralShape","Invalid seed center."]]];
- records=Table[With[{op=operators[[k]]},Module[{candidates={},ps,pools,ids,a,top,local,vs,combined},
+originalDomainIntegralQ[f_,g_G]:=SubsetQ[Flatten[Position[f["TopSector"],1]],Flatten[Position[Take[List@@g,Length[f["Propagators"]]],_?Positive]]];
+originalDomainExpressionQ[f_,e_]:=And@@(originalDomainIntegralQ[f,#]& /@ support[e]);
+originalSeedImages[f_,g_G]:=originalSeedImages[f,g]=Module[{a=List@@g,variants},
+ variants=DeleteDuplicates[(G@@a[[#]]& /@ orbitIndexMaps[f["Hash"],f,parts[f,g]])];
+ Select[variants,originalDomainIntegralQ[f,#] && domainQ[f,#]&]];
+Options[GenerateSeeds]={"SeedDomain"->"Original","SeedCenters"->"Raw","BlockExpansion"->"Cartesian"};
+GenerateSeeds[f_Association,targets_List,ops_:Automatic,OptionsPattern[]]:=Module[{operators=Replace[ops,Automatic:>GenerateOperators[f]],
+ centers,rawCenters,unmapped,records,candidates={},degrees,byDegree,ps,pools,ids,a,local,vs,combined,tuples,
+ seedDomain=OptionValue["SeedDomain"],centerPolicy=OptionValue["SeedCenters"],blockPolicy=OptionValue["BlockExpansion"]},
+ If[!MemberQ[{"Original","Extended"},seedDomain] || !MemberQ[{"Raw","Representative","AllOriginalImages"},centerPolicy] || !MemberQ[{"Cartesian","SingleBlock"},blockPolicy],
+  Return[fail["SeedPolicy","Invalid SeedDomain, SeedCenters or BlockExpansion."]]];
+ rawCenters=support[targets];
+ If[!And@@(validIntegral[f,#]& /@ rawCenters),Return[fail["IntegralShape","Invalid seed center."]]];
+ unmapped=If[centerPolicy==="Raw",{},Select[rawCenters,originalSeedImages[f,#]==={}&]];
+ centers=Switch[centerPolicy,"Raw",rawCenters,"AllOriginalImages",Union[Flatten[originalSeedImages[f,#]& /@ rawCenters]],
+  "Representative",Union[Flatten[Take[originalSeedImages[f,#],UpTo[1]]& /@ rawCenters]]];
+ degrees=Union[Lookup[operators,"Degree",{}]];
+ (* Enumerate each neighborhood once, then share degree batches across operators. *)
+ If[operators=!={},
   Do[a=List@@g;ps=parts[f,g];
    Do[pools=Table[ids=Select[Range[Length[f["Propagators"]]],SubsetQ[block,f["Supports"][[#]]]&];
     local=Union[{a[[ids]],Boole[MemberQ[den,#]]& /@ ids}];
     vs=DeleteDuplicates[Flatten[Table[Join[{v},(v+#& /@ IdentityMatrix[Length[ids]]),
       (v-#& /@ IdentityMatrix[Length[ids]])],{v,local}],1]];
     {ids,vs},{block,ps}];
+    tuples=If[blockPolicy==="Cartesian",Tuples[pools[[All,2]]],
+      DeleteDuplicates[Flatten[Table[ReplacePart[(a[[#]]& /@ pools[[All,1]]),k->v],{k,Length[pools]},{v,pools[[k,2]]}],1]]];
     combined=Table[G@@Fold[ReplacePart[#1,Thread[#2[[1]]->#2[[2]]]]&,a,
-      MapThread[List,{pools[[All,1]],tuple}]],{tuple,Tuples[pools[[All,2]]]}];
-    candidates=Join[candidates,Select[combined,domainQ[f,#] && weights[f,List@@#]+op["Degree"]===ConstantArray[4,f["LoopCount"]]&]],
-    {den,templates[f,g]}],{g,centers}];
-  <|"OperatorIndex"->k,"Degree"->op["Degree"],"Seeds"->Union[candidates]|>]],{k,Length[operators]}];
- <|"Batches"->records,"Operators"->operators,"Centers"->centers,
-  "Geometry"->"Component-local axial +/-1; Cartesian products only between independent blocks",
+      MapThread[List,{pools[[All,1]],tuple}]],{tuple,tuples}];
+    candidates=Join[candidates,combined],{den,templates[f,g]}],{g,centers}];
+  candidates=Select[Union[candidates],MemberQ[degrees,ConstantArray[4,f["LoopCount"]]-weights[f,List@@#]] && domainQ[f,#] &&
+    (seedDomain==="Extended" || originalDomainIntegralQ[f,#])&]];
+ byDegree=GroupBy[candidates,ToString[ConstantArray[4,f["LoopCount"]]-weights[f,List@@#],InputForm]&];
+ records=Table[With[{op=operators[[k]]},
+  <|"OperatorIndex"->k,"Degree"->op["Degree"],"Seeds"->Lookup[byDegree,ToString[op["Degree"],InputForm],{}]|>],{k,Length[operators]}];
+ <|"Batches"->records,"Operators"->operators,"Centers"->centers,"UnmappedCenters"->unmapped,
+  "SeedDomain"->seedDomain,"SeedCenters"->centerPolicy,"BlockExpansion"->blockPolicy,
+  "Geometry"->("Component-local axial +/-1; "<>blockPolicy),
   "EmptyDegrees"->Union[Lookup[Select[records,#["Seeds"]==={}&],"Degree",{}]]|>];
 
 scalarRules[f_]:=Join[f["Kinematics"],Thread[f["DeltaPropagators"]->0]];
@@ -185,19 +245,27 @@ dropEmpty[f_,g_]:=Module[{a=List@@g,empty,keep,ys,props,ids},
  If[empty==={},Return[g]];keep=Complement[Range[f["LoopCount"]],empty];ys=f["Loops"][[keep]];
  props=standardProps[f["External"],ys];ids=First[FirstPosition[f["Propagators"],#]]& /@ props;
  BoundaryIntegral[Length[keep],Join[a[[ids]],ConstantArray[1,Length[keep]]]]];
-IBPRelation[f_Association,op_Association,seed_]:=Module[{gs=support[seed],cs,raw,ct,result},
+ordinaryShiftTemplate[h_,f_,op_]:=ordinaryShiftTemplate[h,f,op]=Module[{p=f["Propagators"],yi=f["Loops"][[op["Loop"]]],rules},
+ Table[If[!MemberQ[List@@p[[j]],yi],{},
+ rules=CoefficientRules[Expand[-dotVector[f,op,First[DeleteCases[List@@p[[j]],yi]]]/.scalarRules[f]],p];
+ ({UnitVector[Length[p],j]-First[#],Last[#]}& /@ rules)],{j,Length[p]}]];
+ordinaryShiftAction[f_,op_,g_G]:=Module[{a=Take[List@@g,Length[f["Propagators"]]],template=ordinaryShiftTemplate[f["Hash"],f,op]},
+ Total[Flatten[Table[If[a[[j]]===0,{},(a[[j]] #[[2]] dropEmpty[f,G@@Join[a+#[[1]],ConstantArray[1,f["LoopCount"]]]]& /@ template[[j]])],{j,Length[a]}]]]];
+shiftIBPRelation[f_Association,op_Association,seed_]:=Module[{gs=support[seed],cs,ct,ordinaryPart,result},
  If[gs==={} || !And@@(validIntegral[f,#] && weights[f,List@@#]+op["Degree"]===ConstantArray[4,f["LoopCount"]]& /@ gs),
   Return[fail["DegreeMismatch","Seed and operator degrees do not give conformal integrals."]]];
- If[Length[gs]>1 && op["Degree"]=!=ConstantArray[0,f["LoopCount"]],
-  Return[fail["WholeOperatorDegree","Whole conformal combinations require degree-zero operators."]]];
+ If[Length[gs]>1 && op["Degree"]=!=ConstantArray[0,f["LoopCount"]],Return[fail["WholeOperatorDegree","Whole conformal combinations require degree-zero operators."]]];
  cs=First[coeff[{seed},gs]];ct=contacts[f,op,#]& /@ gs;
  If[AnyTrue[ct,FailureQ],Return[First[Select[ct,FailureQ]]]];
- raw=Together[cs.((ordinary[f,op,#]& /@ gs)+ct)];result=toIntegral[f,raw];
- If[FailureQ[result],Return[result]];
- result=canonExpr[f,result];If[FailureQ[result],Return[result]];
+ ct=toIntegral[f,Together[cs.ct]];If[FailureQ[ct],Return[ct]];
+ ordinaryPart=cs.(ordinaryShiftAction[f,op,#]& /@ gs);
+ If[!FreeQ[ordinaryPart,_SP],Return[fail["OutsideScalarProducts","Uncancelled infinity or out-of-family scalar products remain."]]];
+ result=canonExpr[f,ordinaryPart+ct];If[FailureQ[result],Return[result]];
  If[!And@@(domainQ[f,#] && weights[f,List@@#]===ConstantArray[4,f["LoopCount"]]& /@ support[result]),
   Return[fail["IBPDomain","IBP output violates a declared ISP domain, pole cap or conformal degree."]]];
  result];
+
+IBPRelation[f_Association,op_Association,seed_]:=shiftIBPRelation[f,op,seed];
 
 DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["Propagators"],rat,dp,out},
  If[sources[expressions]=!={},Return[fail["BoundaryInput","Differentiate lower-loop sources in their own family; they cannot be treated as constants."]]];
@@ -212,5 +280,6 @@ DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["
  <|"Rows"->rows,"Targets"->support[Values[rows]],"WholeCombinationsSimplifiedFirst"->True|>];
 
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Reduction.wl"}]];
+Get[FileNameJoin[{DirectoryName[$InputFileName],"TargetReduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Iteration.wl"}]];
 End[];EndPackage[];

@@ -9,3 +9,6 @@
 *.mx
 *.wxf
 *.log
+
+__pycache__/
+*.pyc

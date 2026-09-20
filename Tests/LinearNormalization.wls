@@ -1,0 +1,17 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+assert[test_,name_]:=If[TrueQ[test],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+normal=ConformalIBP`Private`canonicalLinear;
+g=G[1];h=G[2];b=BoundaryIntegral[1,{1}];
+assert[normal[x g/(x+1)+g/(x+1)]===g,"rational coefficients collected exactly"];
+assert[normal[(x^2-1)g/(x-1)]===(1+x)g,"coefficient simplification retained"];
+assert[normal[0]===0 && normal[g-g]===0,"zero rows accepted"];
+assert[normal[g+b]===g+b,"same-loop and source terms retained"];
+assert[And@@(FailureQ[normal[#]]& /@ {1,g+1,g h,g^2,g b,1/g,Sin[g],g/(1+h)}),"constants nonlinear products and nonpolynomial integral expressions rejected"];
+SeedRandom[1234];
+Do[coeffs=Table[RandomInteger[{-5,5}] (1+x)^RandomInteger[{0,3}]/(1+y)^RandomInteger[{0,3}],{4}];
+ expr=coeffs.{g,h,b,g};expected=Together[coeffs[[1]]+coeffs[[4]]]g+Together[coeffs[[2]]]h+Together[coeffs[[3]]]b;
+ actual=normal[expr];
+ reference=(Together[Coefficient[Expand[expr],#]]& /@ {g,h,b}).{g,h,b};
+ If[actual=!=expected,Print[<|"Case"->k,"SameAsPreviousImplementation"->(actual===reference),"ExactDifference"->Together[actual-expected]|>]];
+ assert[actual===reference && TrueQ[Together[actual-expected]===0],"random exact linear case "<>ToString[k]],{k,20}];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

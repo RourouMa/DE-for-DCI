@@ -1,0 +1,101 @@
+{
+  "version": "0.2.0",
+  "date": "2026-09-20",
+  "wolfram_version": "13.0",
+  "tests": [
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 6.569,
+      "assertions": 29
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 5.759,
+      "assertions": 11
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.918,
+      "assertions": 26
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.919,
+      "assertions": 8
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.889,
+      "assertions": 10
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 4.505,
+      "assertions": 12
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.9,
+      "assertions": 10
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 4.034,
+      "assertions": 0
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 5.155,
+      "assertions": 7
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 8.523,
+      "assertions": 0
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 4.532,
+      "assertions": 9,
+      "includes_automatic_backend": true
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "assertions": 6
+    }
+  ],
+  "all_exit_codes_zero": true,
+  "additional_finiteflow_cache_test": "passed; reused and fresh FiniteFlow agree with exact elimination",
+  "three_loop_closed_pool_replay": {
+    "input_rows": 16274,
+    "finite_components": 25,
+    "same_basis": true,
+    "same_matrices": true,
+    "same_boundary_rows": true,
+    "same_input_coordinates": true,
+    "closed_modulo_boundary": true,
+    "no_new_seeds_needed": true,
+    "scope": "Replay of previously verified original-domain closed pool; not an empty-pool benchmark or a new four-loop closure proof",
+    "reproduce": "Tests/ClosedPoolReplay.wls with trusted archived checkpoint"
+  },
+  "source_sha256": {
+    "Kernel/Reduction.wl": "4d787494452febc5bfdf15b4c18de72dba032eabc053a6af5e82957420b0ba4b",
+    "Kernel/Iteration.wl": "6eebe513d5bd7fde11cbc86c9e00069c257ff54daed0e95b70a1d14a2bc8ae3e",
+    "Kernel/ConformalIBP.wl": "0f0071ca55e96a6188af80428cd1d326c0c0e2b0542e9a091a03e639dd0c8018",
+    "Kernel/TargetReduction.wl": "8a125a29c254e43c8f2aa51255b842722b5f09eaaa4a441c0df3786c7658fc2a",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
+    "scripts/ibp-worker.wls": "136a3c01d1bd3376a2ce42b426989aba6b9574bb7a78b3eae9f4f0081f0c00a9"
+  }
+}
