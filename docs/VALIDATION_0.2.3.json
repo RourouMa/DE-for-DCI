@@ -1,0 +1,35 @@
+{
+  "version": "0.2.3",
+  "validated_at": "2026-09-20T20:36:27.315662+08:00",
+  "scope": "Targeted regression for completed finite-combination worker dispatch; not a rerun of the full 0.2.2 suite",
+  "tests": [
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 12.484
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 5.943
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 8.227
+    }
+  ],
+  "source_sha256": {
+    "Kernel/ConformalIBP.wl": "c1e04635080a218fe0ac0335159afc8b4679948b42b52126fb4f6b3c2f96db5a",
+    "Kernel/Iteration.wl": "cba905662771bea89ae9f896c619b5be2e0102c49cf3629c7b3f0039e8c4cc31",
+    "Tests/SeedDeduplication.wls": "6f032f237b8492e65cda5e5b756293abd059a724119a4dae4627e2e04d134a80",
+    "Tests/GapCampaign.wls": "dc93cdab3a42c3aaf6426965c4aba41bf8c6a0be0c449c33c1e2adef974ae896",
+    "Tests/Workers.wls": "b77527ab507f964f8c9cfa7272496e7588c30565a331c5eeca76f79959bd42f8"
+  },
+  "test_outputs": {
+    "SeedDeduplication": "PASS parallel incremental generation succeeds\nPASS no completed operator-seed pair dispatched again\nPASS incremental applications equal fresh expanded-neighborhood applications\nPASS deduplication preserves the complete relation union\nPASS planning audit counts previously completed and pending applications\nPASS fully overlapping neighborhood launches no workers\nPASS pending finite combinations still dispatch workers\nPASS finite combination dispatch preserves applications and equations\nPASS completed ordinary and finite neighborhoods launch no workers\nPASS duplicate operator applications removed within a plan\nPASS no unexpected Wolfram messages\n",
+    "GapCampaign": "PASS partial pool closes through automatic gap repair\nPASS current unresolved targets trigger focused seeding\nPASS all actual repair seeds stay inside domain\nPASS focused generation records its missing queries\nPASS focused and broad campaigns give identical one-loop DE\nPASS no unexpected Wolfram messages\n",
+    "Workers": "<|IndependentKernels -> 4, SerialEqualsSharded -> True|>\n"
+  },
+  "active_four_loop_version": "0.2.2 frozen, unchanged"
+}

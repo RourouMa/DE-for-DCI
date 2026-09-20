@@ -1,10 +1,13 @@
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
-generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages,plan,active,ids,subplan},
+generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,imported,sharedImages,plan,active,ids,subplan,done},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
  ops=DeleteDuplicates[Replace[options["Operators"],Automatic:>GenerateOperators[f]]];
  plan=GenerateSeeds[f,targets,ops,Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];If[FailureQ[plan],Return[plan]];
  plan=pendingSeedPlan[plan,options["CompletedApplications"]];
- active=Select[Range[Length[ops]],plan["Batches"][[#]]["Seeds"]=!={} || (options["FiniteSeeds"]=!={} && ops[[#]]["Degree"]===ConstantArray[0,f["LoopCount"]])&];
+ done=Association[(#->True)& /@ options["CompletedApplications"]];
+ active=Select[Range[Length[ops]],Function[k,plan["Batches"][[k]]["Seeds"]=!={} ||
+   (ops[[k]]["Degree"]===ConstantArray[0,f["LoopCount"]] &&
+    AnyTrue[options["FiniteSeeds"],!KeyExistsQ[done,{Hash[ops[[k]],"SHA256"],#}]&])]];
  n=Min[n,Length[active]];If[n===0,Return[Join[generatePlannedSystem[f,targets,options,plan],<|"IndependentKernels"->0|>]]];
  kernel=Replace[options["KernelExecutable"],Automatic:>First[$CommandLine]];
  runner=FileNameJoin[{DirectoryName[DirectoryName[$packageFile]],"scripts","ibp-worker.wls"}];

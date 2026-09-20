@@ -2,7 +2,7 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.2.2 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.2.3 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
@@ -224,3 +224,5 @@ See [the verification notes](docs/PARALLEL_VERIFICATION.zh-CN.md).
 Recommended hardware allocation: `RecommendedWorkerCount[]` returns four fifths of logical CPUs, rounded to the nearest integer (32 → 26). Set both `"Workers"` and `"VerificationWorkers"` explicitly; FiniteFlow threads are configured separately. See [parallel configuration](docs/PARALLEL_VERIFICATION.zh-CN.md).
 
 Version 0.2.2 computes the seed plan once in the parent process and dispatches only operator/seed applications absent from the completed ledger. Fully overlapping ordinary neighborhoods launch no workers. See [seeding deduplication](docs/SEEDING_DEDUPLICATION.zh-CN.md) and [17-group validation](docs/VALIDATION_0.2.2.json).
+
+Version 0.2.3 also skips worker startup when finite-combination applications are already completed. Pending finite combinations still run. This changes dispatch only; the active four-loop campaign remains on its frozen 0.2.2 source. See [targeted validation](docs/VALIDATION_0.2.3.json).
