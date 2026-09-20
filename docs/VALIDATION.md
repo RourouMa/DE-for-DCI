@@ -1,5 +1,7 @@
 ## 0.2.7: two-point verification by default
 
+Finite-basis construction now checks the necessary zero-sum condition by substitution before extracting the coefficient matrix. This preserves multi-term candidates and boundary-source rows. `FiniteZeroSumPrefilter` passes for a certified three-term combination, nonzero-sum rejection, and source-only input. On the saved 84-row fourth-round example, the earlier direct-prefilter benchmark took 0.52 s versus 10.94 s for coefficient extraction plus summation; this is a prefilter benchmark, not an end-to-end speedup.
+
 Reduction residuals, normal-form checks, full-pool target comparisons, and historical-rule replay now use exactly two numerical points by default. Integral and boundary-source coefficients are checked individually modulo primes 1000003 and 1000033. Symbolic verification requires explicit `"VerificationMode" -> "Exact"`; numerical results do not claim exact certification. Physical finite-integral checks are unchanged. Verification mode and requested points participate in the reduction cache key.
 
 `NumericalVerification`, `ParallelResiduals`, `ReductionReuse`, `TargetReduction`, and `FiniteFlowTargetSelection` pass: good/bad rules, singular-point rejection, two-point count, explicit exact-mode cache separation, parallel row coverage, and boundary-source constraints. Live four-loop jobs retain their frozen 0.2.6 implementation and the independent two-point full-pool verifier.

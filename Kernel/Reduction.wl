@@ -186,10 +186,10 @@ constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons,failed=False},
  If[failed,$Failed,atoms]];
 BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,
  basis,m,bp,w,residue,den,definitions},
- safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];c=coeff[rows,div];
+ safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];
  If[div==={},basis=safe;rank=0;chosen={},
-  If[!And@@(zero[Total[#]]& /@ c),Return[fail["NoConstantZeroSumCover","Divergent coefficient sums are nonzero; additional relations/ordering are needed."]]];
-  atoms=constantAtoms[c,f["Variables"]];If[atoms===$Failed,Return[fail["NonRationalCoefficients","Coefficient extraction requires rational kinematic functions."]]];
+  If[!And@@(zero /@ ((rows/.Dispatch[Join[Thread[div->ConstantArray[1,Length[div]]],Thread[safe->ConstantArray[0,Length[safe]]]]])-(rows/._G->0))),Return[fail["NoConstantZeroSumCover","Divergent coefficient sums are nonzero; additional relations/ordering are needed."]]];
+  c=coeff[rows,div];atoms=constantAtoms[c,f["Variables"]];If[atoms===$Failed,Return[fail["NonRationalCoefficients","Coefficient extraction requires rational kinematic functions."]]];
   env=rr[atoms];p=pivots[env];rank=Length[env];
   inside[v_]:=And@@(zero /@ (v-v[[p]].env));
   pool=Join[Select[(UnitVector[Length[div],#[[1]]]-UnitVector[Length[div],#[[2]]]& /@ Subsets[Range[Length[div]],{2}]),inside],primitive /@ env];
