@@ -16,6 +16,8 @@ Get[FileNameJoin[{swHome,"legacy","IBP4SeedDomain.wl"}]];
 Get[FileNameJoin[{swHome,"legacy","IBP4GeneratorVersion.wl"}]];
 Get[FileNameJoin[{swHome,"legacy","IBP4FactorCache.wl"}]];
 swBlocks=Get[FileNameJoin[{swHome,"Operators.wl"}]];
+swAssert[Hash[swBlocks,"SHA256"]===Get[FileNameJoin[{swHome,"OperatorAudit.wl"}]]["OperatorHash"],
+ "Operator blocks differ from the degree-audited snapshot"];
 swFingerprint=IBP4GeneratorFingerprint[];
 swAssert[swFingerprint===Get[FileNameJoin[{swHome,"OperatorAudit.wl"}]]["GeneratorFingerprint"],
  "Frozen generator fingerprint mismatch"];

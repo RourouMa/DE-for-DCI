@@ -5,11 +5,13 @@ If[!StringQ[handoffData] || handoffData==="",handoffData=FileNameJoin[{handoffHo
 handoffWork=Environment["DCI_REPLAY_OUT"];
 If[!StringQ[handoffWork] || handoffWork==="",handoffWork=FileNameJoin[{handoffHome,"work","replay"}]];
 If[DirectoryQ[handoffWork],Print["Refusing to reuse an existing output directory: ",handoffWork];Quit[1]];
-If[!FileExistsQ[FileNameJoin[{handoffData,"reduction","IBP4ReductionRules.txt"}]],
+handoffReduction=Environment["DCI_REDUCTION_DIR"];
+If[!StringQ[handoffReduction] || handoffReduction==="",handoffReduction=FileNameJoin[{handoffData,"reduction"}]];
+If[!FileExistsQ[FileNameJoin[{handoffReduction,"IBP4ReductionRules.txt"}]],
  Print["Run fetch.py first."];Quit[1]];
 SingularInterfacePath=""; (* Not needed for differentiation or solved-rule replay. *)
 IBP4RunOutputDirectory=handoffWork;
-IBP4RunReductionDirectory=FileNameJoin[{handoffData,"reduction"}];
+IBP4RunReductionDirectory=handoffReduction;
 IBP4MaxPasses=4;IBP4StopWhenClosed=True;
 Get[FileNameJoin[{handoffHome,"legacy","ClosureOutputAdmission.wl"}]];
 Get[FileNameJoin[{handoffHome,"legacy","IBP4ConstantFromTop.wl"}]];

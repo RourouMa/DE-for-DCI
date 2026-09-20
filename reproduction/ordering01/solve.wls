@@ -26,6 +26,8 @@ Put[hCanonical,FileNameJoin[{hWork,"CanonicalReductionRules.wl"}]];
 hMap=hGet["QueryMap.wl"];
 hRules=Thread[(First /@ hMap)->(Expand /@ ((Last /@ hMap)/.Dispatch[hCanonical]))];
 Put[hRules,FileNameJoin[{hWork,"IBP4ReductionRules.txt"}]];
+Do[CopyFile[FileNameJoin[{hData,"reduction",hFile}],FileNameJoin[{hWork,hFile}]],
+ {hFile,{"OrderingSummary.wl","Projection.wl"}}];
 Put[<|"Seconds"->hSeconds,"Rows"->Length[hRows],"Columns"->Length[hOrder],
  "ExactCanonicalRulesMatch"->hExact,"G4QuotientOnly"->True|>,FileNameJoin[{hWork,"Verification.wl"}]];
 Print[{"ExactCanonicalRulesMatch",hExact}];Quit[If[hExact,0,1]];

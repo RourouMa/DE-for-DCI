@@ -7,6 +7,7 @@ hOK=And@@Flatten[Table[HomogeneousQ[#/.pro[_]->0]===hDegrees[[i]]& /@ hOps[[i]],
 If[!hOK,Print["Operator degree mismatch"];Quit[1]];
 Put[hBlocks,FileNameJoin[{hHome,"Operators.wl"}]];
 Put[<|"Operators"->Total[Length /@ hOps],"Degrees"->hDegrees,
+ "OperatorHash"->Hash[hBlocks,"SHA256"],
  "DegreeCounts"->Thread[hDegrees->(Length /@ hOps)],"AllHomogeneous"->hOK,
  "PortableRoundTrip"->(Get[FileNameJoin[{hHome,"Operators.wl"}]]===hBlocks),
  "GeneratorFingerprint"->(Get[FileNameJoin[{hHome,"legacy","IBP4GeneratorVersion.wl"}]];IBP4GeneratorFingerprint[])|>,

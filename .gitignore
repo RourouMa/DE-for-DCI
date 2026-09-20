@@ -9,6 +9,7 @@
 /release-artifacts/
 /reproduction/ordering01/data/
 /reproduction/ordering01/work/
+/reproduction/ordering01/__pycache__/
 *.mx
 *.wxf
 *.log

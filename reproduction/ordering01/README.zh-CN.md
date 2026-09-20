@@ -62,6 +62,17 @@ WolframKernel -script reproduction/ordering01/solve.wls
 
 `solve.wls` 从完整方程重新做 FiniteFlow 消元，与发布的 canonical rules 逐项作精确差值检查，并输出 raw rules。这一步与前面的“固定规则重放”不同，内存和时间开销明显更大。不要把成功读取矩阵或已有规则当作新求解成功。输出在 `work/solve/`，不覆盖固定规则。
 
+若 `work/solve/Verification.wl` 为 `ExactCanonicalRulesMatch -> True`，可进一步用**新求出的规则**重跑：
+
+```bash
+export DCI_REDUCTION_DIR="$PWD/reproduction/ordering01/work/solve"
+export DCI_REPLAY_OUT="$PWD/reproduction/ordering01/work/replay-from-fresh-solve"
+WolframKernel -script reproduction/ordering01/replay.wls
+WolframKernel -script reproduction/ordering01/verify.wls
+```
+
+回到默认规则重放前，先 `unset DCI_REDUCTION_DIR DCI_REPLAY_OUT`。不会隐式混用 query01 或其它分支。
+
 ## 第五轮衔接
 
 `data/reference/round5/derivatives/` 保存 66 个输入产生的 132 条导数行及 682 个 target。`data/query01/reduction/IBP4ReductionRules.txt` 是同一矩阵的查询扩展，共 8080 条 raw rules；旧第四轮复现仍固定使用 `data/reduction/`。query01 补出了此前缺少的 85 条 raw 请求，**不是增加了 85 条独立 IBP**。本快照未宣称第五轮有限基底已经计算完成或 DE 已经闭合。
