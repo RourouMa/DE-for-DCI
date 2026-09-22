@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-21",
+  "host": "source Mac, not Ubuntu",
+  "assembled_rows": 2833280,
+  "assembled_columns": 2850483,
+  "canonical_queries": 6518,
+  "fresh_canonical_file_byte_identical_to_reference": true,
+  "canonical_sha256": "42cb1ced9f819d7cec7c2f01e2ddbab256ad466b8727df98f160851ecca6a2bc",
+  "raw_rules": 7995,
+  "fresh_raw_file_byte_identical_to_reference": true,
+  "raw_sha256": "ef0a5ba82a1c9de10e1a653fd62f5b39f6fdd90d5fadb70db2b960cdb4068e9c",
+  "raw_bytes": 60718799,
+  "canonical_solve_completed": true,
+  "initial_monolithic_process_exit_success": false,
+  "initial_raw_serialization_interrupted_after_canonical_save": true,
+  "raw_export_resumed_and_verified_with_compact_collector": true,
+  "note": "Initial Expand-based raw serialization was stopped after it grew to several GB. The canonical solve was already complete and byte-identical to the reference. compose.wls rebuilt compact raw rules from that saved solve, checked all 7995 rules exactly, and exited successfully. solve.wls now uses the same tested compact collector; the full monolithic script was not rerun a second time after that serialization-only fix.",
+  "g4_quotient_only": true,
+  "closure_established": false
+}

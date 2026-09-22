@@ -42,6 +42,8 @@ configures an independent computation; it does not bundle or claim a completed
 three-loop tennis-court result. Older checkpoint hashes remain incompatible;
 start a fresh package campaign. Running research snapshots are unaffected.
 
+**Reproduce the legacy fourth round (66 finite elements):** use the [frozen ordering01 snapshot](reproduction/ordering01/README.zh-CN.md). Its private Release assets include the complete solved linear system, exact column order, seed/operator records, reduction rules and finite combinations. A normal `git pull` does not download these assets; run its `fetch.py` first. This is a separate reproducibility fixture, not a claim that the generic package or the four-loop DE is closed.
+
 ## Quick Start
 
 Wolfram Language 13 or newer is required. Development tests were run with the local Wolfram installation; a license permitting multiple simultaneous kernels is needed only for multi-process generation. The small exact solver needs no external software.

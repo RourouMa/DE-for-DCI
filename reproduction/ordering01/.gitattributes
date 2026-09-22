@@ -1,0 +1,3 @@
+# Preserve byte hashes of frozen sources and Wolfram Put-generated payloads.
+*.wl -text whitespace=-blank-at-eol
+**/*.wl -text whitespace=-blank-at-eol

@@ -1,0 +1,18 @@
+<|"Passed" -> True, "Checks" -> {<|"Round" -> 1, "Count" -> 4, 
+    "CountMatches" -> True, "ExactBasisAndDefinitions" -> True, 
+    "ExactTargets" -> True, "ExactReducedDE" -> True, 
+    "AlgebraicChecks" -> True, "PoleAdmission" -> True, 
+    "BareDivergentZero" -> True|>, <|"Round" -> 2, "Count" -> 12, 
+    "CountMatches" -> True, "ExactBasisAndDefinitions" -> True, 
+    "ExactTargets" -> True, "ExactReducedDE" -> True, 
+    "AlgebraicChecks" -> True, "PoleAdmission" -> True, 
+    "BareDivergentZero" -> True|>, <|"Round" -> 3, "Count" -> 26, 
+    "CountMatches" -> True, "ExactBasisAndDefinitions" -> True, 
+    "ExactTargets" -> True, "ExactReducedDE" -> True, 
+    "AlgebraicChecks" -> True, "PoleAdmission" -> True, 
+    "BareDivergentZero" -> True|>, <|"Round" -> 4, "Count" -> 66, 
+    "CountMatches" -> True, "ExactBasisAndDefinitions" -> True, 
+    "ExactTargets" -> True, "ExactReducedDE" -> True, 
+    "AlgebraicChecks" -> True, "PoleAdmission" -> True, 
+    "BareDivergentZero" -> True|>}, "WolframVersion" -> 
+  "15.0.1 for Mac OS X ARM (64-bit) (July 2, 2026)"|>
