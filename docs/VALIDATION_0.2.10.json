@@ -1,0 +1,108 @@
+{
+  "version": "0.2.10",
+  "tests": [
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 3.284
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 7.445
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 5.943
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 3.284
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 3.276
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 4.684
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 10.743
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 5.002
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 3.407
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 13.56
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 3.372
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 3.244
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.257
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.227
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.276
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 3.764
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.387
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 3.423
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 4.482
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 7.403
+    }
+  ],
+  "passed": true,
+  "extended_seed_deduplication_passed": true,
+  "scope": "Shard ledger and symmetry cache payload reduction; finite seed ledger preservation and selected cache import. No claim of four-loop closure."
+}

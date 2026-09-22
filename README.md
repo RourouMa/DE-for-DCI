@@ -2,9 +2,45 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.2.4 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.3.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
+
+
+## Current seeding and finite-priority policy (0.3.0)
+
+- O6 (`TierReference`) prefers retained columns in this order: finite factorized,
+  uncertified factorized, finite connected, uncertified connected. Each tier uses
+  the ordering01 structural/reference-shape key. O1–O6 and the old `ClosureFirst`
+  profile are selectable; see [strategy details](docs/STRATEGIES_0.3.0.zh-CN.md).
+- When every remaining reduced integral is individually finite, `BuildFiniteBasis`
+  returns that support directly. It does not run a row-space minimization or a
+  finite-combination search. Coefficients and all lower-loop sources are retained.
+  Only divergent support enters constant finite-combination construction.
+- Seed planning is parallel, applications are globally deduplicated before dispatch,
+  and worker payloads contain only needed history/cache entries. Every expansion
+  extends ordinary/factorized symmetry and restarts from the original top.
+- General families use `FamilyOnly` with explicitly justified supersectors. The
+  [tennis-court family example](Examples/tennis-court-family.wl) includes two horizontal
+  ladder embeddings and one vertical embedding derived from actual contractions.
+  Its campaign uses `SeedDomain -> "Extended"` to seed those declared supersectors;
+  the package never infers that arbitrary loop pairs have either orientation.
+- Load FiniteFlow for production runs. Symbolic row-space and inverse calculations
+  then use FiniteFlow with exact reconstruction checks. Numerical residual checks
+  default to one point and retain all rows and boundary coefficients.
+
+```wolfram
+InitializeFiniteFlow[finiteFlowInstallDirectory, finiteFlowMathlinkDirectory];
+FiniteFlow`FFNThreads = 24;
+config = Get[FileNameJoin[{repositoryDirectory, "Examples", "tennis-court-family.wl"}]];
+result = RunDE[config["Family"], config["Input"],
+  Sequence @@ config["CampaignOptions"], "OutputDirectory" -> outputDirectory];
+```
+
+Load the package and `Examples/kinematics.wl` before this snippet. This example
+configures an independent computation; it does not bundle or claim a completed
+three-loop tennis-court result. Older checkpoint hashes remain incompatible;
+start a fresh package campaign. Running research snapshots are unaffected.
 
 ## Quick Start
 
@@ -124,7 +160,7 @@ InitializeFiniteFlow[finiteFlowInstallDirectory, finiteFlowMathlinkDirectory];
 result = RunDE[family, targets, "Solver" -> "FiniteFlow", "Workers" -> 4];
 ```
 
-`Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by checks at exactly two numerical kinematic points (all integral coefficients, including boundary sources). `"VerificationMode" -> "Numerical"` is the default; `"NumericalVerificationPoints" -> {{11,17},{13,19}}` overrides the points for a two-parameter system. Singular points fail verification. These checks are numerical evidence, not an analytic proof. Symbolic residual checks run only with explicit `"VerificationMode" -> "Exact"`. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
+`Automatic` uses FiniteFlow when loaded, otherwise the exact solver. Exact reduction is capped at 1500 columns by default. Reconstruction is followed by checks at one numerical kinematic point by default (all integral coefficients, including boundary sources). `"VerificationMode" -> "Numerical"` is the default; `"NumericalVerificationPoints" -> {{11,17}}` specifies the point for a two-parameter system; an explicit two-point list remains supported. Singular points fail verification. These checks are numerical evidence, not an analytic proof. Symbolic residual checks run only with explicit `"VerificationMode" -> "Exact"`. A custom trusted solver can be provided as `Function[{equations, columns, queries}, rules]`.
 
 `Workers -> 4` launches up to four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
 
@@ -168,10 +204,35 @@ queries, representatives and neighboring equation terms. Every extension
 replays the original inputs; an exhausted search is not a closure certificate.
 `GenerationHistory` records centers, gaps, policy, rejected applications and work.
 
-Families default to `"IntegralOrdering" -> "LadderFirst"`: prefer original-domain
-symmetry representatives and eliminate outside-domain columns first. Use
-`CreateFamily[Join[KeyDrop[family, {"Hash"}],
-<|"IntegralOrdering" -> "Legacy"|>]]` for the previous ordering.
+Families default to `"IntegralOrdering" -> "TierReference"` (O6, 四层导航). `ClosureFirst` remains an explicit legacy profile. Searching for a
+finite, closed DE does **not** prioritize eliminating outside-family columns.
+Exact symmetry canonicalization still chooses an original-domain image when
+available; this does not remove an independent direction.
+
+`RunDE` defaults to `"BasisPreference" -> "None"`. The historical post-closure optimization is available explicitly with `"BasisPreference" -> "FamilyAfterClosure"`. The priority is:
+certified finiteness, verified full differential-equation closure, then as many
+original-family basis elements as possible. With this opt-in enabled, once `Closed` and `FlatnessVerified`
+are true, the package searches already reduced finite candidates for an
+invertible change of basis. Candidates must lie in the closed span **including
+all boundary terms**. Necessary outside-family integrals remain in the basis.
+It updates the matrices with `(D[T,z] + T.A[z]).Inverse[T]`, updates original-input
+reconstruction, and checks flatness before accepting the replacement. Failure
+retains the verified closed basis. `FamilyPreferenceAudit` and
+`FamilyPreferenceTransform` record the decision and change of basis. Preference
+is optimized over available certified candidates, not over every possible integral.
+
+`ClosedModuloBoundary`, `QuotientClosed`, and finite coverage of a derivative round
+are not full closure and do not authorize this optimization. `ClosureFirst` is
+a priority policy, not a guarantee that an arbitrary column order will find a
+finite cover or that a bounded IBP search will close.
+
+Old family specifications containing `"LadderFirst"` are switched
+to `ClosureFirst` only when `FamilyAfterClosure` is explicitly enabled, with both requested and actual
+orderings recorded. For historical reproduction only, explicit `LadderFirst` or
+`Legacy` family orderings remain available; `"BasisPreference" -> "None"` disables
+the DE override and post-closure optimization. No seed domain is widened by this
+basis preference. Changed source hashes require a fresh campaign rather than
+silently resuming an older checkpoint.
 
 Explicit alternatives:
 
@@ -194,7 +255,7 @@ combination with every domain-only closure problem is not yet established.
 Included implementation optimizations: compiled ordinary IBP shifts; shared
 operator-degree seed geometry; coefficient-wise rational normalization and
 one expansion per coefficient-matrix row; sparse FiniteFlow output; dependency
-selection of original equation rows; two-point residual/idempotence checks;
+selection of original equation rows; single-point residual/idempotence checks;
 full-pool target comparison for the FiniteFlow selector; sampling, permutation,
 symmetry-orbit, application and verified-reduction caches; worker cache transfer
 and checkpoint fingerprints. See [the optimization and strategy report](docs/OPTIMIZATIONS_20260920.zh-CN.md).
@@ -230,3 +291,49 @@ Version 0.2.3 also skips worker startup when finite-combination applications are
 Version 0.2.4 prepares large seed plans across center partitions before global application deduplication. `"SeedPlanningWorkers" -> Automatic` follows `"Workers"`; `"SeedPlanningThreshold" -> 64` keeps small plans serial. Planning and IBP generation run in separate phases. See [parallel seed planning](docs/PARALLEL_SEED_PLANNING.zh-CN.md).
 
 The 0.2.4 release passed all [18 validation groups](docs/VALIDATION_0.2.4.json), including complete serial/parallel plan equivalence and unchanged generated relation/application sets.
+
+### Joint seed/operator identities (0.2.8)
+
+`FindCoupledIBPRelations[family, seeds]` searches constant rational combinations
+of complete degree-zero rotation actions across the supplied seeds. It solves
+exact constraints for auxiliary-infinity cancellation, output domain and literal
+collision residues before admitting an identity. Primitive actions rejected by
+ordinary seeding are retained in this joint search. Every admitted identity is
+also checked against an independent rational ordinary action plus the complete
+contact sum, before symmetry canonicalization. Lower-loop sources are retained.
+
+```wolfram
+joint = FindCoupledIBPRelations[family, conformalSinglePoleSeeds];
+newRows = joint["Equations"];
+certificates = joint["Certificates"];
+```
+
+To include explicit groups during system generation:
+
+```wolfram
+system = GenerateSystem[family, targets,
+  "SeedDomain" -> "Extended",
+  "CoupledSeedGroups" -> {seedGroup1, seedGroup2},
+  "CompletedCoupledGroups" -> previousJointLedger];
+```
+
+Joint groups run on the coordinator after ordinary workers merge. Their separate
+completion ledger is keyed by implementation, family, seed group and requested
+operators; completed or rejected primitive applications do not suppress them.
+Only search within each supplied group is claimed. Seeds must be conformal and
+in the declared domain, with at most one double loop pole. Operators must be
+verified degree-zero rotations. Unsupported endpoint contacts are reported;
+outputs with unsupported overlapping clusters are excluded by exact constraints.
+No claim of exhaustive identities or general convergence proof is made.
+
+`CoupledIBPRelation[family, terms]` independently verifies a specified identity;
+each term is an association with `"Coefficient"`, `"Seed"`, and `"Operator"`.
+Changing the implementation invalidates old checkpoint fingerprints. Explicitly
+archived historical equations can be reused in a documented new experiment, but
+old checkpoints must not be relabeled as generated by the new implementation.
+
+Parallel workers receive only completed finite-expression applications needed by their extra finite-seed branch. Ordinary applications are already deduplicated by the coordinator. Their symmetry cache is restricted to requested targets, pending seeds, finite seeds, and canonical representative self-mappings; other mappings are recomputed exactly on demand. `WorkerPayload` reports ledger counts, cache counts, and serialized sizes. This avoids replicating the full campaign history and cache in every worker.
+
+Joint action searches also admit seeds with disjoint double-collision pairs. Each completed relation must cancel every literal pair residue and pass the independent rational-action check. Overlapping multi-pair seeds remain unsupported; the ordinary contact calculation is unchanged. This extends relation discovery, not the finite-basis validator or the closure acceptance criterion.
+
+Joint searches match seed weights to each generated operator degree, so legal mixed-degree pairs can participate together. Sparse constraint assembly avoids allocating coefficients for absent integral/action pairs; complete candidate actions still undergo the independent rational and residue checks.

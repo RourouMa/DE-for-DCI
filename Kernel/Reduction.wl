@@ -6,13 +6,14 @@ InitializeFiniteFlow[lib_String,math_String]:=Module[{},
  If[!MemberQ[$Path,ExpandFileName[math]],AppendTo[$Path,ExpandFileName[math]]];
  Quiet[Check[Needs["FiniteFlow`"],Return[fail["FiniteFlowLoad","FiniteFlow could not be loaded."]]]];True];
 
-Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,"ProgressFunction"->None}];
-GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{options=Join[Association[Options[GenerateSystem]],Association[{opts}]],plan},
+Options[GenerateSystem]=Join[Options[GenerateSeeds],{"Operators"->Automatic,"CompletedApplications"->{},"FiniteSeeds"->{},"CoupledSeedGroups"->{},"CompletedCoupledGroups"->{},"CompletedSymmetryInputs"->{},"Workers"->1,"KernelExecutable"->Automatic,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,"ProgressFunction"->None}];
+GenerateSystem[f_Association,targets_List,opts:OptionsPattern[]]:=Module[{options=Join[Association[Options[GenerateSystem]],Association[{opts}]],plan,result},
  If[!IntegerQ[options["Workers"]] || options["Workers"]<1,Return[fail["Workers","Workers must be a positive integer."]]];
- If[options["Workers"]>1,Return[generateSharded[f,targets,options]]];
+ If[options["Workers"]>1,result=generateSharded[f,targets,options],
  plan=seedPlan[f,targets,options["Operators"],options];
  If[FailureQ[plan],Return[plan]];
- generatePlannedSystem[f,targets,options,pendingSeedPlan[plan,options["CompletedApplications"]]]];
+ result=generatePlannedSystem[f,targets,options,pendingSeedPlan[plan,options["CompletedApplications"]]]];
+ If[FailureQ[result],Return[result]];appendCoupledGroups[f,result,options]];
 (* Deduplicate actual operator/seed applications before dispatching any worker. *)
 pendingSeedPlan[plan_Association,completed_List]:=Module[{done=Association[(#->True)& /@ completed],seen=<||>,prior=0,overlap=0,total=0,batches,key,ops=plan["Operators"]},
  batches=Table[Join[batch,<|"Seeds"->Select[batch["Seeds"],Function[seed,
@@ -44,12 +45,7 @@ generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->
   "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 
-simpleKey[f_,g_G]:=Module[{a=List@@g,ps=parts[f,g],ext,boxScore=0},
- ext=Complement[Range[Length[f["Propagators"]]],f["LoopLoopIDs"]];
- Do[With[{v=a[[Select[ext,MemberQ[f["Supports"][[#]],First[block]]&]]]},
-  If[Count[v,_?Positive]>1,boxScore+=Total[Max[Abs[#]-2,0]& /@ v]]],{block,Select[ps,Length[#]===1&]}];
- Join[If[Lookup[f,"IntegralOrdering","LadderFirst"]==="LadderFirst",{Boole[originalDomainIntegralQ[f,g]]},{}],{Boole[Length[ps]>1],-Total[Abs[Pick[a[[f["LoopLoopIDs"]]],f["TopSector"][[f["LoopLoopIDs"]]],0]]],
-  -boxScore,-Total[Abs[Take[a,Length[f["Propagators"]]]]],-Max[Abs[a]],a}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"Ordering.wl"}]];
 $lastVerifiedReduction=<||>;
 (* Integral atoms are independent columns. Avoid a common denominator across distinct columns. *)
 selfReducedIntegralQ[g_G,image_]:=SameQ[g,image] || (!FreeQ[image,g] && TrueQ[canonicalLinear[image-g]===0]);
@@ -62,19 +58,19 @@ reductionTargets[result_,targets_,rows_]:=Module[{dispatch=Dispatch[result["Rule
 coefficientParameters[rows_List]:=Union[Flatten[Function[row,With[{atoms=Join[support[row],sources[row]]},
  Variables[If[atoms==={},row,Last /@ CoefficientRules[Expand[row],atoms]]]]]/@rows]];
 (* Evaluate kinematics before substituting rules: never form symbolic residuals in numerical mode. *)
-numericalPoints[vars_,requested_]:=If[requested===Automatic,If[Length[vars]===2,{{11,17},{13,19}},Table[Prime[Range[Length[vars]]+k+3],{k,2}]],requested];
+numericalPoints[vars_,requested_]:=If[requested===Automatic,If[Length[vars]===2,{{11,17}},{Prime[Range[Length[vars]]+4]}],requested];
 numericalLinearZeroQ[e_,prime_]:=Module[{atoms=Join[support[e],sources[e]],values},
  values=If[atoms==={},{e},Quiet[Check[Last /@ CoefficientRules[Expand[e],atoms],$Failed]]];
  ListQ[values] && AllTrue[values,MatchQ[#,_Integer|_Rational] && Mod[Denominator[#],prime]=!=0 && Mod[Numerator[#] PowerMod[Denominator[#],-1,prime],prime]===0&]];
 sampledRuleResiduals[rows_,rules_,vars_,requested_:Automatic]:=Module[{points=numericalPoints[vars,requested],result=ConstantArray[0,Length[rows]],point,nrules,values,prime,bad},
- If[!MatchQ[points,{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[fail["NumericalPoints","Supply exactly two integer kinematic points of the correct dimension."]]];
+ If[!MatchQ[points,{_List}|{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[fail["NumericalPoints","Supply one or two integer kinematic points of the correct dimension."]]];
  Do[point=Dispatch[Thread[vars->points[[k]]]];prime={1000003,1000033}[[k]];
  nrules=Dispatch[Thread[(First /@ rules)->((Last /@ rules)/.point)]];values=(rows/.point)/.nrules;
- bad=Select[Range[Length[values]],!numericalLinearZeroQ[values[[#]],prime]&];If[bad=!={},result[[bad]]=ConstantArray[1,Length[bad]]],{k,2}];result];
+ bad=Select[Range[Length[values]],!numericalLinearZeroQ[values[[#]],prime]&];If[bad=!={},result[[bad]]=ConstantArray[1,Length[bad]]],{k,Length[points]}];result];
 sampledRuleAgreement[queries_,a_,b_,vars_,requested_:Automatic]:=Module[{points=numericalPoints[vars,requested],point,ar,br,diff,prime,passed=True},
- If[!MatchQ[points,{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[False]];
+ If[!MatchQ[points,{_List}|{_List,_List}] || !AllTrue[points,Length[#]===Length[vars] && VectorQ[#,IntegerQ]&],Return[False]];
  Do[point=Dispatch[Thread[vars->points[[k]]]];prime={1000003,1000033}[[k]];ar=Dispatch[Thread[(First /@ a)->((Last /@ a)/.point)]];br=Dispatch[Thread[(First /@ b)->((Last /@ b)/.point)]];
- diff=((queries/.point)/.ar)-((queries/.point)/.br);If[!AllTrue[diff,numericalLinearZeroQ[#,prime]&],passed=False;Break[]],{k,2}];passed];
+ diff=((queries/.point)/.ar)-((queries/.point)/.br);If[!AllTrue[diff,numericalLinearZeroQ[#,prime]&],passed=False;Break[]],{k,Length[points]}];passed];
 (* Check every selected row; numerical verification is the default. *)
 verifyEquationResiduals[rows_,rules_,workers_,kernel_,mode_:"Numerical",points_:Automatic]:=Module[{n=Min[workers,Length[rows]],dir,runner,jobs={},results,ids,job,result,bad={},executable,parameters},
  If[workers===1 || Length[rows]<2,Return[If[mode==="Exact",canonicalLinear /@ (rows/.Dispatch[rules]),sampledRuleResiduals[rows,rules,coefficientParameters[Join[rows,Last /@ rules]],points]]]];
@@ -137,7 +133,7 @@ ReduceIntegrals[f_Association,targets_List,equations_List,OptionsPattern[]]:=Mod
  residual=verifyEquationResiduals[rows,rules,OptionValue["VerificationWorkers"],OptionValue["KernelExecutable"],mode,points];
  If[FailureQ[residual],Return[residual]];
  If[!And@@(zero /@ residual),Return[fail["UnverifiedReduction","Reduction verification failed; no reduction accepted.",<|"Residuals"->DeleteCases[residual,0]|>]]];
- stage[If[mode==="Exact","EquationResiduals","TwoPointEquationResiduals"]];
+ stage[If[mode==="Exact","EquationResiduals","NumericalEquationResiduals"]];
  raw=Join[support[images],sources[images]];
  If[!If[mode==="Exact",And@@(zero /@ (canonicalLinear /@ ((raw/.Dispatch[rules])-raw))),sampledRuleAgreement[raw,rules,{},coefficientParameters[Join[rows,Last /@ rules]],points]],Return[fail["NonIdempotentReduction","Reduction images are not normal forms."]]];
  stage["Idempotence"];
@@ -187,7 +183,7 @@ constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons,failed=False},
 BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,
  basis,m,bp,w,residue,den,definitions},
  safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];
- If[div==={},basis=safe;rank=0;chosen={},
+ If[div==={},Return[directFiniteSupport[rows,gs]],
   If[!And@@(zero /@ ((rows/.Dispatch[Join[Thread[div->ConstantArray[1,Length[div]]],Thread[safe->ConstantArray[0,Length[safe]]]]])-(rows/._G->0))),Return[fail["NoConstantZeroSumCover","Divergent coefficient sums are nonzero; additional relations/ordering are needed."]]];
   c=coeff[rows,div];atoms=constantAtoms[c,f["Variables"]];If[atoms===$Failed,Return[fail["NonRationalCoefficients","Coefficient extraction requires rational kinematic functions."]]];
   env=rr[atoms];p=pivots[env];rank=Length[env];
@@ -198,7 +194,7 @@ BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,a
   If[Length[chosen]!=rank,Return[fail["UnverifiedFiniteCover","Actual coefficient blocks cannot all be certified finite; they will not be differentiated.",<|"RequiredRank"->rank,"CertifiedRank"->Length[chosen]|>]]];
   basis=Join[safe,(#.div& /@ chosen)]];
  m=coeff[basis,gs];bp=pivots[rr[m]];
- w=If[basis==={},ConstantArray[{},Length[rows]],Map[Together,coeff[rows,gs][[All,bp]].Inverse[m[[All,bp]]],{2}]];
+ w=If[basis==={},ConstantArray[{},Length[rows]],Map[Together,coeff[rows,gs][[All,bp]].linearInverse[m[[All,bp]]],{2}]];
  residue=canonicalLinear /@ (rows-w.basis);residue=residue/._BoundaryIntegral->0;
  If[!And@@(zero /@ residue),Return[fail["FiniteReconstruction","Finite basis does not cover the entire input/DE."]]];
  <|"Basis"->basis,"SingleFinite"->safe,"Combinations"->(#.div& /@ chosen),"Weights"->w,

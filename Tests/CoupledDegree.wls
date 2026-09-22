@@ -1,0 +1,14 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[b_,s_]:=If[TrueQ[b],Print["PASS ",s],Print["FAIL ",s];Quit[1]];
+f=CreateFamily[Join[LadderFamily[2,kinematics,{x,y}],<|"TopSector"->ConstantArray[1,9],"Completion"->"FamilyOnly"|>]];
+g=G[1,1,0,1,0,1,1,1,1,1,1];h=G[2,1,0,1,0,1,1,1,1,1,1];ops=GenerateOperators[f];
+op0=First[Select[ops,#["Loop"]===2 && #["Degree"]==={0,0}&]];op1=First[Select[ops,#["Loop"]===2 && #["Degree"]==={-1,0}&]];
+t0=<|"Coefficient"->1,"Seed"->g,"Operator"->op0|>;t1=<|"Coefficient"->1,"Seed"->h,"Operator"->op1|>;
+p=CoupledIBPRelation[f,{t1}];assert[AssociationQ[p] && ConformalIBP`Private`zero[p["Equation"]-IBPRelation[f,op1,h]],"nonzero operator degree matches direct IBP"];
+p=CoupledIBPRelation[f,{t0,t1}];assert[AssociationQ[p] && And@@Values[p["Checks"]],"mixed seed/operator degrees independently certified"];
+assert[FailureQ[CoupledIBPRelation[f,{Join[t1,<|"Seed"->g|>]}]],"mismatched conformal weights rejected"];
+r=FindCoupledIBPRelations[f,{g,h},"Operators"->{op0,op1}];assert[AssociationQ[r] && r["PrimitiveApplications"]===2 && r["RejectedCandidates"]==={} && r["Equations"]=!={},"joint search matches degrees before forming constraints"];
+assert[FailureQ[FindCoupledIBPRelations[f,{g},"Operators"->{Join[op0,<|"Degree"->{1,0}|>]}]],"forged degree remains rejected"];
+Print["ALL PASSED"];Quit[];

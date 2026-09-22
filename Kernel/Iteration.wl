@@ -1,5 +1,5 @@
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
-generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,optionsFile,imported,sharedImages,plan,active,ids,subplan,done},
+generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,optionsFile,imported,sharedImages,plan,active,ids,subplan,done,finiteKeys,workerOptions,cacheInputs,workerCache,payloadAudit},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
  ops=DeleteDuplicates[Replace[options["Operators"],Automatic:>GenerateOperators[f]]];
  plan=seedPlan[f,targets,ops,options];If[FailureQ[plan],Return[plan]];
@@ -15,8 +15,20 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
  dir=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"conformal-ibp-"<>CreateUUID[]}]];
  sharedImages=CanonicalIntegral[f,#]& /@ support[targets];
  If[AnyTrue[sharedImages,FailureQ],Return[First[Select[sharedImages,FailureQ]]]];
- cacheFile=FileNameJoin[{dir,"SymmetryCache.wl"}];Put[exportSymmetryCache[f],cacheFile];
- optionsFile=FileNameJoin[{dir,"WorkerOptions.wl"}];Put[KeyDrop[Join[options,<|"Workers"->1|>],"Operators"],optionsFile];
+ (* Ordinary applications were deduplicated by the coordinator. Workers need
+    historical entries only for their additional finite-expression branch. *)
+ finiteKeys=Flatten[Table[If[ops[[k]]["Degree"]===ConstantArray[0,f["LoopCount"]],
+   ({Hash[ops[[k]],"SHA256"],#}& /@ options["FiniteSeeds"]),{}],{k,active}],1];
+ workerOptions=KeyDrop[Join[options,<|"Workers"->1,"CompletedApplications"->Select[finiteKeys,KeyExistsQ[done,#]&],
+   "CoupledSeedGroups"->{},"CompletedCoupledGroups"->{},"ProgressFunction"->None|>],"Operators"];
+ cacheInputs=Union[support[{targets,options["FiniteSeeds"]}],Flatten[Lookup[plan["Batches"],"Seeds"],1]];
+ workerCache=exportSelectedSymmetryCache[f,cacheInputs];
+ cacheFile=FileNameJoin[{dir,"SymmetryCache.wl"}];Put[workerCache,cacheFile];
+ optionsFile=FileNameJoin[{dir,"WorkerOptions.wl"}];Put[workerOptions,optionsFile];
+ payloadAudit=<|"HistoricalApplications"->Length[options["CompletedApplications"]],"WorkerHistoricalApplications"->Length[workerOptions["CompletedApplications"]],
+  "ParentCacheMappings"->Length[symmetryKnown[f["Hash"]]],"WorkerCacheMappings"->Length[workerCache["Mappings"]],
+  "WorkerOptionsBytes"->FileByteCount[optionsFile],"WorkerCacheBytes"->FileByteCount[cacheFile]|>;
+ If[options["ProgressFunction"]=!=None,options["ProgressFunction"][Join[<|"Action"->"Prepared bounded worker payload"|>,payloadAudit]]];
  Do[ids=active[[Range[i,Length[active],n]]];shards=ops[[ids]];
   subplan=Join[plan,<|"Operators"->shards,"Batches"->MapIndexed[Join[#1,<|"OperatorIndex"->First[#2]|>]&,plan["Batches"][[ids]]]|>];
   Put[<|"Family"->f,"Targets"->targets,"SeedPlan"->subplan,"SymmetryCacheFile"->cacheFile,"OptionsFile"->optionsFile,"Options"->{"Operators"->shards}|>,
@@ -39,12 +51,12 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "AllActualSeedsInsideOriginalDomain"->And@@Lookup[results,"AllActualSeedsInsideOriginalDomain"],
   "SeedPolicy"->Lookup[First[results],"SeedPolicy",<||>],
   "SeedingDeduplication"->plan["SeedingDeduplication"],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
-  "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"JobDirectory"->dir|>];
+  "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"WorkerPayload"->payloadAudit,"JobDirectory"->dir|>];
 
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
  "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
- "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets",
+ "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets","BasisPreference"->"None",
  "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ProgressFunction"->Print};
 Options[RunReduction]=Options[RunDE];
 progress[o_,a_]:=If[o["ProgressFunction"]=!=None,o["ProgressFunction"][a]];
@@ -57,10 +69,16 @@ checkpoint[state_,dir_]:=If[StringQ[dir],Module[{path,tmp,saved},
 saveRound[dir_,epoch_,round_,record_]:=If[StringQ[dir],Module[{path=FileNameJoin[{dir,"epoch"<>ToString[epoch],"round"<>ToString[round]}]},
  If[!DirectoryQ[path],CreateDirectory[path,CreateIntermediateDirectories->True]];
  KeyValueMap[Put[#2,FileNameJoin[{path,#1<>".wl"}]]&,record]]];
-makeState[f_,inputs_,mode_,o_]:=<|"Family"->f,"FamilyHash"->f["Hash"],"ImplementationHash"->$implementationHash,"OriginalInputs"->inputs,
+makeState[f_,inputs_,mode_,o_]:=Module[{family=f},
+ (* Old family specifications must not silently keep hard ladder priority in a new DE campaign. *)
+ If[mode==="DE" && o["BasisPreference"]==="FamilyAfterClosure" && f["IntegralOrdering"]==="LadderFirst" && familyHash[f]===f["Hash"],
+  family=Join[f,<|"IntegralOrdering"->"ClosureFirst"|>];family["Hash"]=familyHash[family]];
+ <|"Family"->family,"FamilyHash"->family["Hash"],"ImplementationHash"->$implementationHash,"OriginalInputs"->inputs,
+ "RequestedIntegralOrdering"->f["IntegralOrdering"],"SearchIntegralOrdering"->family["IntegralOrdering"],
+ "BasisSelectionPriority"->{"CertifiedFiniteness","VerifiedFullDEClosure","OriginalFamilyPreference"},
  "Mode"->mode,"Options"->o,"Equations"->o["InitialEquations"],"CompletedApplications"->{},"CompletedSymmetryInputs"->{},
  "HistoricalTargets"->support[inputs],"PreviousRepresentatives"->{},"History"->{},"Epoch"->0,
- "Status"->"Initialized","Closed"->False,"HistoricalRules"->{}|>;
+ "Status"->"Initialized","Closed"->False,"HistoricalRules"->{}|>];
 RunDE[f_Association,inputs_List,opts:OptionsPattern[]]:=runCampaign[makeState[f,inputs,"DE",Join[Association[Options[RunDE]],Association[{opts}]]]];
 RunReduction[f_Association,inputs_List,opts:OptionsPattern[]]:=runCampaign[makeState[f,inputs,"Reduction",Join[Association[Options[RunReduction]],Association[{opts}]]]];
 RunDE[f_Association,input_ /; !ListQ[input],opts:OptionsPattern[]]:=RunDE[f,{input},opts];
@@ -87,6 +105,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  If[!MemberQ[{"Retain","Quotient"},o["BoundaryPolicy"]],Return[fail["BoundaryPolicy","BoundaryPolicy must be Retain or Quotient."]]];
  If[!MemberQ[{"Always","OnDemand"},o["GenerationPolicy"]],Return[fail["GenerationPolicy","GenerationPolicy must be Always or OnDemand."]]];
  If[!MemberQ[{"Full","Targets"},o["ReductionScope"]],Return[fail["ReductionScope","ReductionScope must be Full or Targets."]]];
+ If[!MemberQ[{"FamilyAfterClosure","None"},o["BasisPreference"]],Return[fail["BasisPreference","Use FamilyAfterClosure or None."]]];
  If[!MemberQ[{"Original","Extended"},o["SeedDomain"]] || !MemberQ[{"Cartesian","SingleBlock"},o["BlockExpansion"]] || !MemberQ[{True,False},o["GapSeeding"]],Return[fail["SeedPolicy","Invalid campaign seeding policy."]]];
  If[s["Mode"]==="DE" && (f["Variables"]==={} || !And@@(FiniteIntegralQ[f,#]& /@ s["OriginalInputs"])),
   Return[fail["UnverifiedInput","DE inputs must pass the finite-integral check and kinematic variables must be supplied."]]];
@@ -179,8 +198,8 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
     (* Coordinates are solved against the SAME independent input, not the new output. *)
     originalCount=Length[basis];independent=pivots[rr[Transpose[ci]]];
     selectedRows=Flatten[Table[independent+(k-1)originalCount,{k,Length[f["Variables"]]}]];
-    allCoordinates=If[independent==={},ConstantArray[{},Length[fullDE]],Map[Together,cd[[All,p]].Inverse[ci[[independent,p]]],{2}]];
-    inputCoordinates=If[independent==={},ConstantArray[{},Length[fullInput]],Map[Together,ci[[All,p]].Inverse[ci[[independent,p]]],{2}]];
+    allCoordinates=If[independent==={},ConstantArray[{},Length[fullDE]],Map[Together,cd[[All,p]].linearInverse[ci[[independent,p]]],{2}]];
+    inputCoordinates=If[independent==={},ConstantArray[{},Length[fullInput]],Map[Together,ci[[All,p]].linearInverse[ci[[independent,p]]],{2}]];
     allSources=canonicalLinear /@ (fullDE-allCoordinates.fullInput[[independent]]);
     inputSources=canonicalLinear /@ (fullInput-inputCoordinates.fullInput[[independent]]);
     basis=basis[[independent]];fullInput=fullInput[[independent]];fullDE=fullDE[[selectedRows]];
@@ -206,4 +225,5 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  ];
  s["Status"]=reason;s["Closed"]=TrueQ[Lookup[s,"Closed",False]];
  s["BoundaryPolicy"]=o["BoundaryPolicy"];
+ If[s["Mode"]==="DE" && o["BasisPreference"]==="FamilyAfterClosure" && KeyExistsQ[s,"Basis"],s=preferFamilyAfterClosure[s]];
  checkpoint[s,o["OutputDirectory"]];s];

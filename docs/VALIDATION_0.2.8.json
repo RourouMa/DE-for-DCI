@@ -1,0 +1,192 @@
+{
+  "version": "0.2.8",
+  "tests": [
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 3.419
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 6.319
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 3.364
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 3.363
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 4.795
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 10.87
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 4.987
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 3.441
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 14.036
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 3.391
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 3.339
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.341
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.379
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.347
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 3.864
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.351
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 3.393
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 4.297
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 7.196
+    }
+  ],
+  "full_suite_passed": true,
+  "extended_coupled_regression_passed": true,
+  "four_loop_fixture": "Tests/Fixtures/CoupledFourLoop.wl",
+  "upstream_explicit_actions_recomputed": 84,
+  "upstream_explicit_actions_passed": 84,
+  "joint_search_certified_relations": 848,
+  "fourth_round_outcome": {
+    "package_version": "0.2.8",
+    "certified_joint_relations": 848,
+    "new_distinct_raw_rows": 1327,
+    "normalized_nonzero_rows_added": 336,
+    "total_raw_rows": 424070,
+    "fourth_finite_cover_succeeded": false,
+    "fourth_round": {
+      "Round": 4,
+      "Inputs": 28,
+      "DerivativeTargets": 296,
+      "RawSupport": 89,
+      "FactorizedSupport": 27,
+      "BoundarySourceCount": 42,
+      "RankSamples": [
+        {
+          "Prime": 1000003,
+          "InputRank": 28,
+          "InputAndDERank": 48,
+          "Deficit": 20
+        },
+        {
+          "Prime": 1000033,
+          "InputRank": 28,
+          "InputAndDERank": 48,
+          "Deficit": 20
+        }
+      ],
+      "FiniteCoverSucceeded": false,
+      "FiniteOutputCount": null
+    },
+    "failed_zero_sum_rows": 28,
+    "all_four_round_G_parts_unchanged_at_two_points": true,
+    "changed_boundary_rounds": [
+      3,
+      4
+    ],
+    "verification": {
+      "VerificationMode": "Two finite-field kinematic points; all integral coefficients compared against independent full-pool numerical solves",
+      "Samples": [
+        {
+          "Point": [
+            11,
+            17
+          ],
+          "Prime": 9223372036854775783,
+          "FailedQueryRows": [],
+          "Passed": true
+        },
+        {
+          "Point": [
+            13,
+            19
+          ],
+          "Prime": 9223372036854775783,
+          "FailedQueryRows": [],
+          "Passed": true
+        }
+      ],
+      "Queries": 138,
+      "Passed": true,
+      "SymbolicResidualVerificationPerformed": false
+    },
+    "interpretation": "This bounded coupled search changes lower-loop source normal forms but does not restore round-four finite coverage under unchanged LadderFirst ordering."
+  },
+  "rediscovery_span_two_points": [
+    {
+      "Point": [
+        11,
+        17
+      ],
+      "SearchRank": 106,
+      "WithPublishedRelationsRank": 106,
+      "ContainedAtPoint": true
+    },
+    {
+      "Point": [
+        13,
+        19
+      ],
+      "SearchRank": 106,
+      "WithPublishedRelationsRank": 106,
+      "ContainedAtPoint": true
+    }
+  ],
+  "extended_coupled_assertions": 14
+}

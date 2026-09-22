@@ -1,3 +1,15 @@
+fullPoolNumericalAgreement[rows_,columns_,queries_,rules_,parameters_,requested_]:=Module[{graph,in,sys,learn,values,points=numericalPoints[parameters,requested],prime,nrules,point,diff,samples},
+ FiniteFlow`FFNewGraph[graph];FiniteFlow`FFGraphInputVars[graph,in,parameters];
+ FiniteFlow`FFAlgSparseSolver[graph,sys,{in},parameters,#==0& /@ rows,columns,"NeededVars"->queries];
+ FiniteFlow`FFSolverSparseOutput[graph,sys];FiniteFlow`FFGraphOutput[graph,sys];learn=FiniteFlow`FFSparseSolverLearn[graph,columns];
+ If[!ListQ[learn],FiniteFlow`FFDeleteGraph[graph];Return[fail["FullPoolNumericalLearn","Full-pool numerical reference could not be learned."]]];
+ values=FiniteFlow`FFGraphEvaluateMany[graph,points,"NThreads"->Length[points]];FiniteFlow`FFDeleteGraph[graph];
+ If[!ListQ[values] || Length[values]=!=Length[points] || !AllTrue[values,VectorQ[#,IntegerQ]&],Return[fail["FullPoolNumericalEvaluation","The full-pool sample must be nonsingular."]]];
+ prime=FiniteFlow`FFPrimeNo[0];samples=Table[point=Thread[parameters->points[[k]]];nrules=FiniteFlow`FFSparseSolverSol[values[[k]],learn];
+ diff=((queries/.point)/.Dispatch[nrules])-((queries/.point)/.Dispatch[Thread[(First /@ rules)->((Last /@ rules)/.point)]]);
+ <|"Point"->points[[k]],"Passed"->AllTrue[diff,numericalLinearZeroQ[#,prime]&]|>,{k,Length[points]}];
+ <|"Passed"->And@@Lookup[samples,"Passed"],"Samples"->samples,"Prime"->prime,"PoolHash"->Hash[rows,"SHA256"],"SymbolicResidualVerificationPerformed"->False|>];
+
 (* Certify a target reduction with ORIGINAL selected equations, not the full pool. *)
 $lastTargetSampling=<||>;
 Options[ReduceTargetIntegrals]=Join[Options[ReduceIntegrals],{"MinimumSelectionRows"->500,"PythonExecutable"->"python3","ReuseTargetSampling"->True,"TargetSelector"->Automatic}];
@@ -96,17 +108,22 @@ reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
  If[FailureQ[inner],Return[inner]];
  start=AbsoluteTime[];
  If[report=!=None,report[<|"Action"->"Starting full-pool target reference","Parameters"->parameters,"Queries"->Length[inner["ColumnOrder"]]|>]];
+ If[o["VerificationMode"]==="Numerical",
+ reference=fullPoolNumericalAgreement[rows,all,inner["ColumnOrder"],inner["Rules"],parameters,o["NumericalVerificationPoints"]];
+ If[FailureQ[reference],Return[reference]];
+ If[!TrueQ[reference["Passed"]],Return[fail["FullPoolTargetMismatch","Selected target normal forms differ from the full pool."]]],
  reference=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->inner["ColumnOrder"],"Parameters"->parameters,"SparseOutput"->True,"MaxPrimes"->o["MaxPrimes"]];
  If[!ListQ[reference] || !And@@(MatchQ[#,_Rule]& /@ reference),Return[fail["FullPoolTargetSolve","Full-pool target reference failed."]]];
  If[report=!=None,report[<|"Action"->"Full-pool target solve returned; comparing exact normal forms","Seconds"->AbsoluteTime[]-start|>]];
  diff=If[o["VerificationMode"]==="Exact",canonicalLinear /@ ((inner["ColumnOrder"]/.Dispatch[reference])-(inner["ColumnOrder"]/.Dispatch[inner["Rules"]])),If[sampledRuleAgreement[inner["ColumnOrder"],reference,inner["Rules"],parameters,o["NumericalVerificationPoints"]],{}, {1}]];
  If[!And@@(zero /@ diff),Return[fail["FullPoolTargetMismatch","Selected target normal forms differ from the full pool.",<|"Residuals"->DeleteCases[diff,0]|>]]];
+ ];
  fullSeconds=AbsoluteTime[]-start;
  certificate=inner["VerificationCertificate"];mapped=ids[[certificate["OriginalRowIndices"]]];
  certificate=Join[certificate,<|"OriginalPoolHash"->Hash[rows,"SHA256"],"OriginalRowIndices"->mapped,
   "SelectedEquationsHash"->Hash[rows[[mapped]],"SHA256"],"SelectionBackend"->"FiniteFlowThenIndependentModularCertificate",
   "FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->o["VerificationMode"],"FullPoolTargetRulesHash"->Hash[reference,"SHA256"]|>];
- If[report=!=None,report[<|"Action"->If[o["VerificationMode"]==="Exact","Full-pool target normal forms agree exactly","Full-pool target normal forms agree at two numerical points"],"Queries"->Length[inner["ColumnOrder"]],"Seconds"->fullSeconds|>]];
+ If[report=!=None,report[<|"Action"->If[o["VerificationMode"]==="Exact","Full-pool target normal forms agree exactly","Full-pool target normal forms agree at requested numerical points"],"Queries"->Length[inner["ColumnOrder"]],"Seconds"->fullSeconds|>]];
  Join[inner,<|"VerificationCertificate"->certificate,"OriginalEquationCount"->Length[rows],
   "FullPoolEquationResidualsChecked"->(Length[mapped]===Length[rows]),"FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->o["VerificationMode"],
   "SelectionSeconds"->(selectedSeconds+inner["SelectionSeconds"]),"FullPoolTargetCheckSeconds"->fullSeconds|>]

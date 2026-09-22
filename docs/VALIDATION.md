@@ -1,3 +1,25 @@
+## 0.2.12: sparse, degree-matched joint kernels
+
+All 22 regression programs pass. Mixed-degree actions agree with direct ordinary IBP; mismatched weights and forged operators are rejected. The sparse search reproduces the dense 36-seed four-loop group exactly (166 equations). Larger searches are ongoing; this is not a closure certificate.
+
+## 0.2.11: disjoint double-collision joint actions
+
+All 21 regression programs pass, including a nonzero four-loop product of two finite differences. Joint seeds and completed outputs can contain disjoint double-collision pairs. Each completed identity must pass the independent rational-action comparison and every literal pair-residue check; iterated residues of those zero expressions also vanish. The ordinary contact formula and finite-basis validator are unchanged. Overlapping multi-pair seeds are still rejected. Four-loop closure remains under investigation.
+
+## 0.2.10: bounded parallel-worker payloads
+
+A real four-loop run exhausted memory when 26 workers each loaded about 303 MB of serialized historical options and 207 MB of symmetry mappings. Recovery kept the same 22,656 pending applications, checked that none were completed, removed the ordinary completed ledger from worker inputs, used cold canonicalization, and limited concurrency to six. All 26 saved shards completed. The per-worker options file fell to 18,321,999 bytes.
+
+The package now keeps ordinary completed ledgers in the coordinator, retaining only relevant completed finite-expression entries for workers. It exports only symmetry mappings needed by pending inputs, including representative self-mappings for cache idempotence. Existing serial/parallel, incremental application, finite-combination, coupled, symmetry and closure regressions all pass (20 programs). `WorkerPayload` records payload size and retained metadata counts. Source hashes continue to prevent silent checkpoint reuse.
+
+## 0.2.9: family preference after full DE closure
+
+The default `ClosureFirst` search order removes hard original-family column priority. New `RunDE` campaigns with the default `BasisPreference -> "FamilyAfterClosure"` also override old `LadderFirst` family specifications, recording requested and actual orderings. Exact symmetry canonicalization continues to prefer original-domain images. Seed permissions do not change.
+
+Only after full `Closed` and `FlatnessVerified` does family preference select finite candidates inside the certified closed span, preserving boundary equality and an invertible transformation. It updates DE matrices with the derivative of that transformation and original-input reconstruction, then checks flatness. Required outside-family directions are retained. Quotient closure and finite coverage alone do not enable optimization. Failure retains the previous closed basis; the candidate search is bounded and does not claim a global optimum over all integrals.
+
+All 20 regression programs pass (`VALIDATION_0.2.9.json`). `ClosurePreference` covers necessary outside directions, varying transformation coefficients, source mismatches, out-of-span candidates, and closure/flatness gates. `OnDemandDE` closes a real one-loop example and independently differentiates the preferred basis and reduces its DE residuals to zero. These tests do not claim that four-loop DE closure is achieved; merely dropping original-family column priority did not fix the saved fourth-round example.
+
 ## 0.2.7: two-point verification by default
 
 Finite-basis construction now checks the necessary zero-sum condition by substitution before extracting the coefficient matrix. This preserves multi-term candidates and boundary-source rows. `FiniteZeroSumPrefilter` passes for a certified three-term combination, nonzero-sum rejection, and source-only input. On the saved 84-row fourth-round example, the earlier direct-prefilter benchmark took 0.52 s versus 10.94 s for coefficient extraction plus summation; this is a prefilter benchmark, not an end-to-end speedup.
@@ -41,3 +63,17 @@ Local development validation, 2026-09-20. These checks validate the package inte
 A supplementary four-loop development run generated and saved an initial extension of 496 relations and reached the subsequent expansion. That longer expansion was stopped during release preparation. It is **not** a passed four-loop closure test or a performance guarantee, and its large local artifacts are not included in the repository. Start a new campaign with the released source rather than resuming a development checkpoint with a different implementation fingerprint.
 
 Not validated end-to-end: full three-/four-loop DE closure using this new package, recursive lower-loop source closure, overlapping collision certificates, and large Ubuntu production reductions. The legacy comparison is an optional test requiring the user's trusted original generator; that source is not redistributed here.
+
+## 0.2.8: coupled seed/operator actions
+
+`Tests/CoupledIBP.wls` checks independent action agreement, rejection of variable
+weights and forged degrees, exact cancellation before primitive rejection,
+contact-kernel searches, integration into GenerateSystem and a separate joint
+completion ledger. Four-loop experimental results are recorded separately under
+`runs/g4-coupled-20260921/`; passing package tests alone does not imply fourth-round
+finite recovery.
+
+
+## 0.3.0 strategy integration
+
+All 28 groups in [the validation record](VALIDATION_0.3.0.json) passed. The default numerical check uses one point; the all-finite path reconstructs coefficients and retained boundary sources without finite-cover search. Six ordering strategies and topology-derived tennis-court supersectors have dedicated regressions. This does not certify a completed tennis-court campaign.

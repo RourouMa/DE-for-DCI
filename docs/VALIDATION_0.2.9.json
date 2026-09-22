@@ -1,0 +1,113 @@
+{
+  "version": "0.2.9",
+  "policy": [
+    "CertifiedFiniteness",
+    "VerifiedFullDEClosure",
+    "OriginalFamilyPreference"
+  ],
+  "tests": [
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 3.813
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 7.534
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 6.048
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 3.308
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 3.336
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 4.793
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 10.579
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 4.875
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 3.35
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 13.733
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 3.324
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 3.268
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.288
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.273
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.264
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 3.699
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.273
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 3.396
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 4.467
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 7.243
+    }
+  ],
+  "passed": true,
+  "test_programs": 20,
+  "scope": "Default closure-first search ordering, old LadderFirst specification override, post-closure finite in-span basis selection, exact invertible change of basis, boundary equality, derivative term, input reconstruction, flatness, and actual one-loop re-differentiation/reduction. Does not establish four-loop closure."
+}

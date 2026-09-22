@@ -1,0 +1,117 @@
+{
+  "version": "0.2.12",
+  "tests": [
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 3.21
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 7.35
+    },
+    {
+      "test": "CoupledDisjoint",
+      "exit_code": 0,
+      "seconds": 3.563
+    },
+    {
+      "test": "CoupledDegree",
+      "exit_code": 0,
+      "seconds": 3.247
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 5.807
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 3.244
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 3.222
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 4.526
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 13.982
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 4.783
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 3.289
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 13.61
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 3.285
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 3.206
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 3.239
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 3.212
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 3.242
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 3.729
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 3.243
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 3.27
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 4.238
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 7.053
+    }
+  ],
+  "passed": true,
+  "scope": "Sparse joint constraints, degree-matched mixed seed/operator actions, direct independent action and collision checks. Sparse group of 36 four-loop seeds exactly reproduces all 166 dense-search equations. No four-loop closure claim."
+}

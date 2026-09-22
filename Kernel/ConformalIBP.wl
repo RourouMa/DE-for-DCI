@@ -8,12 +8,14 @@ FamilyPropagators::usage="FamilyPropagators[family] returns ordered propagators 
 GenerateOperators::usage="GenerateOperators[family] gives verified delta-tangent rotation syzygies with loop degrees.";
 GenerateSeeds::usage="GenerateSeeds[family,targets,operators] pairs component-local axial seeds with operator degrees.";
 IBPRelation::usage="IBPRelation[family,operator,seed] evaluates the ordinary action and endpoint-local collision contacts.";
+CoupledIBPRelation::usage="CoupledIBPRelation[family,terms] independently certifies a complete rational combination of seed/operator actions before symmetry canonicalization.";
+FindCoupledIBPRelations::usage="FindCoupledIBPRelations[family,seeds] searches joint degree-matched action kernels with exact infinity, domain and literal residue cancellation.";
 GenerateSystem::usage="GenerateSystem[family,targets] generates IBP and full ordinary/factorized symmetry relations.";
 CanonicalIntegral::usage="CanonicalIntegral[family,G[...]] canonicalizes exact external and loop symmetries inside declared domains.";
 DifferentiateIntegrals::usage="DifferentiateIntegrals[family,expressions] differentiates complete expressions before collecting targets.";
 FiniteIntegralQ::usage="FiniteIntegralQ[family,expression] applies a conservative collision-cancellation test, not an arbitrary zero-sum rule.";
 BuildFiniteBasis::usage="BuildFiniteBasis[family,rows] constructs a minimal constant-coefficient divergent block cover and verifies it.";
-ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verified Gaussian reduction, with original-domain and then factorized free representatives preferred.";
+ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verified Gaussian reduction. Default TierReference ordering uses finite/factorized tiers and ordering01 internal priorities.";
 ReduceTargetIntegrals::usage="ReduceTargetIntegrals[family,targets,equations] verifies a target reduction using a dependency-selected subset of original equations and returns its certificate.";
 RunReduction::usage="RunReduction[family,targets,options] generates and iterates a target reduction campaign.";
 RunDE::usage="RunDE[family,inputs,options] restarts from the original inputs after every system extension and tests actual derivative closure.";
@@ -22,7 +24,7 @@ InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirec
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.2.7";
+$ConformalIBPVersion="0.3.0";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -34,7 +36,7 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"ConformalIBP.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
+ {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
@@ -46,7 +48,8 @@ canonicalLinear[e_]:=Module[{atoms=Join[support[e],sources[e]],terms},
   Return[fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]];
  Total[(Together[Last[#]] atoms[[First[FirstPosition[First[#],1]]]])& /@ terms]];
 coeff[rows_,vars_]:=Table[With[{expanded=Expand[r]},Together[Coefficient[expanded,#]]& /@ vars],{r,rows}];
-rr[m_]:=If[m==={} || First[m]==={},{},Select[RowReduce[m],!And@@(zero /@ #)&]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"LinearAlgebra.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"FiniteSupport.wl"}]];
 pivots[m_]:=First[FirstPosition[#,a_/;!zero[a],Missing[],{1},Heads->False]]& /@ m;
 edges[l_]:=Join[Partition[Range[l],2,1],Complement[Subsets[Range[l],{2}],Partition[Range[l],2,1]]];
 standardProps[xs_,ys_]:=Join[Flatten[Table[SP[x,y],{y,ys},{x,xs}]],SP@@ys[[#]]& /@ edges[Length[ys]]];
@@ -58,9 +61,9 @@ CreateFamily[spec_Association]:=Module[{f,xs,ys,p,expected,top,kin,vars,gram,per
  f=Join[<|"Name"->"ConformalFamily","Variables"->{},"Kinematics"->{},
  "Propagators"->Automatic,"ExternalDerivatives"->Automatic,
  "ExternalPermutations"->Automatic,"SuperSectors"->{},"Completion"->"FamilyOnly",
- "IntegralOrdering"->"LadderFirst","MaxLoopPower"->2,"Dimension"->4,"FiniteValidator"->Automatic|>,spec];
+ "IntegralOrdering"->"TierReference","MaxLoopPower"->2,"Dimension"->4,"FiniteValidator"->Automatic|>,spec];
  If[f["Dimension"]=!=4,Return[fail["Dimension","The built-in conformal weights and contact normalization currently require dimension four."]]];
- If[!MemberQ[{"LadderFirst","Legacy"},f["IntegralOrdering"]],Return[fail["IntegralOrdering","Use LadderFirst or Legacy."]]];
+ If[!MemberQ[{"TierReference","TierLadder","TierBlocks","Reference","ClosureFirst","LadderFirst","Legacy"},f["IntegralOrdering"]],Return[fail["IntegralOrdering","Use TierReference (default), TierLadder, TierBlocks, Reference, ClosureFirst, LadderFirst or Legacy."]]];
  xs=Lookup[f,"External",{}];ys=Lookup[f,"Loops",{}];vars=f["Variables"];kin=f["Kinematics"];
  If[xs==={} || ys==={} || !DuplicateFreeQ[Join[xs,ys]] || !VectorQ[Join[xs,ys,vars],MatchQ[#,_Symbol]&],
   Return[fail["InvalidVectors","External, Loops and Variables must be lists of distinct symbolic vectors/parameters."]]];
@@ -143,6 +146,10 @@ CanonicalIntegral[f_Association,g_G]:=Module[{h=f["Hash"],r},
 exportSymmetryCache[f_,exclude_:{}]:=Module[{m=KeyDrop[symmetryKnown[f["Hash"]],exclude],a},
  a=<|"FamilyHash"->f["Hash"],"ImplementationHash"->$implementationHash,"Mappings"->m|>;
  Append[a,"Hash"->Hash[a,"SHA256"]]];
+exportSelectedSymmetryCache[f_,inputs_List]:=Module[{known=symmetryKnown[f["Hash"]],m,a},
+ m=KeyTake[known,inputs];m=Join[m,KeyTake[known,DeleteDuplicates[Values[m]]]];
+ a=<|"FamilyHash"->f["Hash"],"ImplementationHash"->$implementationHash,"Mappings"->m|>;
+ Append[a,"Hash"->Hash[a,"SHA256"]]];
 importSymmetryCache[f_,a_Association]:=Module[{m,known=symmetryKnown[f["Hash"]],overlap,merged},
  If[Lookup[a,"FamilyHash",None]=!=f["Hash"] || Lookup[a,"ImplementationHash",None]=!=$implementationHash ||
   Lookup[a,"Hash",None]=!=Hash[KeyDrop[a,"Hash"],"SHA256"],
@@ -177,7 +184,7 @@ canonMemo[h_,f_,g_]:=canonMemo[h,f,g]=Module[{a=List@@g,records,positive,ids,var
  ids=First /@ Select[records,Function[rec,AnyTrue[rec[[2]],BitAnd[positive,#]===positive&]]];
  variants=DeleteDuplicates[G@@a[[#]]& /@ ids];
  If[variants==={},Return[fail["OutsideFamily","No symmetry image lies in the declared family/supersector domains."]]];
- representative=If[Lookup[f,"IntegralOrdering","LadderFirst"]==="LadderFirst",
+ representative=If[MemberQ[{"ClosureFirst","LadderFirst"},Lookup[f,"IntegralOrdering","ClosureFirst"]],
   First[SortBy[variants,{Boole[!originalDomainIntegralQ[f,#]]&,Identity}]],First[Sort[variants]]];
  Scan[(canonMemo[h,f,#]=representative)&,variants];representative];
 canonExpr[f_,e_]:=Module[{gs=support[e],images},images=CanonicalIntegral[f,#]& /@ gs;
@@ -290,6 +297,8 @@ DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["
 
 Get[FileNameJoin[{DirectoryName[$InputFileName],"SeedPlanning.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Reduction.wl"}]];
+Get[FileNameJoin[{DirectoryName[$InputFileName],"Coupled.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"TargetReduction.wl"}]];
+Get[FileNameJoin[{DirectoryName[$InputFileName],"ClosurePreference.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Iteration.wl"}]];
 End[];EndPackage[];

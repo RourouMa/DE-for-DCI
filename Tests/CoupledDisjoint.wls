@@ -1,0 +1,18 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[b_,s_]:=If[TrueQ[b],Print["PASS ",s],Print["FAIL ",s];Quit[1]];
+f=CreateFamily[Join[LadderFamily[4,kinematics,{x,y}],<|"TopSector"->ConstantArray[1,22],"Completion"->"FamilyOnly","SuperSectors"->{}|>]];
+a={1,1,0,0,0,0,1,1};b={1,0,1,0,0,1,0,1};
+seeds=Flatten[Table[G@@Join[u,v,{2,0,2,0,0,0},ConstantArray[1,4]],{u,{a,b}},{v,{a,b}}],1];
+assert[AllTrue[seeds,ConformalIBP`Private`coupledSeedQ[f,#]&],"disjoint double-pair seeds admitted"];
+overlap=G@@{2,0,0,0,0,0,0,0,0,2,0,0,1,1,1,1,2,2,0,0,0,0,1,1,1,1};
+assert[!ConformalIBP`Private`coupledSeedQ[f,overlap],"overlapping collision seed rejected"];
+op=First[Select[GenerateOperators[f],#["Loop"]===1 && #["Degree"]==={0,0,0,0}&]];
+ops={op,First[Select[GenerateOperators[f],#["Loop"]===2 && #["A"]===op["A"] && #["B"]===op["B"]&]]};
+terms=Flatten[Table[MapThread[<|"Coefficient"->#1,"Seed"->#2,"Operator"->o|>&,{{1,-1,-1,1},seeds}],{o,ops}],1];
+p=CoupledIBPRelation[f,terms];assert[AssociationQ[p] && !ConformalIBP`Private`zero[p["Equation"]],"nonzero product of two finite differences independently certified"];
+assert[And@@Values[p["Checks"]],"direct rational action and every literal pair residue verified"];
+assert[AnyTrue[ConformalIBP`Private`support[p["UncanonicalizedEquation"]],Length[ConformalIBP`Private`badClusters[f,#]]===2&],"certificate actually exercises two disjoint poles"];
+r=FindCoupledIBPRelations[f,seeds,"Operators"->ops];assert[AssociationQ[r] && r["Equations"]=!={} && r["RejectedCandidates"]==={},"joint kernel discovers disjoint-pole relations"];
+Print["ALL PASSED"];Quit[];

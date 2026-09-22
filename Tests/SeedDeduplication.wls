@@ -8,6 +8,7 @@ assert[AssociationQ[next],"parallel incremental generation succeeds"];
 assert[Intersection[first["Applications"],next["Applications"]]==={},"no completed operator-seed pair dispatched again"];
 assert[Union[first["Applications"],next["Applications"]]===Union[full["Applications"]],"incremental applications equal fresh expanded-neighborhood applications"];
 assert[Union[first["Equations"],next["Equations"]]===Union[full["Equations"]],"deduplication preserves the complete relation union"];
+assert[next["WorkerPayload"]["WorkerHistoricalApplications"]===0 && next["WorkerPayload"]["HistoricalApplications"]>0,"ordinary completed ledger stays in coordinator"];
 audit=next["SeedingDeduplication"];
 assert[audit["SkippedCompletedOrdinaryApplications"]>0 && audit["PendingOrdinaryApplications"]===Length[next["Applications"]],"planning audit counts previously completed and pending applications"];
 again=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},GenerateSystem[f,{a,b},"Workers"->4,"CompletedApplications"->full["Applications"],"CompletedSymmetryInputs"->full["NewSymmetryInputs"]]];
@@ -18,6 +19,10 @@ assert[pendingFinite["IndependentKernels"]>0 && pendingFinite["Applications"]=!=
 assert[Union[full["Applications"],pendingFinite["Applications"]]===Union[withFinite["Applications"]] && Union[full["Equations"],pendingFinite["Equations"]]===Union[withFinite["Equations"]],"finite combination dispatch preserves applications and equations"];
 repeatFinite=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},GenerateSystem[f,{a,b},"FiniteSeeds"->{a+b},"Workers"->4,"CompletedApplications"->withFinite["Applications"],"CompletedSymmetryInputs"->withFinite["NewSymmetryInputs"]]];
 assert[repeatFinite["Applications"]==={} && repeatFinite["Equations"]==={} && repeatFinite["IndependentKernels"]===0,"completed ordinary and finite neighborhoods launch no workers"];
+mixed=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},GenerateSystem[f,{a,b,G[3,-1,1,1,1]},"FiniteSeeds"->{a+b},"Workers"->4,"CompletedApplications"->withFinite["Applications"]]];
+assert[Intersection[withFinite["Applications"],mixed["Applications"]]==={} && mixed["WorkerPayload"]["WorkerHistoricalApplications"]>0,"finite-expression ledger retained when ordinary work remains"];
+cache=ConformalIBP`Private`exportSelectedSymmetryCache[f,{b}];
+assert[Sort[Keys[cache["Mappings"]]]===Union[{b},Values[cache["Mappings"]]] && TrueQ[ConformalIBP`Private`importSymmetryCache[f,cache]],"selected cache preserves representative self-mappings and imports"];
 ops=GenerateOperators[f];p=GenerateSeeds[f,{a},{First[ops],First[ops]}];q=ConformalIBP`Private`pendingSeedPlan[p,{}];
 assert[q["SeedingDeduplication"]["SkippedDuplicateOrdinaryApplications"]>0,"duplicate operator applications removed within a plan"];
 assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

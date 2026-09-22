@@ -1,7 +1,7 @@
 root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
 assert[test_,name_]:=If[TrueQ[test],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
 Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
-f=LadderFamily[3,kinematics,{x,y}];
+f=LadderFamily[3,kinematics,{x,y}];f=CreateFamily[Join[KeyDrop[f,{"Hash"}],<|"IntegralOrdering"->"LadderFirst"|>]];
 gaps={G[0,-1,0,4,0,-1,2,2,0,2,0,2,1,0,0,1,1,1],G[0,0,0,3,-1,-1,3,2,0,2,0,2,1,0,0,1,1,1],G[0,0,0,3,0,-2,2,3,0,2,0,2,1,0,0,1,1,1]};
 inside=ConformalIBP`Private`originalDomainIntegralQ;
 seeds[plan_]:=Union[Flatten[Lookup[plan["Batches"],"Seeds"]]];

@@ -1,0 +1,12 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[1,kinematics,{x,y}];a=G[1,1,1,1,1];b=G[0,2,1,1,1];src=BoundaryIntegral[1,{2,0,2,0,1}];
+rows={(x+y)(a-b)+a/(x-1)+y src,2 a-x src,0};r=BuildFiniteBasis[f,rows];
+assert[AssociationQ[r]&&TrueQ[r["FiniteCoverSearchSkipped"]]&&r["Combinations"]==={},"all-finite support bypasses cover search"];
+assert[And@@(ConformalIBP`Private`zero /@ (rows-r["Weights"].r["Basis"]-r["BoundaryRows"])),"exact reconstruction retains coefficients and boundary sources"];
+assert[r["Basis"]===Sort[{a,b}],"every remaining finite atom is retained without span compression"];
+assert[BuildFiniteBasis[f,{src}]["BoundaryRows"]==={src},"boundary-only rows retained"];
+assert[FailureQ[BuildFiniteBasis[f,{a b}]],"nonlinear input rejected"];
+assert[Lookup[Association[Options[RunDE]],"BasisPreference"]==="None","post-closure preference is opt-in"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

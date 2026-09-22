@@ -1,0 +1,222 @@
+{
+  "version": "0.3.0",
+  "at": "2026-09-22T15:36:00.749426+08:00",
+  "passed": true,
+  "test_groups": 28,
+  "tests": [
+    {
+      "test": "DirectFiniteSupport",
+      "exit_code": 0,
+      "seconds": 4.003
+    },
+    {
+      "test": "OrderingStrategies",
+      "exit_code": 0,
+      "seconds": 3.995
+    },
+    {
+      "test": "TennisTopology",
+      "exit_code": 0,
+      "seconds": 4.045
+    },
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 4.065
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 10.594
+    },
+    {
+      "test": "CoupledDisjoint",
+      "exit_code": 0,
+      "seconds": 4.445
+    },
+    {
+      "test": "CoupledDegree",
+      "exit_code": 0,
+      "seconds": 4.001
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 8.232
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 4.038
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 4.039
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 6.141
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 26.195
+    },
+    {
+      "test": "ParallelSeedPlanning",
+      "exit_code": 0,
+      "seconds": 46.845
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 11.252
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 6.908
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 28.313
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 8.457
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 6.784
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 6.756
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 6.759
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 6.861
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 9.114
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 7.115
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 7.258
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 10.293
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 19.44
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 9.292
+    },
+    {
+      "test": "FiniteFlowLinearAlgebra",
+      "exit_code": 0,
+      "executed_separately": true,
+      "checks": [
+        "dependent and zero symbolic rows",
+        "exact left and right inverse",
+        "zero row space",
+        "no unexpected messages"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "Kernel/ClosurePreference.wl": "c8829d9f8979932701946fe9aa22ec6b20dd4b899b1177a128b13645eccc3db4",
+    "Kernel/ConformalIBP.wl": "45b1490d8aa7c3a20b3516fed0b5b692ac0b2369de00b8bf8895137445ec0aeb",
+    "Kernel/Coupled.wl": "52f4eefd06113e896076e62e6d02511ee562e1abd906594b57d10d0914f41f6c",
+    "Kernel/FiniteSupport.wl": "e5755b2f723cbdfc03d304c00f108b51715f2e6ab4d9d139609b3f32508cf4b7",
+    "Kernel/Iteration.wl": "b0c31d6d8c64dec85a251c5eb3f31f95207099c53e906d73216a54460385bd4e",
+    "Kernel/LinearAlgebra.wl": "f15c085c27b58f810fc4988c0fbdc18ab9326e4bfc67087745d86b5460a27131",
+    "Kernel/Ordering.wl": "531a20a389c4f8bb755a4d3779340bec17698525aa14fd9d546caf139bfdb30e",
+    "Kernel/Ordering01Reference.wl": "743626b32ab15ce77ac5bcf074de7175004fbb67a6ac83c2be42a28d2b474358",
+    "Kernel/Ordering01Symmetry.wl": "b674f75cc4b24dac71519656e45f303d5ca63a66160a6c5b6c685a15763c0c3a",
+    "Kernel/Reduction.wl": "fe00f28b132e1e6176e6b47e408a60f123400d9cbe9afa2ff3d445583429218f",
+    "Kernel/SeedPlanning.wl": "7ddd9923aeff0ee270b64c462b92f098ef75f0eef340e6d3fb80d63cc06230cf",
+    "Kernel/TargetReduction.wl": "4c596db04c9e3371120a104c70a929706e70cb8fbac9bd31577c8d4424b92aba",
+    "Kernel/init.m": "3f81e9b820c20fbff464a1ba2d6e94a63f6986a59721b8f18b105e2c1b07ade5",
+    "scripts/ibp-worker.wls": "b6a6f809c2743c2f68ecb100d0315a43bcd8211ddc03d486bfcf4d55c934ea6f",
+    "scripts/monitor-campaign.py": "2deba7120f9db0b10e2a5535f2eb78cf8d08fcdec64f5e55d6ab787439039a48",
+    "scripts/report-rounds.wls": "17b8b44b68a096f8d171b1a11d0a82e8b43535f3d92592c5f2541b7c8cf2dd48",
+    "scripts/run-tests.py": "c66357d149779b27310d5c97b45b9aba9897c60c213076a782773dc59139b1ca",
+    "scripts/seed-plan-worker.wls": "170870267c1a057cf08c434589d0c6374ec11e1c1b2210fb952e0779e62ba7e2",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
+    "scripts/verify-residual-worker.wls": "70f50adb8a2bda37da7f56ac05475b6dcf7381c2bd402d4c6c38382cd47634a4",
+    "Tests/BoundaryReduction.wls": "3b54cea5b76b1d8c30b8b212e0fddb47820915d144cd9ca579bdfcc4b8bbd46f",
+    "Tests/ClosedPoolReplay.wls": "b1ad14e7f6e6ff93b84eb7bcdaff7d545ba282c56bf24a4721b514fdb1e7cb09",
+    "Tests/ClosurePreference.wls": "b78a896479557dcf3a9abd7cd04d2a4c6d5c321522aad7456bbc967097293bf2",
+    "Tests/CoefficientParameters.wls": "4dc7723954f21aeebb71d0b92cf27a63baff7826d713e81c4815d405eedafe17",
+    "Tests/CompareLegacy.wls": "90836ddb972a2e4248c19adeea5e9431f64916e927a907cfd8bfc4825d6ef362",
+    "Tests/CoupledDegree.wls": "599ae7da0132572d021fc338bbed4196bf289277294755d0538adc351c241346",
+    "Tests/CoupledDisjoint.wls": "92e547fb4df438057a20eb565229f7d60f297e73416776b2614f4e9ea6dd8041",
+    "Tests/CoupledIBP.wls": "6ee4afe6c44ff17df64ebf6024f3671bebef44fada1a819c91f18e8de0e14e97",
+    "Tests/DirectFiniteSupport.wls": "964423ce88c759be81e4e3c71f4856d8e7faa08e07aebfa0404a83c2c5faded7",
+    "Tests/FailurePropagation.wls": "3a903d1cd0ae23fbbacd19650a325daacf5863f8ec8ab0b1a8b42e16d3ce2174",
+    "Tests/FiniteFlow.wls": "cc6c73f70becf3c6d2c571eff5dd0000a7b558392a2022c9bbbb372979e267e9",
+    "Tests/FiniteFlowLinearAlgebra.wls": "633361cd644cb251a6e85e012c8921ff99a638ab60fbe920322bea8ada807454",
+    "Tests/FiniteFlowTargetSelection.wls": "0d40ad8f30461cddea8e1498591d64126c73d5a663deb4663ea985c180bf48ee",
+    "Tests/FiniteZeroSumPrefilter.wls": "dbecdde37eba1029bff611be9985ce9f9f0cb4474a01ff1b23bd186fcfd05b58",
+    "Tests/Fixtures/CoupledFourLoop.wl": "6ae0a61f1be9af80136f1d6df7265252f0dd4c6d38194e026980cdd59c0491a5",
+    "Tests/GapCampaign.wls": "dc93cdab3a42c3aaf6426965c4aba41bf8c6a0be0c449c33c1e2adef974ae896",
+    "Tests/LinearNormalization.wls": "941c229b11fc360506378195bdaddd96fd7adfa76516e7f361e41aff7c9f9738",
+    "Tests/NumericalVerification.wls": "656958c0496ae34ae99b471d33599f7e44020caab87f06ae8f133b4756aa182e",
+    "Tests/OnDemandDE.wls": "9fd8cddbf51bc550223ab0690b64d881aeba9576f082377bd62aa6255003fe01",
+    "Tests/OrbitCache.wls": "e369f22c0981cd2fe6d622f7059e6882fb59af904a70df6c2ed08a6386b9a835",
+    "Tests/OrderingStrategies.wls": "c93b8c916e81143c04f1ee2026ba269e6338a685782c82b8b6ef7517dd714fee",
+    "Tests/ParallelResiduals.wls": "99b7eb45dbecbbb5be892d69854ebb1ab526b70a14556df2e5bc81e8945c1e8f",
+    "Tests/ParallelSeedPlanning.wls": "2dfc473de7e53cc0d507e6dd0b811aaee8afe3a07ff8898c19a88867d095f631",
+    "Tests/ReductionReuse.wls": "895c5ee63eabe20dade55258aa70dea341edcbc5c6f17e82fee4577d15c12a62",
+    "Tests/RelabelCache.wls": "6997a8d136de77ad91cab30da9f8b0033afda3a92f9f90a5848185b4ec3ea744",
+    "Tests/RelationFrontier.wls": "45ab98b53ff5ddf35e8c903cf25ea6ef5109b0c41725aafd4c0de809bd084f87",
+    "Tests/RunTests.wls": "e523eb7bca8cd7ad5e9ddc8e36e5a05ef8bdb74ee081acf79885661a0d7839bd",
+    "Tests/SeedDeduplication.wls": "3aae337097f3f5c2484edf71da50f9e2c5785e5dffc76cbed87867d4a6e6b0f7",
+    "Tests/SeedPlanArchive.wls": "3455062041589b8b9a3c2be134fbe76872fa377ad4fbc56f9f1591deb3138ca9",
+    "Tests/SeedPlanEquivalence.wls": "df4d6fc9b8a390f0725ba354d532f0a20ba390d89fcd94dda38c27df241ab1c9",
+    "Tests/SeedPolicies.wls": "cec272605e8e62d905a6c11623d2c451dc05fcc8ed3ba9396a86806d7bf8f372",
+    "Tests/SelfReducedTargets.wls": "b852f33daeaca6327373ccef03bd548bba559038212d4ef2cd3b00b3d74d71e9",
+    "Tests/SymmetryReuse.wls": "5a5a859df8cb79270314f08236cb31c602ff627a29719d52014079a48cd5ac91",
+    "Tests/SystemArchive.wls": "a4782b5ab6b0edcbbae3641d218ac5e8ca0cd2966dc72e8cad02ade310e79980",
+    "Tests/SystemArchiveReuse.wls": "6a3bcf98f3bde2e3083bc61f5f9a1b73b92b408db6b619b8b6d48c197b3dbecf",
+    "Tests/TargetReduction.wls": "1fda8f6850c76f569dd5f60e4a967928eb17b8700504bf4a7e58018f1d87cfa9",
+    "Tests/TennisTopology.wls": "1fa68318d47e178d665178a51b276fded3702f86038bb1a83c486f5c1887d4f1",
+    "Tests/Workers.wls": "b77527ab507f964f8c9cfa7272496e7588c30565a331c5eeca76f79959bd42f8",
+    "Tests/Workers26Reuse.wls": "88c677d12b7e6d70eb072714ae286db7f42247439e782427752adf9338e1aeb7",
+    "Examples/disjoint-collision-certificate.wls": "c73d985fb85ab0c146ce1a9023c8b84a547ab5232126fed376116f03e7817f47",
+    "Examples/four-loop.wls": "1e3272ce7a8b8a81a0076ac1181b2dc2733f723be4ad94a36481d4c658b09b2c",
+    "Examples/kinematics.wl": "373cbdbad161de5562731ae25d21ad1855e9137093bcd39e3cc2d570e284e31e",
+    "Examples/one-loop.wls": "156b611804474e482d81bf527c5159485e0ff3125869542661fa7f04bf0e734c",
+    "Examples/reduction.wls": "ed020ba42fbfc17b7bfb7399c7bc12ced5b70253044899e78169f8d9dc3ab5bd",
+    "Examples/tennis-court-family.wl": "56d2683b42b1902c59e630ebaa7e48bd5623faa900ac241fad0369a21cf4f44d"
+  },
+  "scope": "Portable package regression and explicit FiniteFlow tests; no claim of completed three-loop tennis-court DE"
+}
