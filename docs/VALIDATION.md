@@ -1,3 +1,7 @@
+## 0.3.1: reporting and finite-basis decision contract
+
+Targeted validation passed on 2026-09-23: `Reporting` (12 assertions), `OnDemandDE` (12 assertions), and `RunTests` (29 core assertions). Tests distinguish raw divergent support from finite basis counts, reject hidden elements and unassessed variable choices, accept a finite variable cover with a recorded decision, preserve coefficient derivatives, keep unknown ranks unknown, and verify expansion/top-replay events plus final exact one-loop closure and flatness. This is not a new tennis-court closure certificate or an automated variable-coefficient search. Running experimental snapshots remain separate from this package version.
+
 ## 0.2.12: sparse, degree-matched joint kernels
 
 All 22 regression programs pass. Mixed-degree actions agree with direct ordinary IBP; mismatched weights and forged operators are rejected. The sparse search reproduces the dense 36-seed four-loop group exactly (166 equations). Larger searches are ongoing; this is not a closure certificate.

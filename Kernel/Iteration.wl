@@ -1,3 +1,4 @@
+Get[FileNameJoin[{DirectoryName[$packageFile],"Reporting.wl"}]];
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
 generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,optionsFile,imported,sharedImages,plan,active,ids,subplan,done,finiteKeys,workerOptions,cacheInputs,workerCache,payloadAudit},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
@@ -99,7 +100,7 @@ relationFrontier[f_,masters_List,rows_List]:=Module[{groups,atoms,keys},
 runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initial["Options"],basis,pass,der,rows,targets,
  reduction,query,generated,new,finite,records,historyRules={},oldResidual,ci,cd,vars,r,p,cl,coordinates,
  fullInput,fullDE,input,de,boundary,matrices,sourcesRows,reason,changed,replay=True,epoch,startEpoch,
- independent,selectedRows,originalCount,curvature,allCoordinates,inputCoordinates,allSources,inputSources,
+ unclosedRows,independent,selectedRows,originalCount,curvature,allCoordinates,inputCoordinates,allSources,inputSources,
  frontier,masters,canonicalRows,generationNeeded,cacheImport,seedTargets,seedOptions,gapTargets,focused,fallback},
  If[familyHash[f]=!=s["FamilyHash"],Return[fail["FamilyMismatch","Family metadata hash changed."]]];
  If[!MemberQ[{"Retain","Quotient"},o["BoundaryPolicy"]],Return[fail["BoundaryPolicy","BoundaryPolicy must be Retain or Quotient."]]];
@@ -116,6 +117,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  While[replay && s["Epoch"]-startEpoch<=o["MaxSystemExpansions"],
   replay=False;basis=s["OriginalInputs"];records={};
   Do[
+   progress[o,Join[reportContext[s,pass],<|"Event"->"RoundStarted","InputCount"->Length[basis],"StartFromOriginalTop"->(pass===1)|>]];
    der=If[s["Mode"]==="DE",DifferentiateIntegrals[f,basis],<|"Rows"-><||>,"Targets"->support[basis]|>];
    If[FailureQ[der],reason=der;Break[]];rows=Flatten[Values[der["Rows"]],1];
    targets=Union[support[basis],der["Targets"]];
@@ -140,7 +142,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    s["PreviousRepresentatives"]=Union[s["PreviousRepresentatives"],support[{fullInput,fullDE}]];
    masters=support[{fullInput,fullDE}];frontier={};generationNeeded=True;
    If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand",
-    finite=BuildFiniteBasis[f,Join[fullInput,fullDE]];
+    finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]]];
     generationNeeded=FailureQ[finite] || reduction["UnseenTargets"]=!={}];
    If[generationNeeded,
    gapTargets=Union[reduction["UnseenTargets"],If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite],masters,{}]];
@@ -178,19 +180,16 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    If[new=!={} && s["Epoch"]-startEpoch<o["MaxSystemExpansions"],
     s["Equations"]=Union[s["Equations"],new];s["Epoch"]++;replay=True;
     s["Status"]="ReplayFromOriginalInputs";
-    progress[o,<|"Epoch"->s["Epoch"],"NewRelations"->Length[new],"HistoricalQueries"->Length[query],"Action"->"Re-reduce all historical targets and restart from original inputs"|>];
+    progress[o,Join[reportContext[s,pass],<|"Event"->"PoolExpanded","NewRelations"->Length[new],"HistoricalQueries"->Length[query],"ReplayFromOriginalTop"->True,"NextRound"->1,"Action"->"Re-reduce all historical targets and restart from original inputs"|>]];
     checkpoint[s,o["OutputDirectory"]];Break[]];
    If[new=!={},reason="ExpansionLimit";s["PendingRelations"]=new;Break[]];
    If[s["Mode"]==="Reduction",s["ReducedInputs"]=fullInput;reason="ReductionFixedPoint";Break[]];
    vars=support[{input,de}];ci=coeff[input,vars];cd=coeff[de,vars];r=rr[ci];p=pivots[r];
-   cl=If[r==={},And@@Flatten[Map[zero,cd,{2}]],And@@Flatten[Map[zero,cd-cd[[All,p]].r,{2}]]];
-   finite=BuildFiniteBasis[f,Join[fullInput,fullDE]];
-   If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];Break[]];
-   AppendTo[records,<|"Round"->pass,"InputCount"->Length[basis],"DERows"->Length[rows],"Targets"->Length[der["Targets"]],
-    "RawSupport"->Length[vars],"SingleFinite"->Length[finite["SingleFinite"]],"Combinations"->Length[finite["Combinations"]],
-    "OutputCount"->Length[finite["Basis"]],"ClosedOnSameInput"->cl,"BoundarySources"->Length[sources[{fullInput,fullDE}]],
-    "FactorizedSingleFinite"->Count[(Length[parts[f,#]]>1& /@ finite["SingleFinite"]),True],
-    "SelfReducedQueries"->Length[reduction["SelfReducedTargets"]],"UnseenQueries"->Length[reduction["UnseenTargets"]]|>];
+   unclosedRows=Select[Range[Length[cd]],!And@@(zero /@ If[r==={},cd[[#]],cd[[#]]-cd[[#,p]].r])&];cl=unclosedRows==={};
+   finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]]];
+   If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
+    progress[o,Join[reportContext[s,pass],rawSupportReport[f,{fullInput,fullDE}],<|"Event"->"FiniteCoverFailed","Reason"->finite,"InputCount"->Length[basis],"OutputCount"->Missing["NotAccepted"],"FullClosureVerified"->False,"NextAction"->"Inspect uncovered combinations and missing relations; retain previous verified basis"|>]];Break[]];
+   AppendTo[records,finiteRoundReport[s,pass,basis,der,fullInput,fullDE,reduction,finite,Length[r],unclosedRows]];
    saveRound[o["OutputDirectory"],s["Epoch"],pass,<|"Input"->basis,"Derivatives"->der,"Reduction"->reduction,
     "ReducedInput"->fullInput,"ReducedDE"->fullDE,"FiniteBasis"->finite,"Summary"->Last[records]|>];
    progress[o,Last[records]];s["Basis"]=finite["Basis"];s["History"]=records;
@@ -226,4 +225,9 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  s["Status"]=reason;s["Closed"]=TrueQ[Lookup[s,"Closed",False]];
  s["BoundaryPolicy"]=o["BoundaryPolicy"];
  If[s["Mode"]==="DE" && o["BasisPreference"]==="FamilyAfterClosure" && KeyExistsQ[s,"Basis"],s=preferFamilyAfterClosure[s]];
+ progress[o,Join[reportContext[s,If[records==={},Missing["NoVerifiedRound"],Last[records]["Round"]]],
+  <|"Event"->"CampaignFinished","Status"->s["Status"],"OutputCount"->Length[Lookup[s,"Basis",{}]],
+    "ClosedModuloBoundary"->TrueQ[Lookup[s,"ClosedModuloBoundary",False]],
+    "FullClosureVerified"->s["Closed"],"FlatnessVerified"->Lookup[s,"FlatnessVerified",Missing["NotChecked"]],
+    "LowerLoopDETargets"->Lookup[s,"LowerLoopDETargets",{}]|>]];
  checkpoint[s,o["OutputDirectory"]];s];

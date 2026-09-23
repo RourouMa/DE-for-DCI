@@ -3,11 +3,16 @@ assert[test_,name_]:=If[TrueQ[test],Print["PASS ",name],Print["FAIL ",name];Quit
 kin={SP[X1,X1]->2 x,SP[X3,X3]->2 x,SP[X2,X2]->2 y,SP[X4,X4]->2 y,
  SP[X1,X3]->1+x^2,SP[X2,X4]->1+y^2,SP[X1,X2]->0,SP[X1,X4]->0,SP[X2,X3]->0,SP[X3,X4]->0};
 f=LadderFamily[1,kin,{x,y}];g=G[1,1,1,1,1];
-run=RunDE[f,g,"Solver"->"Exact","GenerationPolicy"->"OnDemand","BasisPreference"->"FamilyAfterClosure","MaxRounds"->6,"MaxSystemExpansions"->8,"ProgressFunction"->None];
+events={};
+run=RunDE[f,g,"Solver"->"Exact","GenerationPolicy"->"OnDemand","BasisPreference"->"FamilyAfterClosure","MaxRounds"->6,"MaxSystemExpansions"->8,"ProgressFunction"->(AppendTo[events,#]&)];
 assert[AssociationQ[run] && run["Closed"] && run["FlatnessVerified"],"demand-driven one-loop DE closes with exact flatness"];
 assert[Length[run["Basis"]]===4 && Length[run["History"]]>=2,"finite cover feeds a subsequent derivative round"];
 assert[run["LastReduction"]["NumericalEquationResidualsZero"] && run["LastReduction"]["Idempotent"],"full reduction verification retained"];
 assert[run["CompletedApplications"]=!={},"missing targets trigger actual IBP generation"];
+expanded=Select[events,Lookup[#,"Event",None]==="PoolExpanded"&];
+assert[expanded=!={} && AllTrue[expanded,TrueQ[#["ReplayFromOriginalTop"]] && #["NextRound"]===1&],"every pool expansion announces top replay"];
+assert[AnyTrue[events,Lookup[#,"Event",None]==="RoundStarted"&] && AnyTrue[events,Lookup[#,"Event",None]==="RoundVerified"&],"round start and verified counts both emitted"];
+assert[Last[events]["Event"]==="CampaignFinished" && Last[events]["FullClosureVerified"] && Last[events]["FlatnessVerified"],"terminal event distinguishes full closure and flatness from round progress"];
 assert[And@@(FiniteIntegralQ[f,#]& /@ run["Basis"]),"final differentiated inputs remain certified finite"];
 assert[run["FamilyPreferenceAudit"]["Applied"] && run["FamilyPreferenceAudit"]["ExactChangeOfBasis"],"family preference runs after verified closure"];
 newDer=DifferentiateIntegrals[f,run["Basis"]];

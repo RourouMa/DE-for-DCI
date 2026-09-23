@@ -56,7 +56,7 @@ exact input-span DE closure test
         +-- closed block --> explicit source check --> flatness when source-free
 ```
 
-The result distinguishes raw support, single finite integrals, constant combinations, targets, and input/output counts. None is silently substituted for the others. Previous input elements are reconstructed in the current system; obsolete dependent expressions are not appended to inflate the basis.
+The result distinguishes raw support, single finite integrals, constant and variable combinations, targets, and input/output counts. None is silently substituted for the others. Previous input elements are reconstructed in the current system; obsolete dependent expressions are not appended to inflate the basis.
 
 Local relation neighbors are essential even for a one-loop box: an unconstrained single axial shift changes conformal weight, so degree-zero operators may initially receive only the center itself. When that center survives, the system automatically follows simpler neighbors in its existing IBP rows. For example, the regression suite recovers `G[-2,2,4,0,1] = (1+x^2+x^4)/(3 x^2) G[0,0,2,2,1]` without importing any precomputed one-loop identity.
 
@@ -75,3 +75,9 @@ This avoids both kinematic-dependent definitions and arbitrary `H_i-H_1` assumpt
 - A completed scalar ladder block is inferred from the supported ladder convention. Other family completions must be declared by the caller.
 - Lower-loop DE recursion, protected-propagator syzygies, large distributed matrix storage, and global sparse-basis optimization are not implemented in version 0.1.
 - Passing a finite seed range is not evidence that all magic relations have been found. Unseen targets, self-reduced complex targets, degree coverage gaps and rejected applications are exposed for the next extension.
+
+## Selection objective and reporting
+
+Finite coverage and DE closure are correctness requirements; simplicity is the optimization objective. Prefer sparse rational-constant combinations, without enlarging the actual differentiated span merely to avoid combinations. The constant builder is not a proof that variable coefficients are forbidden or that a failed search is impossible. Before trying a variable cover, assess candidate completeness, IBP and supersector symmetry, and compare costs. Record the autonomous decision; differentiate coefficients as well as integrals. The default builder still searches constant covers only. Three-loop constant feasibility guides diagnosis; it must not be assumed for four loops.
+
+Every round reports raw support, all finite basis components, independently measured rank, closure level, verification type and artifact location. Missing rank stays unknown. Every relation-pool expansion reports the new epoch and top replay; basis selection alone does not increment the epoch. See [the reporting contract](REPORTING.zh-CN.md).
