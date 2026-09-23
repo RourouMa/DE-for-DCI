@@ -16,6 +16,14 @@ assert[AssociationQ[ConformalIBP`Private`complexityAdvanceContract[b,decision]],
 assert[FailureQ[ConformalIBP`Private`complexityAdvanceContract[b,Join[decision,<|"EquationPoolHash"->124|>]]],"stale decisions cannot authorize another equation pool"];
 c=AssessBasisComplexity[f1,{simple},<|"Rules"->{CanonicalIntegral[f1,simple]->simple}|>];
 assert[!c["RequiresReview"],"simple top integral proceeds"];
+f2=LadderFamily[2,kinematics,{x,y}];ga=G[2,0,0,0,0,2,0,0,2,1,1];gb=G[1,1,0,0,1,1,0,0,2,1,1];gc=G[3,-1,0,0,-1,3,0,0,2,1,1];whole=ga+gb-2 gc;
+assert[FailureQ[AssessBasisComplexity[f2,{gb},<|"Rules"->{}|>]],"out-of-domain canonicalization returns a failure without malformed records"];
+f2=CreateFamily[Join[f2,<|"SuperSectors"->{Range[9]}|>]];
+wholeAudit=AssessBasisComplexity[f2,{whole,ga},<|"Rules"->{}|>];
+assert[wholeAudit["AuditedCandidateCount"]===2 && Length[wholeAudit["PhysicalCandidates"]]===2,"every physical candidate is audited without an example whitelist"];
+firstPhysical=First[wholeAudit["PhysicalCandidates"]];
+assert[firstPhysical["FiniteAsWhole"] && Length[firstPhysical["DivergentAtoms"]]===3 && firstPhysical["CoverageSearchTarget"]===whole && !firstPhysical["AtomwiseFiniteCoverageRequired"],"finite combination is tested as a whole despite three divergent atoms"];
+assert[!Last[wholeAudit["PhysicalCandidates"]]["FiniteAsWhole"],"isolated divergent atom is distinguished from its finite combination"];
 ops=GenerateOperators[f1];axial=GenerateSeeds[f1,{simple},ops];
 example=FirstCase[Flatten[Table[With[{r=IBPRelation[f1,ops[[batch["OperatorIndex"]]],seed]},
  If[!FailureQ[r] && ConformalIBP`Private`support[r]=!={},<|"Seed"->seed,"OperatorIndex"->batch["OperatorIndex"],"Relation"->r|>,Nothing]],{batch,axial["Batches"]},{seed,batch["Seeds"]}],1],_Association];
