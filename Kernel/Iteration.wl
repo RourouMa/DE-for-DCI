@@ -58,7 +58,7 @@ Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12
  "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
  "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets","BasisPreference"->"None",
- "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ProgressFunction"->Print};
+ "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ComplexityDecision"->Automatic,"ComplexitySectorProfiles"->{},"ProgressFunction"->Print};
 Options[RunReduction]=Options[RunDE];
 progress[o_,a_]:=If[o["ProgressFunction"]=!=None,o["ProgressFunction"][a]];
 checkpoint[state_,dir_]:=If[StringQ[dir],Module[{path,tmp,saved},
@@ -101,7 +101,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  reduction,query,generated,new,finite,records,historyRules={},oldResidual,ci,cd,vars,r,p,cl,coordinates,
  fullInput,fullDE,input,de,boundary,matrices,sourcesRows,reason,changed,replay=True,epoch,startEpoch,
  unclosedRows,independent,selectedRows,originalCount,curvature,allCoordinates,inputCoordinates,allSources,inputSources,
- frontier,masters,canonicalRows,generationNeeded,cacheImport,seedTargets,seedOptions,gapTargets,focused,fallback},
+ frontier,masters,canonicalRows,generationNeeded,cacheImport,seedTargets,seedOptions,gapTargets,focused,fallback,complexityAudit,complexityGate},
  If[familyHash[f]=!=s["FamilyHash"],Return[fail["FamilyMismatch","Family metadata hash changed."]]];
  If[!MemberQ[{"Retain","Quotient"},o["BoundaryPolicy"]],Return[fail["BoundaryPolicy","BoundaryPolicy must be Retain or Quotient."]]];
  If[!MemberQ[{"Always","OnDemand"},o["GenerationPolicy"]],Return[fail["GenerationPolicy","GenerationPolicy must be Always or OnDemand."]]];
@@ -139,6 +139,12 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    fullInput=canonicalLinear /@ ((canonExpr[f,#]& /@ basis)/.Dispatch[reduction["Rules"]]);
    fullDE=canonicalLinear /@ ((canonExpr[f,#]& /@ rows)/.Dispatch[reduction["Rules"]]);
    input=fullInput/._BoundaryIntegral->0;de=fullDE/._BoundaryIntegral->0;
+   If[s["Mode"]==="DE",
+    complexityAudit=AssessBasisComplexity[f,basis,reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}]];
+    s["ComplexityAudit"]=complexityAudit;
+    complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
+    If[FailureQ[complexityGate],reason=complexityGate;s["UnverifiedRows"]=Join[fullInput,fullDE];
+     progress[o,Join[reportContext[s,pass],<|"Event"->"ComplexityReviewRequired","Audit"->complexityAudit,"NoIntegralsDiscarded"->True,"FullClosureVerified"->False|>]];Break[]]];
    s["PreviousRepresentatives"]=Union[s["PreviousRepresentatives"],support[{fullInput,fullDE}]];
    masters=support[{fullInput,fullDE}];frontier={};generationNeeded=True;
    If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand",
@@ -189,6 +195,11 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]]];
    If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
     progress[o,Join[reportContext[s,pass],rawSupportReport[f,{fullInput,fullDE}],<|"Event"->"FiniteCoverFailed","Reason"->finite,"InputCount"->Length[basis],"OutputCount"->Missing["NotAccepted"],"FullClosureVerified"->False,"NextAction"->"Inspect uncovered combinations and missing relations; retain previous verified basis"|>]];Break[]];
+   complexityAudit=AssessBasisComplexity[f,finite["Basis"],reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}]];
+   s["ComplexityAudit"]=complexityAudit;
+   complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
+   If[FailureQ[complexityGate],reason=complexityGate;s["CandidateFiniteBasis"]=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
+    progress[o,Join[reportContext[s,pass],<|"Event"->"ComplexityReviewRequired","Audit"->complexityAudit,"NoIntegralsDiscarded"->True,"FullClosureVerified"->False|>]];Break[]];
    AppendTo[records,finiteRoundReport[s,pass,basis,der,fullInput,fullDE,reduction,finite,Length[r],unclosedRows]];
    saveRound[o["OutputDirectory"],s["Epoch"],pass,<|"Input"->basis,"Derivatives"->der,"Reduction"->reduction,
     "ReducedInput"->fullInput,"ReducedDE"->fullDE,"FiniteBasis"->finite,"Summary"->Last[records]|>];

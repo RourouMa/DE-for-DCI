@@ -1,0 +1,46 @@
+# 用候选积分复杂度指导 IBP 扩充（0.3.2）
+
+目标是最高圈 DE 闭合且有限基尽可能简单。有限覆盖、当前方程池中的自由列、真正独立的主积分是不同概念。不能因为 `G -> G`，或一个复杂积分恰好单独有限，就直接把它送进下一轮微分。复杂度是调查线索，不是可约性的证明；没有关系就不能删掉它。
+
+## 逐轮判断
+
+对完整有限组合的每个原子，以及已有规则给出的规范形，记录 sector、正幂总和 r、正幂槽数 t、分子次数 s、dots=r−t、最大正负幂、连通分量和各圈权重。末尾单位 cut 指标不计入 r、t、s。比较应在同 family、同 sector 或真实允许的子拓扑中进行，不把横向 ladder 的经验直接套给所有 tennis-court 子拓扑。
+
+初始警报是 s≥2、dots≥2，且最大分母幂≥3或最大分子幂≥2。这是三圈数据提示的保守调查阈值，不是普适主积分上界。`ComplexitySectorProfiles` 可提供本 family 的已验证 sector 复杂度参考，必须记录 `FamilyHash, Sector, Score, Evidence`。比参考更复杂的候选也进入调查。
+
+1. **候选尚未查询**：先在已有完整方程池中约化，不能立刻撒点。
+2. **复杂候选已有简单规范形**：优先用已有关系改选有限代表，验证完整组合、精确覆盖和实际张成空间。不要为选基问题扩充 IBP。
+3. **规范形仍含可疑复杂积分**：以这些残留项为目标，先做精确 operator 逆移位撒点。逐 operator 枚举能产生目标项的 seed，检查非零系数、共形权重和已声明域，再由完整 IBP（含 contact）验证。只增大分母或只增大分子的一维轴向邻域可能漏掉需要同时转移幂次的 seed。
+4. **一层逆移位不足**：检查未消去的复杂邻居、被拒绝的 contact/domain 类型，以及真实的横向/纵向 factorized 子拓扑。只有需要时才扩大相应壳层、允许 supersector，或检验成组 action 的合法抵消（`FindCoupledIBPRelations`）；不能丢掉不合法项后把剩余部分当关系。
+
+当前 API：
+
+```wl
+audit = AssessBasisComplexity[family, basis, reduction,
+  "EquationPoolHash" -> Hash[equations, "SHA256"]];
+plan = GenerateSeeds[family, audit["TargetedSeedTargets"], Automatic,
+  "SeedGeometry" -> "InverseTargets", "SeedDomain" -> "Extended"];
+(* Extended 仍受 family 已声明的域约束，不是任意 supersector。 *)
+```
+
+`GenerateSystem` 同样支持 `SeedGeometry`；完成的实际 operator–seed 配对仍按原有账本去重。原有 component-axial 默认模式保持不变。规范形比较、复杂度参考及定向 shell 扩充不改变 O7 ordering。
+
+## 接受扩充与推进微分的条件
+
+保留旧池和已验证规则。对候选增量同时比较：(a)复杂目标的规范形是否变简单、(b)输入及输入＋DE的实际秩、(c)有限覆盖是否完整、是否新增复杂代表。**秩不变并不意味着关系无用**，它可能把难看的代表替换成简单代表。反之，原始支撑项数增减都不能单独证明好坏。报告所用复杂度度量及其局限。
+
+每次真正扩充主池，都把新增支撑对应的 ordinary/factorized symmetry 放到相同的已声明 supersector 域中处理，再从原始 top 重放。保持同一 ordering、generic point 和比较对象；扩大池后旧查询的秩不能无故增加。单点 FiniteFlow 用于候选筛查及最终 IBP 残差验证，符号重构可能需要多点，两者不能混称。
+
+`RunDE` 在现有输入约化后、接受新的有限基前均调用复杂度门槛。触发时保留全部积分、规则、未验证行与审查记录，返回 `ComplexityReviewRequired`，而不是继续微分或宣称闭合。这个结构化状态是自主选择下一种修复策略的入口，不要求用户批准。它尚不自动尝试所有 shell/coupled 策略。
+
+复杂积分并非永久禁止。如果定向撒点、symmetry 和简单基比较支持暂时保留它，可提供 `ComplexityDecision`，记录 `Reason, TargetedSeedAudit, SymmetryAudit, SimplerBasisComparison`，并绑定本次 `FamilyHash, BasisHash, EquationPoolHash`。这是有证据的判断，不能只写“用户允许”或用旧池的决定放行新池。常系数组合优先，变量系数的评估仍遵循原有有限基约定。最高圈未闭合前不转去做低圈闭合。
+
+## 独立 tennis-court O7 实验记录（2026-09-23）
+
+E1 第四轮有限基有35个元素；下一轮输入＋DE秩54，商空间19维。不能把19叫作19个新增有限主积分。对35个元素中的原子审查，24个触发联合幂次增长，只有4个在已有规范形下保持自身。针对复杂候选及其残留规范形选出39个目标，复用此前391条独立候选关系，再尝试4761个 operator–seed 配对，生成3797条不同的非零关系。与已有候选和相应 symmetry 合并、去除旧池已有关系后，增量为4684条。
+
+同一 generic point 的 FiniteFlow 筛查：输入秩35→31，输入＋DE秩54→37，差额19→6。它证实这批有针对性的关系有效；**不是符号约化验证、最终主积分数或闭合证明**。扩充池的符号重构和 E2 原始 top 重放另行记录。
+
+## 文献与适用边界
+
+[Kira 3, arXiv:2505.20197](https://arxiv.org/html/2505.20197v1) 第2节用 r、s、dots 描述复杂度，第3.1节讨论撒点优化，第3.6节介绍检查主积分集合、在出现额外候选时中断约化的机制。这支持对候选集合和撒点范围做主动检查。这里的具体警报阈值、共形逆移位规划与推进条件来自本项目推导和实验，不是论文给出的可约性定理；常规维数正规化的 seed 界不能不加转换地套用到本项目的权重及 contact 约束。

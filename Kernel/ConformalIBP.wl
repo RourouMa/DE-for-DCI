@@ -6,7 +6,9 @@ CreateFamily::usage="CreateFamily[association] validates an embedding-space fami
 LadderFamily::usage="LadderFamily[L,kinematics,variables] constructs the four-external-point ladder convention at any positive loop order.";
 FamilyPropagators::usage="FamilyPropagators[family] returns ordered propagators including delta cuts.";
 GenerateOperators::usage="GenerateOperators[family] gives verified delta-tangent rotation syzygies with loop degrees.";
-GenerateSeeds::usage="GenerateSeeds[family,targets,operators] pairs component-local axial seeds with operator degrees.";
+GenerateSeeds::usage="GenerateSeeds[family,targets,operators] pairs component-local axial or exact inverse-target seeds with operator degrees.";
+IntegralComplexity::usage="IntegralComplexity[family,G[...]] reports sector, numerator degree, dots and maximum powers, excluding unit cuts.";
+AssessBasisComplexity::usage="AssessBasisComplexity[family,basis,reduction] distinguishes complex representatives from complex surviving normal forms; complexity is not a reducibility proof.";
 IBPRelation::usage="IBPRelation[family,operator,seed] evaluates the ordinary action and endpoint-local collision contacts.";
 CoupledIBPRelation::usage="CoupledIBPRelation[family,terms] independently certifies a complete rational combination of seed/operator actions before symmetry canonicalization.";
 FindCoupledIBPRelations::usage="FindCoupledIBPRelations[family,seeds] searches joint degree-matched action kernels with exact infinity, domain and literal residue cancellation.";
@@ -24,7 +26,7 @@ InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirec
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.3.1";
+$ConformalIBPVersion="0.3.2";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -36,7 +38,7 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
+ {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
@@ -196,17 +198,24 @@ originalDomainExpressionQ[f_,e_]:=And@@(originalDomainIntegralQ[f,#]& /@ support
 originalSeedImages[f_,g_G]:=originalSeedImages[f,g]=Module[{a=List@@g,variants},
  variants=DeleteDuplicates[(G@@a[[#]]& /@ orbitIndexMaps[f["Hash"],f,parts[f,g]])];
  Select[variants,originalDomainIntegralQ[f,#] && domainQ[f,#]&]];
-Options[GenerateSeeds]={"SeedDomain"->"Original","SeedCenters"->"Raw","BlockExpansion"->"Cartesian"};
+Options[GenerateSeeds]={"SeedDomain"->"Original","SeedCenters"->"Raw","BlockExpansion"->"Cartesian","SeedGeometry"->"ComponentAxial"};
 GenerateSeeds[f_Association,targets_List,ops_:Automatic,OptionsPattern[]]:=Module[{operators=Replace[ops,Automatic:>GenerateOperators[f]],
  centers,rawCenters,unmapped,records,candidates={},degrees,byDegree,ps,pools,ids,a,local,vs,combined,tuples,
- seedDomain=OptionValue["SeedDomain"],centerPolicy=OptionValue["SeedCenters"],blockPolicy=OptionValue["BlockExpansion"]},
- If[!MemberQ[{"Original","Extended"},seedDomain] || !MemberQ[{"Raw","Representative","AllOriginalImages"},centerPolicy] || !MemberQ[{"Cartesian","SingleBlock"},blockPolicy],
-  Return[fail["SeedPolicy","Invalid SeedDomain, SeedCenters or BlockExpansion."]]];
+ seedDomain=OptionValue["SeedDomain"],centerPolicy=OptionValue["SeedCenters"],blockPolicy=OptionValue["BlockExpansion"],geometry=OptionValue["SeedGeometry"]},
+ If[!MemberQ[{"ComponentAxial","InverseTargets"},geometry] || !MemberQ[{"Original","Extended"},seedDomain] || !MemberQ[{"Raw","Representative","AllOriginalImages"},centerPolicy] || !MemberQ[{"Cartesian","SingleBlock"},blockPolicy],
+  Return[fail["SeedPolicy","Invalid SeedDomain, SeedCenters, BlockExpansion or SeedGeometry."]]];
  rawCenters=support[targets];
  If[!And@@(validIntegral[f,#]& /@ rawCenters),Return[fail["IntegralShape","Invalid seed center."]]];
  unmapped=If[centerPolicy==="Raw",{},Select[rawCenters,originalSeedImages[f,#]==={}&]];
  centers=Switch[centerPolicy,"Raw",rawCenters,"AllOriginalImages",Union[Flatten[originalSeedImages[f,#]& /@ rawCenters]],
   "Representative",Union[Flatten[Take[originalSeedImages[f,#],UpTo[1]]& /@ rawCenters]]];
+ If[geometry==="InverseTargets",
+  records=inverseSeedBatches[f,centers,operators,seedDomain];
+  Return[<|"Batches"->records,"Operators"->operators,"Centers"->centers,"UnmappedCenters"->unmapped,
+   "SeedDomain"->seedDomain,"SeedCenters"->centerPolicy,"BlockExpansion"->blockPolicy,
+   "Geometry"->"Exact inverse ordinary operator shifts; full contact validation required",
+   "FullIBPValidationRequired"->True,"SymmetryExpansionRequired"->True,
+   "EmptyDegrees"->Union[Lookup[Select[records,#["Seeds"]==={}&],"Degree",{}]]|>]];
  degrees=Union[Lookup[operators,"Degree",{}]];
  (* Enumerate each neighborhood once, then share degree batches across operators. *)
  If[operators=!={},
@@ -295,6 +304,7 @@ DifferentiateIntegrals[f_Association,expressions_List]:=Module[{rows,gs,cs,p=f["
  failures=Cases[Values[rows],_Failure,Infinity];If[failures=!={},Return[First[failures]]];
  <|"Rows"->rows,"Targets"->support[Values[rows]],"WholeCombinationsSimplifiedFirst"->True|>];
 
+Get[FileNameJoin[{DirectoryName[$InputFileName],"Complexity.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"SeedPlanning.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Reduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Coupled.wl"}]];

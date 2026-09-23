@@ -3,12 +3,12 @@ assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
 f=LadderFamily[2,kinematics,{x,y}];a=Join[f["TopSector"],{1,1}];top=G@@a;factor=a;factor[[First[f["LoopLoopIDs"]]]]=0;
 Do[id=First[Select[Range[Length[f["Propagators"]]],f["Supports"][[#]]==={k} && a[[#]]===1&]];factor[[id]]++,{k,2}];factor=G@@factor;
 targets={top,factor};ops=GenerateOperators[f];Needs["ProcessLink`"];streams=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"seed-plan-test-"<>CreateUUID[]}]];
-Do[options=Join[Association[Options[GenerateSystem]],<|"Workers"->2,"SeedPlanningWorkers"->2,"SeedPlanningThreshold"->0,"SeedCenters"->"AllOriginalImages","SeedDomain"->policy[[1]],"BlockExpansion"->policy[[2]]|>];
+Do[options=Join[Association[Options[GenerateSystem]],<|"Workers"->2,"SeedPlanningWorkers"->2,"SeedPlanningThreshold"->0,"SeedCenters"->"AllOriginalImages","SeedDomain"->policy[[1]],"BlockExpansion"->policy[[2]],"SeedGeometry"->policy[[3]]|>];
  serial=GenerateSeeds[f,targets,ops,Sequence@@FilterRules[Normal[options],Options[GenerateSeeds]]];
  parallel=Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},ConformalIBP`Private`seedPlan[f,targets,ops,options]];
  assert[AssociationQ[parallel] && KeyDrop[parallel,"SeedPlanning"]===serial,"complete serial/parallel plan equality "<>StringRiffle[policy,"/"]];
  assert[parallel["SeedPlanning"]["IndependentKernels"]===2 && TrueQ[parallel["SeedPlanning"]["ExactTargetCoverage"]],"two planning workers and exact center coverage"],
- {policy,{{"Original","Cartesian"},{"Original","SingleBlock"},{"Extended","Cartesian"}}}];
+ {policy,{{"Original","Cartesian","ComponentAxial"},{"Original","SingleBlock","ComponentAxial"},{"Extended","Cartesian","ComponentAxial"},{"Original","Cartesian","InverseTargets"},{"Extended","Cartesian","InverseTargets"}}}];
 small=ConformalIBP`Private`seedPlan[f,targets,ops,Join[options,<|"SeedPlanningThreshold"->64|>]];
 assert[small["SeedPlanning"]["IndependentKernels"]===0,"small plans avoid subprocess overhead"];
 assert[FailureQ[ConformalIBP`Private`seedPlan[f,targets,ops,Join[options,<|"SeedPlanningWorkers"->0|>]]],"invalid planning worker count rejected"];

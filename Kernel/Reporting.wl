@@ -32,7 +32,7 @@ finiteRoundReport[s_,round_,basis_,der_,fullInput_,fullDE_,reduction_,finite_,in
  <|"Event"->"RoundVerified","InputCount"->Length[basis],"DERows"->Length[fullDE],"Targets"->Length[der["Targets"]],
  "SingleFinite"->Length[finite["SingleFinite"]],"Combinations"->Length[definitions],"OutputCount"->Length[finite["Basis"]],
  "CountsIncludeAllCombinations"->True,"ConstantCombinations"->nconstant,"VariableCombinations"->Length[definitions]-nconstant,
- "ConstantCombinationCoefficients"->(nconstant===Length[definitions]),"CombinationComplexity"->complexity,
+ "ConstantCombinationCoefficients"->(nconstant===Length[definitions]),"CombinationComplexity"->complexity,"IntegralComplexityAudit"->Lookup[s,"ComplexityAudit",Missing["NotRecorded"]],
  "VariableCoefficientDecision"->Lookup[finite,"VariableCoefficientDecision",Missing["NotNeeded"]],
  "InputRationalRank"->inputRank,"ActualRationalRank"->rank,"ActualRankVerified"->IntegerQ[rank],
  "OutputCountIsMasterCount"->False,"ExactCoverage"->True,"ClosedOnSameInput"->closed,
