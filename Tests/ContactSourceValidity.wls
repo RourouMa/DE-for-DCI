@@ -1,0 +1,18 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[b_,s_]:=If[TrueQ[b],Print["PASS ",s],Print["FAIL ",s];Quit[1]];
+f=CreateFamily[Join[LadderFamily[3,kinematics,{x,y}],<|"TopSector"->ConstantArray[1,15],"Completion"->"FamilyOnly","SuperSectors"->{}|>]];
+seed=G[2,0,0,0,0,0,1,0,0,0,2,0,2,2,0,1,1,1];
+op=First[Select[GenerateOperators[f],#["Loop"]===3&&#["A"]===X3&&#["B"]===Y2&]];
+raw=ConformalIBP`Private`toIntegral[f,ConformalIBP`Private`contacts[f,op,seed]];
+assert[!FailureQ[raw]&&!ConformalIBP`Private`regularContactSourcesQ[f,raw],"nested collision produces an uncertified divergent two-loop source"];
+rejected=IBPRelation[f,op,seed];
+assert[FailureQ[rejected]&&First[rejected]==="UncertifiedContactSource","actual tennis witness rejected before joining lower-loop IBP"];
+simple=BoundaryIntegral[1,{1,1,1,1,1}];
+assert[ConformalIBP`Private`regularContactSourcesQ[f,simple],"ordinary finite one-loop contact retained"];
+assert[ConformalIBP`Private`regularContactSourcesQ[f,0],"exactly cancelled whole source retained"];
+assert[!ConformalIBP`Private`regularContactSourcesQ[f,BoundaryIntegral[2,{2,0,0,0,0,0,2,0,2,1,1}]],"divergent lower source is not treated as zero"];
+assert[AllTrue[GenerateOperators[f],With[{yi=f["Loops"][[#["Loop"]]]},#["A"]=!=yi&&#["B"]=!=yi]&],"rotation generators do not contain their own differentiation endpoint"];
+assert[$MessageList==={},"no unexpected messages"];
+Print["ALL PASSED"];Quit[0];

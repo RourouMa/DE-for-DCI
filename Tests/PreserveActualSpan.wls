@@ -1,0 +1,15 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialized"];
+f=LadderFamily[1,kinematics,{x,y}];a=CanonicalIntegral[f,G[1,1,1,1,1]];b=CanonicalIntegral[f,G[2,1,1,0,1]];
+rows={x(a+b),y(a+b)};identity=<|"Rules"->{a->a,b->b}|>;
+cover=BuildSpanPreservingFiniteBasis[f,rows,{a+b},identity];
+assert[AssociationQ[cover]&&cover["ActualRationalRank"]===1&&Length[cover["Basis"]]===1,"one actual direction is covered by a constant pair without adding its two separate directions"];
+assert[cover["SpanPreserving"]&&cover["ExactCoverage"]&&And@@(ConformalIBP`Private`zero /@ (rows-cover["Weights"].cover["ReducedBasis"])),"exact physical coverage and rational span"];
+assert[FailureQ[ConformalIBP`Private`finiteBasisContract[f,cover,rows]],"strict ordering remains the default"];
+assert[AssociationQ[ConformalIBP`Private`finiteBasisContract[f,cover,rows,"PreserveActualSpan"]],"adaptive policy is explicitly opt-in"];
+source=BoundaryIntegral[0,{}];withSource=BuildSpanPreservingFiniteBasis[f,{rows[[1]]+source,rows[[2]]},{a+b},identity];
+assert[AssociationQ[withSource]&&withSource["BoundaryRows"]==={source,0},"retained sources are not dropped during span selection"];
+incomplete=BuildSpanPreservingFiniteBasis[f,{a+x b},{a,b},identity];
+assert[FailureQ[incomplete],"insufficient constant candidates do not silently enlarge the span"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

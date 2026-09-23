@@ -1,0 +1,123 @@
+{
+  "package_version": "0.4.0",
+  "local_complete_run": "ladder-validation-20260920/package-revalidation-three-loop-20260923",
+  "original_regenerated_applications": 708301,
+  "regeneration_jobs": 180,
+  "generation_workers": 24,
+  "ladder_additional_applications": 7495,
+  "ladder_additional_rows": 3103,
+  "ladder_high_pool_rows": 60506,
+  "tennis_high_pool_rows": 295500,
+  "ladder_full_pool_rows": 61629,
+  "tennis_full_pool_rows": 299521,
+  "fresh_relation_generation": true,
+  "old_equations_imported": false,
+  "old_reductions_imported": false,
+  "old_symmetry_imported": false,
+  "current_mathematical_runtime_matches_frozen_source": true,
+  "residual_points": 1,
+  "full_symbolic_curvature": true,
+  "portable_recheck_passed": true,
+  "results": {
+    "ladder": {
+      "Name": "ladder",
+      "Passed": true,
+      "Checks": {
+        "CompleteCurvatureRows": true,
+        "CurvatureInputHashesMatch": true,
+        "ExactFullCurvatureZero": true,
+        "AllBasisFinite": true,
+        "DependencyDifferentiationExact": true,
+        "AllDerivativesCovered": true,
+        "OriginalTopCovered": true,
+        "FullPoolGenericResidualPassed": true,
+        "PoolHashesMatch": true,
+        "ImplementationHashesMatch": true,
+        "NoOldEquationsOrReductionsImported": true,
+        "NoOneLoopBasisForcedZero": true
+      },
+      "BasisCount": 30,
+      "LoopCounts": {
+        "3": 19,
+        "2": 7,
+        "1": 4
+      },
+      "SingleFinite": 30,
+      "ConstantCombinations": 0,
+      "VariableCombinations": 0,
+      "DERows": 60,
+      "CurvatureEntries": 900,
+      "NonzeroCurvatureEntries": 0,
+      "EliminatedCandidateIndices": [],
+      "ChangedEntriesVsOldCandidateMatrix": 0,
+      "VerificationPoints": 1,
+      "VerificationPoint": [
+        7338376896737913617,
+        7718278679044643367
+      ],
+      "Prime": 9223372036854775783,
+      "ReductionQueriesChecked": 91,
+      "ImplementationHash": 5527422406812152916954960928223526523164024203550496352230757276548179279325,
+      "PoolHash": 75193268557186809465831977167904987418281086125512340387168522087376961888798,
+      "DEHash": 13381701680723077890033326609708657654301074058699743579090342459077344891246
+    },
+    "tennis": {
+      "Name": "tennis",
+      "Passed": true,
+      "Checks": {
+        "CompleteCurvatureRows": true,
+        "CurvatureInputHashesMatch": true,
+        "ExactFullCurvatureZero": true,
+        "AllBasisFinite": true,
+        "DependencyDifferentiationExact": true,
+        "AllDerivativesCovered": true,
+        "OriginalTopCovered": true,
+        "FullPoolGenericResidualPassed": true,
+        "PoolHashesMatch": true,
+        "ImplementationHashesMatch": true,
+        "NoOldEquationsOrReductionsImported": true,
+        "NoOneLoopBasisForcedZero": true
+      },
+      "BasisCount": 46,
+      "LoopCounts": {
+        "3": 31,
+        "2": 11,
+        "1": 4
+      },
+      "SingleFinite": 46,
+      "ConstantCombinations": 0,
+      "VariableCombinations": 0,
+      "DERows": 92,
+      "CurvatureEntries": 2116,
+      "NonzeroCurvatureEntries": 0,
+      "EliminatedCandidateIndices": [
+        33
+      ],
+      "ChangedEntriesVsOldCandidateMatrix": 93,
+      "VerificationPoints": 1,
+      "VerificationPoint": [
+        7338376896737913617,
+        7718278679044643367
+      ],
+      "Prime": 9223372036854775783,
+      "ReductionQueriesChecked": 142,
+      "ImplementationHash": 5527422406812152916954960928223526523164024203550496352230757276548179279325,
+      "PoolHash": 67752240126864379408103267509062033371191679057126856516656923676998650675098,
+      "DEHash": 92048984671305912819958025731260977371479812727765082743086639210796656530877
+    }
+  },
+  "sha256": {
+    "README.zh-CN.md": "42adbc0c938d3d505863151bdc34d491c1555b86084a7b26593df212318f04ba",
+    "SourceManifest.json": "38af0d6507deb5e642602b521b8ecc45c081da61061d9e6a59817291f4439e8b",
+    "exported-curvature-check.json": "82a3767c75c2ae06b70ed0546c24b46acfdd92035c523e6d502612db78ff2017",
+    "ladder-DifferentialEquations.wl": "b6ebb07afe0966b4b9a17eaf3db0fa0307feb60208a8f783d3b0155552614123",
+    "ladder-verification.json": "c94640ceb9243abc24f95301604b443751334a6064a6187204e2da950c3aa522",
+    "ladder-verification.wl": "f3b127b2228ea4e2e40fb516ccc4b86fb95d68e0a97de5971d00c60ec2dc5072",
+    "tennis-DifferentialEquations.wl": "1aa6f33776c6125646379571999a71d1ad32c748d0c467e519fb2ada7bf4daaf",
+    "tennis-LowerDependency.wl": "ed90f7f7d10efdcda40af21f8fdb55314fe815565c20d5ef98508e01f04865e2",
+    "tennis-verification.json": "0decc2104e6482ccedc930fbe0fb98a42c635b9e03f3315eb9ace1c3b705ae9b",
+    "tennis-verification.wl": "47780cfe96822da49b849f914736627ff67002ef63887801e2c16d5d2fbe31ea",
+    "verify-curvature.py": "5900e740ead0bc790cd1f566f7e4bdcf3d388011f6bfbb66fba8eb932c238459",
+    "verify-curvature.wls": "46a54bc7cf71ebdc2227adb25d98bd7f712a066907226c531e48d9eade6aa6b0"
+  }
+}

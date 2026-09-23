@@ -1,0 +1,20 @@
+{
+  "strategy": "O7AdaptiveFiniteCover / PreserveActualSpan",
+  "highest_loop_closed": true,
+  "highest_loop_basis": 31,
+  "single_finite": 31,
+  "homogeneous_curvature_exact_zero": true,
+  "curvature_entries": 961,
+  "full_source_flatness_verified": false,
+  "pool_rows": 332672,
+  "reference_MI_used": false,
+  "sha256": {
+    "HighestLoopDE.wl": "b8108748d7837b9f3d4f950e5e15fc33eb0f88176b5c1fc033d74a9c44f43dd3",
+    "HighestLoopCurvature.wl": "ee0be3967e674881e416eff971a4640eb0c4eb5ed0247634bf228e27c2dbf39f",
+    "production-ordering.wls": "bd0899b4d27874cb02bf07be2170444c41b6d99d21834e13f693bb4b3cf0c992"
+  },
+  "accepted_physical_closure": false,
+  "status": "quarantined after joint-pool contradiction",
+  "highest_loop_closed_scope": "formal quotient of historical relation pool only",
+  "joint_pool_one_loop_box_forced_zero": true
+}

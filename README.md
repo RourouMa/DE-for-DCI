@@ -2,13 +2,25 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.3.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.4.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
 For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
 
 
-## Current seeding and finite-priority policy (0.3.0)
+## Current seeding and finite-priority policy (0.4.0)
 
+- `FiniteBasisPolicy -> "StrictOrdering"` remains the default. Explicit
+  `"PreserveActualSpan"` selects simple finite representatives inside the actual
+  reduced input/DE span, with exact membership and coverage checks. It is a
+  separate basis policy, not strict preservation of ordering free columns.
+  See [the method and its validation scope](docs/PRESERVE_ACTUAL_SPAN.zh-CN.md).
+- `SeedGeometry -> "InverseTargets"` now applies every degree-compatible operator
+  to each inverse-selected seed (`InverseOperatorPolicy -> "Complete"`). The old
+  `"DirectHit"` mode remains available for controlled comparisons. See
+  [the same-pool ablation and four-loop transfer plan](docs/RESIDUAL_OPERATOR_COMPLETE_SEEDING.zh-CN.md).
+- Contracted sources are checked as complete expressions before admitting ordinary
+  or coupled IBP relations. Uncertified divergent sources return a diagnostic;
+  see [the contact-source audit](docs/CONTACT_SOURCE_VALIDITY.zh-CN.md).
 - O6 (`TierReference`) prefers retained columns in this order: finite factorized,
   uncertified factorized, finite connected, uncertified connected. Each tier uses
   the ordering01 structural/reference-shape key. O1–O6 and the old `ClosureFirst`
@@ -38,9 +50,16 @@ result = RunDE[config["Family"], config["Input"],
 ```
 
 Load the package and `Examples/kinematics.wl` before this snippet. This example
-configures an independent computation; it does not bundle or claim a completed
-three-loop tennis-court result. Older checkpoint hashes remain incompatible;
-start a fresh package campaign. Running research snapshots are unaffected.
+configures an independent computation and does not bundle the large production
+archives. The adaptive O7 historical pool failed the joint high/lower consistency
+audit despite zero homogeneous curvature; its old exported block remains
+quarantined. A fresh 0.4.0 regeneration now verifies the complete ladder system
+(19+7+4 elements) and tennis system (31+11+4 elements), including all lower sources,
+generic full-pool reduction checks and exact full curvature. See the
+[corrected three-loop artifacts and verification scope](reproduction/corrected-three-loop-20260923/README.zh-CN.md).
+Older checkpoint hashes remain incompatible; start a fresh package campaign.
+Historical research snapshots require separate validation against the corrected
+admission rules.
 
 **Reproduce the legacy fourth round (66 finite elements):** use the [frozen ordering01 snapshot](reproduction/ordering01/README.zh-CN.md). Its private Release assets include the complete solved linear system, exact column order, seed/operator records, reduction rules and finite combinations. A normal `git pull` does not download these assets; run its `fetch.py` first. This is a separate reproducibility fixture, not a claim that the generic package or the four-loop DE is closed.
 

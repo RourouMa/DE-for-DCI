@@ -39,6 +39,7 @@ CoupledIBPRelation[f_Association,terms_List]:=Module[{raw,full,contact,direct,gs
  If[AnyTrue[raw,FailureQ],Return[First[Select[raw,FailureQ]]]];
  full=canonicalLinear[Lookup[terms,"Coefficient"].raw];
  If[FailureQ[full] || !FreeQ[full,infinity|_SP],Return[fail["CoupledInfinity","Complete action retains infinity or scalar products; no terms were discarded."]]];
+ If[!regularContactSourcesQ[f,full],Return[fail["UncertifiedContactSource","The complete coupled contact source is not certified finite; no divergent source was discarded or identified with a finite lower-loop system."]]];
  gs=support[full];If[!AllTrue[gs,coupledOutputQ[f,#]&],Return[fail["CoupledDomain","Complete output contains a forbidden domain, degree or unsupported overlapping pole."]]];
  If[!AllTrue[f["LoopLoopIDs"],zero[coupledLiteralResidue[f,full,#]]&],Return[fail["CoupledResidue","Complete output has a nonzero literal collision residue."]]];
  (* Independent rational ordinary action; contacts are summed before conversion. *)

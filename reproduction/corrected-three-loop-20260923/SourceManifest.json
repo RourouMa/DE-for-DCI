@@ -1,0 +1,28 @@
+{
+  "source": "DE-for-DCI-publish working tree 0.4.0",
+  "files": {
+    "Kernel/ClosurePreference.wl": "c8829d9f8979932701946fe9aa22ec6b20dd4b899b1177a128b13645eccc3db4",
+    "Kernel/Complexity.wl": "33d8a0fce012106945209e37d42aa8b4e3bddf392ae8ed574782e0014f8b8d27",
+    "Kernel/ConformalIBP.wl": "2baf85b4e7ad19215c4ad855fe09a104eadd8d7814796a8a160dec64ae72a6c3",
+    "Kernel/Coupled.wl": "88915bb6fe565de95924b7adfd9c04a96230e608628656cce39c4eac5176b47e",
+    "Kernel/FiniteSupport.wl": "e5755b2f723cbdfc03d304c00f108b51715f2e6ab4d9d139609b3f32508cf4b7",
+    "Kernel/Iteration.wl": "c157f36cddeac7970d07b797a66f086cfbb1fae6a17e3b88f2f17fd95974b4de",
+    "Kernel/LinearAlgebra.wl": "f15c085c27b58f810fc4988c0fbdc18ab9326e4bfc67087745d86b5460a27131",
+    "Kernel/Ordering.wl": "531a20a389c4f8bb755a4d3779340bec17698525aa14fd9d546caf139bfdb30e",
+    "Kernel/Ordering01Reference.wl": "743626b32ab15ce77ac5bcf074de7175004fbb67a6ac83c2be42a28d2b474358",
+    "Kernel/Ordering01Symmetry.wl": "b674f75cc4b24dac71519656e45f303d5ca63a66160a6c5b6c685a15763c0c3a",
+    "Kernel/Reduction.wl": "1ca8088810d045a66ec73ecd76c561790511564c0b9defc5634d6a8864304168",
+    "Kernel/Reporting.wl": "446913d6f8d36318586b3bd15c20b0576177bb1b720292629c218665b0806d66",
+    "Kernel/SeedPlanning.wl": "7ddd9923aeff0ee270b64c462b92f098ef75f0eef340e6d3fb80d63cc06230cf",
+    "Kernel/SpanPreservingFiniteBasis.wl": "a05765d66162bcd3636f0e971f6a5d40f97f0e20c3290e8ffe1ba020e85fa188",
+    "Kernel/TargetReduction.wl": "4c596db04c9e3371120a104c70a929706e70cb8fbac9bd31577c8d4424b92aba",
+    "Kernel/init.m": "3f81e9b820c20fbff464a1ba2d6e94a63f6986a59721b8f18b105e2c1b07ade5",
+    "scripts/ibp-worker.wls": "b6a6f809c2743c2f68ecb100d0315a43bcd8211ddc03d486bfcf4d55c934ea6f",
+    "scripts/monitor-campaign.py": "2deba7120f9db0b10e2a5535f2eb78cf8d08fcdec64f5e55d6ab787439039a48",
+    "scripts/report-rounds.wls": "17b8b44b68a096f8d171b1a11d0a82e8b43535f3d92592c5f2541b7c8cf2dd48",
+    "scripts/run-tests.py": "1e6b225748ef2f8f581239b1a3648eafd6571af4a248e7570c2d776965fb9495",
+    "scripts/seed-plan-worker.wls": "170870267c1a057cf08c434589d0c6374ec11e1c1b2210fb952e0779e62ba7e2",
+    "scripts/select-equation-rows.py": "0cbdf11b1e65527e97f89c4e0c2ad9b207ec944b4bd77d613ce1da46f56ad914",
+    "scripts/verify-residual-worker.wls": "70f50adb8a2bda37da7f56ac05475b6dcf7381c2bd402d4c6c38382cd47634a4"
+  }
+}

@@ -1,4 +1,5 @@
 Get[FileNameJoin[{DirectoryName[$packageFile],"Reporting.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"SpanPreservingFiniteBasis.wl"}]];
 (* A state is a trusted local Wolfram expression, never an opaque global session. *)
 generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,dir,kernel,runner,jobs={},results,code,out,cacheFile,optionsFile,imported,sharedImages,plan,active,ids,subplan,done,finiteKeys,workerOptions,cacheInputs,workerCache,payloadAudit},
  If[!IntegerQ[n] || n<1,Return[fail["Workers","Workers must be a positive integer."]]];
@@ -57,8 +58,8 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
 Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
  "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
- "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets","BasisPreference"->"None",
- "SeedDomain"->"Original","BlockExpansion"->"Cartesian","GapSeeding"->True,"ComplexityDecision"->Automatic,"ComplexitySectorProfiles"->{},"ProgressFunction"->Print};
+ "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets","BasisPreference"->"None","FiniteBasisPolicy"->"StrictOrdering",
+ "SeedDomain"->"Original","BlockExpansion"->"Cartesian","SeedGeometry"->"ComponentAxial","InverseOperatorPolicy"->"Complete","GapSeeding"->True,"ComplexityDecision"->Automatic,"ComplexitySectorProfiles"->{},"ProgressFunction"->Print};
 Options[RunReduction]=Options[RunDE];
 progress[o_,a_]:=If[o["ProgressFunction"]=!=None,o["ProgressFunction"][a]];
 checkpoint[state_,dir_]:=If[StringQ[dir],Module[{path,tmp,saved},
@@ -107,7 +108,9 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
  If[!MemberQ[{"Always","OnDemand"},o["GenerationPolicy"]],Return[fail["GenerationPolicy","GenerationPolicy must be Always or OnDemand."]]];
  If[!MemberQ[{"Full","Targets"},o["ReductionScope"]],Return[fail["ReductionScope","ReductionScope must be Full or Targets."]]];
  If[!MemberQ[{"FamilyAfterClosure","None"},o["BasisPreference"]],Return[fail["BasisPreference","Use FamilyAfterClosure or None."]]];
- If[!MemberQ[{"Original","Extended"},o["SeedDomain"]] || !MemberQ[{"Cartesian","SingleBlock"},o["BlockExpansion"]] || !MemberQ[{True,False},o["GapSeeding"]],Return[fail["SeedPolicy","Invalid campaign seeding policy."]]];
+ If[!MemberQ[{"StrictOrdering","PreserveActualSpan"},o["FiniteBasisPolicy"]],Return[fail["FiniteBasisPolicy","Use StrictOrdering or the explicit adaptive PreserveActualSpan policy."]]];
+ If[o["FiniteBasisPolicy"]==="PreserveActualSpan"&&!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowRequired","Initialize FiniteFlow for PreserveActualSpan."]]];
+ If[!MemberQ[{"ComponentAxial","InverseTargets"},o["SeedGeometry"]] || !MemberQ[{"Complete","DirectHit"},o["InverseOperatorPolicy"]] || !MemberQ[{"Original","Extended"},o["SeedDomain"]] || !MemberQ[{"Cartesian","SingleBlock"},o["BlockExpansion"]] || !MemberQ[{True,False},o["GapSeeding"]],Return[fail["SeedPolicy","Invalid campaign seeding policy."]]];
  If[s["Mode"]==="DE" && (f["Variables"]==={} || !And@@(FiniteIntegralQ[f,#]& /@ s["OriginalInputs"])),
   Return[fail["UnverifiedInput","DE inputs must pass the finite-integral check and kinematic variables must be supplied."]]];
  If[KeyExistsQ[s,"SymmetryCache"],cacheImport=importSymmetryCache[f,s["SymmetryCache"]];If[FailureQ[cacheImport],Return[cacheImport]]];
@@ -140,7 +143,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    fullDE=canonicalLinear /@ ((canonExpr[f,#]& /@ rows)/.Dispatch[reduction["Rules"]]);
    input=fullInput/._BoundaryIntegral->0;de=fullDE/._BoundaryIntegral->0;
    If[s["Mode"]==="DE",
-    complexityAudit=AssessBasisComplexity[f,basis,reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}]];
+    complexityAudit=AssessBasisComplexity[f,basis,reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}],"FiniteBasisPolicy"->o["FiniteBasisPolicy"]];
     s["ComplexityAudit"]=complexityAudit;
     complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
     If[FailureQ[complexityGate],reason=complexityGate;s["UnverifiedRows"]=Join[fullInput,fullDE];
@@ -148,7 +151,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    s["PreviousRepresentatives"]=Union[s["PreviousRepresentatives"],support[{fullInput,fullDE}]];
    masters=support[{fullInput,fullDE}];frontier={};generationNeeded=True;
    If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand",
-    finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]],Join[fullInput,fullDE]];
+    finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
     generationNeeded=FailureQ[finite] || reduction["UnseenTargets"]=!={}];
    If[generationNeeded,
    gapTargets=Union[reduction["UnseenTargets"],If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite],masters,{}]];
@@ -160,7 +163,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Generating IBP seeds","FocusedGapSeeding"->focused,"GapTargetCount"->Length[gapTargets],"CenterCount"->Length[seedTargets]|>];
    seedOptions={"CompletedApplications"->s["CompletedApplications"],"CompletedSymmetryInputs"->Lookup[s,"CompletedSymmetryInputs",{}],
     "FiniteSeeds"->Select[basis,Length[support[#]]>1&],"Workers"->o["Workers"],"KernelExecutable"->o["KernelExecutable"],"SeedPlanningWorkers"->o["SeedPlanningWorkers"],"SeedPlanningThreshold"->o["SeedPlanningThreshold"],"ProgressFunction"->o["ProgressFunction"],
-    "SeedDomain"->o["SeedDomain"],"BlockExpansion"->o["BlockExpansion"]};
+    "SeedDomain"->o["SeedDomain"],"BlockExpansion"->o["BlockExpansion"],"SeedGeometry"->o["SeedGeometry"],"InverseOperatorPolicy"->o["InverseOperatorPolicy"]};
    generated=GenerateSystem[f,seedTargets,"SeedCenters"->If[focused,"AllOriginalImages","Raw"],Sequence@@seedOptions];
    (* Widen only after the focused neighborhood contributes no new relation. *)
    If[!FailureQ[generated] && focused && Complement[generated["Equations"],s["Equations"]]==={},
@@ -192,10 +195,10 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    If[s["Mode"]==="Reduction",s["ReducedInputs"]=fullInput;reason="ReductionFixedPoint";Break[]];
    vars=support[{input,de}];ci=coeff[input,vars];cd=coeff[de,vars];r=rr[ci];p=pivots[r];
    unclosedRows=Select[Range[Length[cd]],!And@@(zero /@ If[r==={},cd[[#]],cd[[#]]-cd[[#,p]].r])&];cl=unclosedRows==={};
-   finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]],Join[fullInput,fullDE]];
+   finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
    If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
     progress[o,Join[reportContext[s,pass],rawSupportReport[f,{fullInput,fullDE}],<|"Event"->"FiniteCoverFailed","Reason"->finite,"InputCount"->Length[basis],"OutputCount"->Missing["NotAccepted"],"FullClosureVerified"->False,"NextAction"->"Inspect uncovered combinations and missing relations; retain previous verified basis"|>]];Break[]];
-   complexityAudit=AssessBasisComplexity[f,finite["Basis"],reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}]];
+   complexityAudit=AssessBasisComplexity[f,finite["Basis"],reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}],"FiniteBasisPolicy"->o["FiniteBasisPolicy"]];
    s["ComplexityAudit"]=complexityAudit;
    complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
    If[FailureQ[complexityGate],reason=complexityGate;s["CandidateFiniteBasis"]=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];

@@ -41,7 +41,7 @@ generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->
  equations=DeleteCases[DeleteDuplicates[canonicalLinear /@ Join[equations,syms]],0];
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
   "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
-  "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","UnmappedCenters"}],
+  "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","InverseOperatorPolicy","UnmappedCenters"}],
   "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 

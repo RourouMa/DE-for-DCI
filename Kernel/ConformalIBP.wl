@@ -17,6 +17,7 @@ CanonicalIntegral::usage="CanonicalIntegral[family,G[...]] canonicalizes exact e
 DifferentiateIntegrals::usage="DifferentiateIntegrals[family,expressions] differentiates complete expressions before collecting targets.";
 FiniteIntegralQ::usage="FiniteIntegralQ[family,expression] applies a conservative collision-cancellation test, not an arbitrary zero-sum rule.";
 BuildFiniteBasis::usage="BuildFiniteBasis[family,rows] constructs a minimal constant-coefficient divergent block cover and verifies it.";
+BuildSpanPreservingFiniteBasis::usage="BuildSpanPreservingFiniteBasis[family,normalFormRows,queries,verifiedReduction] selects finite representatives within the actual rational span, with exact membership and coverage checks; requires FiniteFlow.";
 ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verified Gaussian reduction. Default TierReference ordering uses finite/factorized tiers and ordering01 internal priorities.";
 ReduceTargetIntegrals::usage="ReduceTargetIntegrals[family,targets,equations] verifies a target reduction using a dependency-selected subset of original equations and returns its certificate.";
 RunReduction::usage="RunReduction[family,targets,options] generates and iterates a target reduction campaign.";
@@ -26,7 +27,7 @@ InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirec
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.3.5";
+$ConformalIBPVersion="0.4.0";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -38,7 +39,7 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
+ {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","SpanPreservingFiniteBasis.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
@@ -198,22 +199,22 @@ originalDomainExpressionQ[f_,e_]:=And@@(originalDomainIntegralQ[f,#]& /@ support
 originalSeedImages[f_,g_G]:=originalSeedImages[f,g]=Module[{a=List@@g,variants},
  variants=DeleteDuplicates[(G@@a[[#]]& /@ orbitIndexMaps[f["Hash"],f,parts[f,g]])];
  Select[variants,originalDomainIntegralQ[f,#] && domainQ[f,#]&]];
-Options[GenerateSeeds]={"SeedDomain"->"Original","SeedCenters"->"Raw","BlockExpansion"->"Cartesian","SeedGeometry"->"ComponentAxial"};
+Options[GenerateSeeds]={"SeedDomain"->"Original","SeedCenters"->"Raw","BlockExpansion"->"Cartesian","SeedGeometry"->"ComponentAxial","InverseOperatorPolicy"->"Complete"};
 GenerateSeeds[f_Association,targets_List,ops_:Automatic,OptionsPattern[]]:=Module[{operators=Replace[ops,Automatic:>GenerateOperators[f]],
  centers,rawCenters,unmapped,records,candidates={},degrees,byDegree,ps,pools,ids,a,local,vs,combined,tuples,
- seedDomain=OptionValue["SeedDomain"],centerPolicy=OptionValue["SeedCenters"],blockPolicy=OptionValue["BlockExpansion"],geometry=OptionValue["SeedGeometry"]},
- If[!MemberQ[{"ComponentAxial","InverseTargets"},geometry] || !MemberQ[{"Original","Extended"},seedDomain] || !MemberQ[{"Raw","Representative","AllOriginalImages"},centerPolicy] || !MemberQ[{"Cartesian","SingleBlock"},blockPolicy],
-  Return[fail["SeedPolicy","Invalid SeedDomain, SeedCenters, BlockExpansion or SeedGeometry."]]];
+ seedDomain=OptionValue["SeedDomain"],centerPolicy=OptionValue["SeedCenters"],blockPolicy=OptionValue["BlockExpansion"],geometry=OptionValue["SeedGeometry"],inversePolicy=OptionValue["InverseOperatorPolicy"]},
+ If[!MemberQ[{"Complete","DirectHit"},inversePolicy] || !MemberQ[{"ComponentAxial","InverseTargets"},geometry] || !MemberQ[{"Original","Extended"},seedDomain] || !MemberQ[{"Raw","Representative","AllOriginalImages"},centerPolicy] || !MemberQ[{"Cartesian","SingleBlock"},blockPolicy],
+  Return[fail["SeedPolicy","Invalid SeedDomain, SeedCenters, BlockExpansion, SeedGeometry or InverseOperatorPolicy."]]];
  rawCenters=support[targets];
  If[!And@@(validIntegral[f,#]& /@ rawCenters),Return[fail["IntegralShape","Invalid seed center."]]];
  unmapped=If[centerPolicy==="Raw",{},Select[rawCenters,originalSeedImages[f,#]==={}&]];
  centers=Switch[centerPolicy,"Raw",rawCenters,"AllOriginalImages",Union[Flatten[originalSeedImages[f,#]& /@ rawCenters]],
   "Representative",Union[Flatten[Take[originalSeedImages[f,#],UpTo[1]]& /@ rawCenters]]];
  If[geometry==="InverseTargets",
-  records=inverseSeedBatches[f,centers,operators,seedDomain];
+  records=inverseSeedBatches[f,centers,operators,seedDomain,inversePolicy];
   Return[<|"Batches"->records,"Operators"->operators,"Centers"->centers,"UnmappedCenters"->unmapped,
    "SeedDomain"->seedDomain,"SeedCenters"->centerPolicy,"BlockExpansion"->blockPolicy,
-   "Geometry"->"Exact inverse ordinary operator shifts; full contact validation required",
+   "Geometry"->"Inverse shifts select seeds; degree-compatible operator actions require full contact validation","InverseOperatorPolicy"->inversePolicy,
    "FullIBPValidationRequired"->True,"SymmetryExpansionRequired"->True,
    "EmptyDegrees"->Union[Lookup[Select[records,#["Seeds"]==={}&],"Degree",{}]]|>]];
  degrees=Union[Lookup[operators,"Degree",{}]];
@@ -274,6 +275,21 @@ ordinaryShiftTemplate[h_,f_,op_]:=ordinaryShiftTemplate[h,f,op]=Module[{p=f["Pro
  ({UnitVector[Length[p],j]-First[#],Last[#]}& /@ rules)],{j,Length[p]}]];
 ordinaryShiftAction[f_,op_,g_G]:=Module[{a=Take[List@@g,Length[f["Propagators"]]],template=ordinaryShiftTemplate[f["Hash"],f,op]},
  Total[Flatten[Table[If[a[[j]]===0,{},(a[[j]] #[[2]] dropEmpty[f,G@@Join[a+#[[1]],ConstantArray[1,f["LoopCount"]]]]& /@ template[[j]])],{j,Length[a]}]]]];
+(* A single-collision formula is not a prescription for a divergent contracted
+   integral. Check the complete lower source, allowing exact residue cancellation
+   between its terms. Do not identify unsupported divergent sources with the
+   independently generated four-dimensional lower-loop IBP system. *)
+contactSourceFamily[h_,f_,l_]:=contactSourceFamily[h,f,l]=CreateFamily[<|
+ "Loops"->Take[f["Loops"],l],"External"->f["External"],"Kinematics"->f["Kinematics"],
+ "Variables"->{},"TopSector"->ConstantArray[1,Length[f["External"]] l+Binomial[l,2]],
+ "MaxLoopPower"->Infinity,"ExternalPermutations"->f["ExternalPermutations"]|>];
+regularContactSourcesQ[f_,e_]:=Module[{bs=sources[e],loops,lf,part},
+ If[bs==={},Return[True]];loops=Union[First /@ bs];
+ AllTrue[loops,Function[l,
+  If[!IntegerQ[l]||l<1||l>=f["LoopCount"],False,
+   lf=contactSourceFamily[f["Hash"],f,l];
+   part=Total[(Coefficient[Expand[e],#] (G@@#[[2]]))& /@ Select[bs,First[#]===l&]];
+   !FailureQ[lf] && TrueQ[FiniteIntegralQ[lf,part]]]]]];
 shiftIBPRelation[f_Association,op_Association,seed_]:=Module[{gs=support[seed],cs,ct,ordinaryPart,result},
  If[gs==={} || !And@@(validIntegral[f,#] && weights[f,List@@#]+op["Degree"]===ConstantArray[4,f["LoopCount"]]& /@ gs),
   Return[fail["DegreeMismatch","Seed and operator degrees do not give conformal integrals."]]];
@@ -281,6 +297,7 @@ shiftIBPRelation[f_Association,op_Association,seed_]:=Module[{gs=support[seed],c
  cs=First[coeff[{seed},gs]];ct=contacts[f,op,#]& /@ gs;
  If[AnyTrue[ct,FailureQ],Return[First[Select[ct,FailureQ]]]];
  ct=toIntegral[f,Together[cs.ct]];If[FailureQ[ct],Return[ct]];
+ If[!regularContactSourcesQ[f,ct],Return[fail["UncertifiedContactSource","The complete contracted source is not certified finite; nested or overlapping collisions require a separate justified prescription."]]];
  ordinaryPart=cs.(ordinaryShiftAction[f,op,#]& /@ gs);
  If[!FreeQ[ordinaryPart,_SP],Return[fail["OutsideScalarProducts","Uncancelled infinity or out-of-family scalar products remain."]]];
  result=canonExpr[f,ordinaryPart+ct];If[FailureQ[result],Return[result]];

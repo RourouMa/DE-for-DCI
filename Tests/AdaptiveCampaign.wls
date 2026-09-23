@@ -1,0 +1,16 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialized"];
+f=LadderFamily[1,kinematics,{x,y}];events={};
+r=RunDE[f,G[1,1,1,1,1],"Solver"->"FiniteFlow","FiniteBasisPolicy"->"PreserveActualSpan","SeedGeometry"->"InverseTargets","MaxRounds"->6,"MaxSystemExpansions"->8,"ProgressFunction"->(AppendTo[events,#]&)];
+If[!AssociationQ[r],Print[r];Quit[2]];
+Print[KeyTake[r,{"Status","Reason","Closed","FlatnessVerified"}]];
+assert[TrueQ[r["Closed"]]&&TrueQ[r["FlatnessVerified"]],"adaptive one-loop campaign closes with exact curvature"];
+assert[Length[r["Basis"]]===4&&AllTrue[r["Basis"],FiniteIntegralQ[f,#]&],"complete finite basis retained"];
+reports=Select[events,Lookup[#,"Event",None]==="RoundVerified"&];
+assert[reports=!={}&&AllTrue[reports,#["FiniteBasisPolicy"]==="PreserveActualSpan"&&TrueQ[#["ExactCoverage"]]&],"round reports retain explicit adaptive policy and coverage"];
+assert[r["ComplexityAudit"]["FiniteBasisPolicy"]==="PreserveActualSpan"&&!r["ComplexityAudit"]["OrderingPreferenceMustBePreserved"],"complexity audit respects the declared policy"];
+d=DifferentiateIntegrals[f,r["Basis"]];res=Flatten[Table[d["Rows"][z]-r["Matrices"][z].r["Basis"],{z,{x,y}}],1];
+check=ReduceIntegrals[f,res,r["Equations"],"Solver"->"FiniteFlow"];
+assert[AssociationQ[check]&&AllTrue[check["ReducedTargets"],ConformalIBP`Private`zero],"independent full reduction reproduces returned derivatives"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

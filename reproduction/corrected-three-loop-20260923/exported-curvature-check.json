@@ -1,0 +1,12 @@
+{
+  "ladder": {
+    "dimension": 30,
+    "entries": 900,
+    "passed": true
+  },
+  "tennis": {
+    "dimension": 46,
+    "entries": 2116,
+    "passed": true
+  }
+}

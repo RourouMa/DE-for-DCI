@@ -1,4 +1,4 @@
-(* Complexity guides relation searches under the specified ordering; it never authorizes another basis. *)
+(* Complexity guides relation searches; basis policy is explicit and never changed by this audit. *)
 IntegralComplexity[f_Association,g_G]:=Module[{a,p,n,joint},
  If[!validIntegral[f,g],Return[fail["IntegralShape","Malformed integral in complexity audit."]]];
  a=Take[List@@g,Length[f["Propagators"]]];p=Select[a,Positive];n=-Select[a,Negative];
@@ -11,9 +11,10 @@ IntegralComplexity[f_Association,g_G]:=Module[{a,p,n,joint},
  "Score"->{Total[n]+Total[p]-Length[p],Max[Append[p,0]],Max[Append[n,0]]},
  "LoopWeights"->weights[f,List@@g],"Components"->parts[f,g],"UnitCutsExcluded"->True|>];
 complexityFlag[p_Association]:=p["NumeratorDegree"]>=3 && p["Dots"]>=3;
-Options[AssessBasisComplexity]={"EquationPoolHash"->None,"SectorProfiles"->{}};
+Options[AssessBasisComplexity]={"EquationPoolHash"->None,"SectorProfiles"->{},"FiniteBasisPolicy"->"StrictOrdering"};
 AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPattern[]]:=Module[
- {atoms=support[basis],profiles,known=Association[Lookup[reduction,"Rules",{}]],sectorProfiles=OptionValue["SectorProfiles"],suspect,aboveReference,records,flagged,nfTargets,unqueried,physical,flaggedAtoms,canonicalAtoms},
+ {atoms=support[basis],profiles,known=Association[Lookup[reduction,"Rules",{}]],sectorProfiles=OptionValue["SectorProfiles"],suspect,aboveReference,records,flagged,nfTargets,unqueried,physical,flaggedAtoms,canonicalAtoms,policy=OptionValue["FiniteBasisPolicy"]},
+ If[!MemberQ[{"StrictOrdering","PreserveActualSpan"},policy],Return[fail["FiniteBasisPolicy","Unknown finite-cover policy."]]];
  If[!AllTrue[atoms,validIntegral[f,#]&],Return[fail["IntegralShape","Malformed basis in complexity audit."]]];
  If[!ListQ[sectorProfiles] || !AllTrue[sectorProfiles,AssociationQ[#] &&
    Lookup[#,"FamilyHash",None]===f["Hash"] && ListQ[Lookup[#,"Sector",None]] &&
@@ -51,12 +52,13 @@ AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPatt
  "GrowthLevelCounts"->Counts[Lookup[profiles,"GrowthLevel"]],
  "SecondOrderGrowthAloneBlocksAdvancement"->False,"AboveReferenceAloneProvesReducibility"->False,
  "SimplerRepresentativeSearchTargets"->Lookup[Select[physical,TrueQ[#["RequiresComplexityReview"]]&],"Expression",{}],
- "RepresentativeSearchScope"->"Relation diagnostics across actually allowed sectors only; accepted finite bases stay within the specified ordering's surviving atoms",
- "OrderingPreferenceMustBePreserved"->True,"ReintroducingEliminatedQueriesAllowed"->False,
+ "FiniteBasisPolicy"->policy,
+ "RepresentativeSearchScope"->If[policy==="StrictOrdering","Surviving ordered atoms in actually allowed sectors","Verified finite representatives inside the actual rational span in actually allowed sectors"],
+ "OrderingPreferenceMustBePreserved"->(policy==="StrictOrdering"),"ReintroducingEliminatedQueriesAllowed"->(policy==="PreserveActualSpan"),
  "RepresentativeReplacementTargets"->Lookup[Select[flagged,#["Classification"]==="ReplaceComplexRepresentative"&],"Canonical",{}],
  "TargetedSeedTargets"->Union[nfTargets,unqueried],"SectorProfiles"->sectorProfiles,
  "ComplexityProvesReducibility"->False,"OutputCountIsMasterCount"->False,
- "NextAction"->Which[unqueried=!={},"Query flagged candidates in the existing pool under the specified ordering before generating equations",nfTargets=!={},"Audit missing IBP and matching supersector symmetry for complex survivors; retain ordering and replay top after pool expansion",flagged=!={},"Use the existing ordered normal form; do not invert reductions to reintroduce eliminated queries",True,"Proceed with certified finite coverage of the ordering's surviving atoms"]|>];
+ "NextAction"->Which[unqueried=!={},"Query flagged candidates in the existing pool under the specified ordering before generating equations",nfTargets=!={},"Audit missing IBP and matching supersector symmetry for complex survivors; retain ordering and replay top after pool expansion",flagged=!={},If[policy==="StrictOrdering","Use the existing ordered normal form; do not invert reductions to reintroduce eliminated queries","Compare simpler representatives using verified reduction, membership and exact coverage"],True,"Proceed with certified finite coverage under the declared basis policy"]|>];
 complexityDecisionQ[a_,d_]:=AssociationQ[d] && And@@(Lookup[d,#,Missing[]]===a[#]& /@
  {"FamilyHash","BasisHash","EquationPoolHash"}) &&
  AllTrue[{"Reason","TargetedSeedAudit","SymmetryAudit","SimplerBasisComparison"},
@@ -67,11 +69,14 @@ complexityAdvanceContract[a_,decision_]:=If[FailureQ[a],a,
 
 (* Enumerate exact preimages of ordinary operator shifts, not a Cartesian power box.
    A nonzero ordinary coefficient is only a planner filter; IBPRelation still certifies contacts. *)
-inverseSeedBatches[f_,centers_,operators_,seedDomain_]:=Module[{n=Length[f["Propagators"]],records,op,template,shifts,seeds},
+inverseSeedBatches[f_,centers_,operators_,seedDomain_,operatorPolicy_:"Complete"]:=Module[{n=Length[f["Propagators"]],records,op,template,shifts,seeds,selected},
  records=Table[op=operators[[k]];template=ordinaryShiftTemplate[f["Hash"],f,op];
   shifts=Union[Flatten[(First /@ #)& /@ template,1]];
   seeds=Union[Flatten[Table[G@@Join[Take[List@@g,n]-shift,ConstantArray[1,f["LoopCount"]]],{g,centers},{shift,shifts}],1]];
   seeds=Select[seeds,domainQ[f,#] && (seedDomain==="Extended" || originalDomainIntegralQ[f,#]) &&
    weights[f,List@@#]+op["Degree"]===ConstantArray[4,f["LoopCount"]]&];
   seeds=Select[seeds,Function[seed,With[{action=Expand[ordinaryShiftAction[f,op,seed]]},AnyTrue[centers,!zero[Coefficient[action,#]]&]]]];
-  <|"OperatorIndex"->k,"Degree"->op["Degree"],"Seeds"->seeds|>,{k,Length[operators]}];records];
+  <|"OperatorIndex"->k,"Degree"->op["Degree"],"Seeds"->seeds|>,{k,Length[operators]}];
+ If[operatorPolicy==="DirectHit",Return[records]];
+ selected=Union[Flatten[Lookup[records,"Seeds",{}],1]];
+ Table[op=operators[[k]];<|"OperatorIndex"->k,"Degree"->op["Degree"],"Seeds"->Select[selected,weights[f,List@@#]+op["Degree"]===ConstantArray[4,f["LoopCount"]]&]|>,{k,Length[operators]}]];

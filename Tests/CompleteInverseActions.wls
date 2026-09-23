@@ -1,0 +1,13 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[2,kinematics,{x,y}];target=G@@Join[f["TopSector"],{1,1}];ops=GenerateOperators[f];
+hit=GenerateSeeds[f,{target},ops,"SeedGeometry"->"InverseTargets","InverseOperatorPolicy"->"DirectHit"];
+full=GenerateSeeds[f,{target},ops,"SeedGeometry"->"InverseTargets"];
+seeds=Union[Flatten[Lookup[hit["Batches"],"Seeds"],1]];
+actions[p_]:=Union[Flatten[Table[{b["OperatorIndex"],s},{b,p["Batches"]},{s,b["Seeds"]}],1]];
+extra=Complement[actions[full],actions[hit]];
+assert[extra=!={},"complete policy restores auxiliary actions omitted by direct-hit filtering"];
+assert[Complement[actions[hit],actions[full]]==={},"all direct-hit actions are preserved"];
+assert[AllTrue[extra,ConformalIBP`Private`zero[Coefficient[Expand[ConformalIBP`Private`ordinaryShiftAction[f,ops[[#[[1]]]],#[[2]]]],target]]&],"restored actions genuinely have zero direct target coefficient"];
+assert[And@@Flatten[Table[MemberQ[full["Batches"][[k]]["Seeds"],s]===TrueQ[ConformalIBP`Private`weights[f,List@@s]+ops[[k]]["Degree"]==={4,4}],{s,seeds},{k,Length[ops]}]],"each selected seed receives every compatible operator and no incompatible operator"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];
