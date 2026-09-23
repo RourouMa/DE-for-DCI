@@ -1,24 +1,27 @@
 (* Complexity is a diagnostic of incomplete reduction / poor representatives, never a relation. *)
-IntegralComplexity[f_Association,g_G]:=Module[{a,p,n},
+IntegralComplexity[f_Association,g_G]:=Module[{a,p,n,joint},
  If[!validIntegral[f,g],Return[fail["IntegralShape","Malformed integral in complexity audit."]]];
  a=Take[List@@g,Length[f["Propagators"]]];p=Select[a,Positive];n=-Select[a,Negative];
+ joint=Min[Total[n],Total[p]-Length[p]];
  <|"Integral"->g,"Sector"->Flatten[Position[a,_?Positive]],"PropagatorCount"->Length[p],
  "PositiveDegree"->Total[p],"NumeratorDegree"->Total[n],"Dots"->Total[p]-Length[p],
  "MaxDenominatorPower"->Max[Append[p,0]],"MaxNumeratorPower"->Max[Append[n,0]],
+ "JointExcess"->joint,"GrowthLevel"->Which[joint<=1,"Routine",joint===2,"UncommonSecondOrder",True,"StrongHigherOrderSignal"],
+ "GrowthReference"->"Numerator degree and dots relative to zero numerator and unit positive powers; topology-specific baselines must also be considered",
  "Score"->{Total[n]+Total[p]-Length[p],Max[Append[p,0]],Max[Append[n,0]]},
  "LoopWeights"->weights[f,List@@g],"Components"->parts[f,g],"UnitCutsExcluded"->True|>];
-complexityFlag[p_Association]:=p["NumeratorDegree"]>=2 && p["Dots"]>=2 &&
- (p["MaxDenominatorPower"]>=3 || p["MaxNumeratorPower"]>=2);
+complexityFlag[p_Association]:=p["NumeratorDegree"]>=3 && p["Dots"]>=3;
 Options[AssessBasisComplexity]={"EquationPoolHash"->None,"SectorProfiles"->{}};
 AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPattern[]]:=Module[
- {atoms=support[basis],profiles,known=Association[Lookup[reduction,"Rules",{}]],sectorProfiles=OptionValue["SectorProfiles"],suspect,records,flagged,nfTargets,unqueried,physical,flaggedAtoms,canonicalAtoms},
+ {atoms=support[basis],profiles,known=Association[Lookup[reduction,"Rules",{}]],sectorProfiles=OptionValue["SectorProfiles"],suspect,aboveReference,records,flagged,nfTargets,unqueried,physical,flaggedAtoms,canonicalAtoms},
  If[!AllTrue[atoms,validIntegral[f,#]&],Return[fail["IntegralShape","Malformed basis in complexity audit."]]];
  If[!ListQ[sectorProfiles] || !AllTrue[sectorProfiles,AssociationQ[#] &&
    Lookup[#,"FamilyHash",None]===f["Hash"] && ListQ[Lookup[#,"Sector",None]] &&
    MatchQ[Lookup[#,"Score",None],{_Integer,_Integer,_Integer}] &&
    StringQ[Lookup[#,"Evidence",None]] && StringLength[StringTrim[#["Evidence"]]]>0&],
   Return[fail["ComplexityProfiles","Sector profiles require the same family hash, sector, score and recorded evidence."]]];
- suspect[g_G]:=With[{p=IntegralComplexity[f,g]},complexityFlag[p] ||
+ suspect[g_G]:=complexityFlag[IntegralComplexity[f,g]];
+ aboveReference[g_G]:=With[{p=IntegralComplexity[f,g]},
    AnyTrue[sectorProfiles,#["Sector"]===p["Sector"] && #["Score"]=!=p["Score"] && OrderedQ[{#["Score"],p["Score"]}]&]];
  profiles=IntegralComplexity[f,#]& /@ atoms;
  canonicalAtoms=CanonicalIntegral[f,#]& /@ atoms;
@@ -27,6 +30,7 @@ AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPatt
   seen=KeyExistsQ[known,cg];nf=If[seen,known[cg],cg];
   hard=Select[support[nf],suspect];
   Join[IntegralComplexity[f,g],<|"Canonical"->cg,"Flagged"->suspect[g],"Queried"->seen,
+   "AboveRecordedSectorReference"->aboveReference[g],
    "SelfReduced"->(seen && cg===nf),"NormalForm"->nf,"ComplexNormalFormAtoms"->hard,
    "Classification"->Which[!seen,"QueryBeforeJudging",hard=!={},"TargetedRelationAudit",suspect[g],"ReplaceComplexRepresentative",True,"NoComplexitySignal"]|>]],{k,Length[atoms]}];
  If[AnyTrue[records,FailureQ],Return[First[Select[records,FailureQ]]]];
@@ -44,6 +48,8 @@ AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPatt
  <|"FamilyHash"->f["Hash"],"BasisHash"->Hash[basis,"SHA256"],"EquationPoolHash"->OptionValue["EquationPoolHash"],
  "Profiles"->profiles,"Records"->records,"FlaggedCount"->Length[flagged],"RequiresReview"->(flagged=!={}),
  "PhysicalCandidates"->physical,"AuditedCandidateCount"->Length[basis],
+ "GrowthLevelCounts"->Counts[Lookup[profiles,"GrowthLevel"]],
+ "SecondOrderGrowthAloneBlocksAdvancement"->False,"AboveReferenceAloneProvesReducibility"->False,
  "SimplerRepresentativeSearchTargets"->Lookup[Select[physical,TrueQ[#["RequiresComplexityReview"]]&],"Expression",{}],
  "RepresentativeSearchScope"->"All actually occurring allowed sectors, including symmetry-related subtopologies; not only the flagged atom's positive sector",
  "RepresentativeReplacementTargets"->Lookup[Select[flagged,#["Classification"]==="ReplaceComplexRepresentative"&],"Canonical",{}],
