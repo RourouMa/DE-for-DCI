@@ -12,7 +12,8 @@ Do[profile=IntegralComplexity[f1,example];ca=CanonicalIntegral[f1,example];revie
  assert[profile["GrowthLevel"]==="UncommonSecondOrder" && !review["RequiresReview"] && AssociationQ[ConformalIBP`Private`complexityAdvanceContract[review,Automatic]],"distributed and concentrated second-order compensation do not block on degree alone"],{example,{twiceSplit,twiceConcentrated}}];
 assert[IntegralComplexity[f1,hard]["JointExcess"]===3,"third-order compensation is distinguished from second order"];
 a=AssessBasisComplexity[f1,{hard},<|"Rules"->{cg->simple}|>,"EquationPoolHash"->123];
-assert[a["RequiresReview"] && a["TargetedSeedTargets"]==={} && a["RepresentativeReplacementTargets"]==={cg},"an already simple normal form requires reselection, not more IBP"];
+assert[a["RequiresReview"] && a["TargetedSeedTargets"]==={} && a["RepresentativeReplacementTargets"]==={cg},"an already simple ordered normal form is used without new IBP"];
+assert[a["OrderingPreferenceMustBePreserved"] && !a["ReintroducingEliminatedQueriesAllowed"],"complexity review cannot authorize reintroducing eliminated queries"];
 b=AssessBasisComplexity[f1,{hard},<|"Rules"->{cg->cg}|>,"EquationPoolHash"->123];
 assert[b["RequiresReview"] && b["TargetedSeedTargets"]==={cg} && !b["ComplexityProvesReducibility"],"complex survivor requires relation audit without asserting reducibility"];
 assert[FailureQ[ConformalIBP`Private`complexityAdvanceContract[b,Automatic]],"finite coverage cannot bypass the complexity gate"];

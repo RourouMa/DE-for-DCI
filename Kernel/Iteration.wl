@@ -148,7 +148,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    s["PreviousRepresentatives"]=Union[s["PreviousRepresentatives"],support[{fullInput,fullDE}]];
    masters=support[{fullInput,fullDE}];frontier={};generationNeeded=True;
    If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand",
-    finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]]];
+    finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]],Join[fullInput,fullDE]];
     generationNeeded=FailureQ[finite] || reduction["UnseenTargets"]=!={}];
    If[generationNeeded,
    gapTargets=Union[reduction["UnseenTargets"],If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite],masters,{}]];
@@ -192,7 +192,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    If[s["Mode"]==="Reduction",s["ReducedInputs"]=fullInput;reason="ReductionFixedPoint";Break[]];
    vars=support[{input,de}];ci=coeff[input,vars];cd=coeff[de,vars];r=rr[ci];p=pivots[r];
    unclosedRows=Select[Range[Length[cd]],!And@@(zero /@ If[r==={},cd[[#]],cd[[#]]-cd[[#,p]].r])&];cl=unclosedRows==={};
-   finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]]];
+   finite=finiteBasisContract[f,BuildFiniteBasis[f,Join[fullInput,fullDE]],Join[fullInput,fullDE]];
    If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
     progress[o,Join[reportContext[s,pass],rawSupportReport[f,{fullInput,fullDE}],<|"Event"->"FiniteCoverFailed","Reason"->finite,"InputCount"->Length[basis],"OutputCount"->Missing["NotAccepted"],"FullClosureVerified"->False,"NextAction"->"Inspect uncovered combinations and missing relations; retain previous verified basis"|>]];Break[]];
    complexityAudit=AssessBasisComplexity[f,finite["Basis"],reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}]];

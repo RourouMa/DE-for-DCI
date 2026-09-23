@@ -3,16 +3,21 @@ constantCombinationQ[e_]:=AllTrue[Flatten[coeff[{e},support[e]]],MatchQ[Together
 variableDecisionQ[d_]:=AssociationQ[d] && AllTrue[
  {"Reason","ConstantSearchSummary","RelationAudit","AlternativesCompared"},
  StringQ[Lookup[d,#,None]] && StringLength[StringTrim[Lookup[d,#,""]]]>0&];
-finiteBasisContract[f_,finite_]:=Module[{basis,single,combinations},
+finiteBasisContract[f_,finite_,normalFormRows_:Automatic]:=Module[{basis,single,combinations,raw,extra,missing},
  If[FailureQ[finite],Return[finite]];
  If[!AssociationQ[finite]||!TrueQ[Lookup[finite,"ExactCoverage",False]],Return[fail["UnverifiedFiniteCover","No next-round basis without a complete coverage certificate."]]];
  basis=Lookup[finite,"Basis",{}];single=Lookup[finite,"SingleFinite",{}];combinations=Lookup[finite,"Combinations",{}];
  If[Sort[Join[single,combinations]]=!=Sort[basis]||!AllTrue[single,MatchQ[#,_G]&],
   Return[fail["FiniteBasisCountMismatch","Basis must contain exactly all declared singles and combinations; no hidden elements."]]];
+ If[ListQ[normalFormRows],
+  raw=support[normalFormRows];extra=Complement[support[basis],raw];
+  If[extra=!={},Return[fail["OrderingPreferenceViolation","Finite coverage must use the surviving normal-form atoms. Do not reintroduce eliminated queries as a new preferred basis.",<|"ReintroducedAtoms"->extra|>]]];
+  missing=Complement[Select[raw,FiniteIntegralQ[f,#]&],single];
+  If[missing=!={},Return[fail["PreferredFiniteSinglesOmitted","Retain individually finite normal-form representatives; actual DE row-rank compression is not an ordering-preserving basis selection.",<|"MissingSingleFinite"->missing|>]]]];
  If[!AllTrue[combinations,constantCombinationQ] && !variableDecisionQ[Lookup[finite,"VariableCoefficientDecision",None]],
   Return[fail["VariableCoefficientDecisionRequired","Constant coefficients are preferred, not mandatory. Record the constant search, relation audit, alternatives and reason before accepting a variable-coefficient basis."]]];
  If[!AllTrue[basis,FiniteIntegralQ[f,#]&],Return[fail["UncertifiedFiniteBasis","Each complete basis expression must pass the finite criterion."]]];
- finite];
+ If[ListQ[normalFormRows],Join[finite,<|"OrderingPreferencePreserved"->True,"BasisSelectionScope"->"Surviving normal-form atoms and their finite combinations"|>],finite]];
 reportContext[s_,round_]:=<|"ReportSchemaVersion"->1,"Strategy"->Lookup[s["Family"],"IntegralOrdering",Missing["NotRecorded"]],
  "Epoch"->s["Epoch"],"ReplayNumber"->s["Epoch"],"Round"->round,
  "EquationCount"->Length[s["Equations"]],"EquationPoolHash"->Hash[s["Equations"],"SHA256"]|>;

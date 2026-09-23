@@ -1,4 +1,4 @@
-(* Complexity is a diagnostic of incomplete reduction / poor representatives, never a relation. *)
+(* Complexity guides relation searches under the specified ordering; it never authorizes another basis. *)
 IntegralComplexity[f_Association,g_G]:=Module[{a,p,n,joint},
  If[!validIntegral[f,g],Return[fail["IntegralShape","Malformed integral in complexity audit."]]];
  a=Take[List@@g,Length[f["Propagators"]]];p=Select[a,Positive];n=-Select[a,Negative];
@@ -44,18 +44,19 @@ AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPatt
    "DivergentAtoms"->div,"RequiresComplexityReview"->(Intersection[aa,flaggedAtoms]=!={}),
    "CoverageSearchTarget"->expr,"CoverageSearchUnit"->"WholeExpression",
    "AtomwiseFiniteCoverageRequired"->False,
-   "Interpretation"->If[finite&&div=!={},"Divergent atoms belong to a certified finite combination; test coverage of the whole combination","Compare complete candidate with simpler finite representatives"]|>]],basis];
+   "Interpretation"->If[finite&&div=!={},"Divergent atoms belong to a certified finite combination; test coverage of the whole combination","Reduce the complete candidate under the specified ordering and inspect surviving atoms"]|>]],basis];
  <|"FamilyHash"->f["Hash"],"BasisHash"->Hash[basis,"SHA256"],"EquationPoolHash"->OptionValue["EquationPoolHash"],
  "Profiles"->profiles,"Records"->records,"FlaggedCount"->Length[flagged],"RequiresReview"->(flagged=!={}),
  "PhysicalCandidates"->physical,"AuditedCandidateCount"->Length[basis],
  "GrowthLevelCounts"->Counts[Lookup[profiles,"GrowthLevel"]],
  "SecondOrderGrowthAloneBlocksAdvancement"->False,"AboveReferenceAloneProvesReducibility"->False,
  "SimplerRepresentativeSearchTargets"->Lookup[Select[physical,TrueQ[#["RequiresComplexityReview"]]&],"Expression",{}],
- "RepresentativeSearchScope"->"All actually occurring allowed sectors, including symmetry-related subtopologies; not only the flagged atom's positive sector",
+ "RepresentativeSearchScope"->"Relation diagnostics across actually allowed sectors only; accepted finite bases stay within the specified ordering's surviving atoms",
+ "OrderingPreferenceMustBePreserved"->True,"ReintroducingEliminatedQueriesAllowed"->False,
  "RepresentativeReplacementTargets"->Lookup[Select[flagged,#["Classification"]==="ReplaceComplexRepresentative"&],"Canonical",{}],
  "TargetedSeedTargets"->Union[nfTargets,unqueried],"SectorProfiles"->sectorProfiles,
  "ComplexityProvesReducibility"->False,"OutputCountIsMasterCount"->False,
- "NextAction"->Which[unqueried=!={},"Query flagged candidates in the existing pool before generating equations",nfTargets=!={},"Compare whole finite candidates with simpler representatives across actual allowed sectors before targeting missing relations",flagged=!={},"Select a simpler finite representative using existing reductions",True,"Proceed with independently certified finite coverage"]|>];
+ "NextAction"->Which[unqueried=!={},"Query flagged candidates in the existing pool under the specified ordering before generating equations",nfTargets=!={},"Audit missing IBP and matching supersector symmetry for complex survivors; retain ordering and replay top after pool expansion",flagged=!={},"Use the existing ordered normal form; do not invert reductions to reintroduce eliminated queries",True,"Proceed with certified finite coverage of the ordering's surviving atoms"]|>];
 complexityDecisionQ[a_,d_]:=AssociationQ[d] && And@@(Lookup[d,#,Missing[]]===a[#]& /@
  {"FamilyHash","BasisHash","EquationPoolHash"}) &&
  AllTrue[{"Reason","TargetedSeedAudit","SymmetryAudit","SimplerBasisComparison"},

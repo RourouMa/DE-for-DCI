@@ -7,6 +7,8 @@ a=G[2,0,0,0,0,2,0,0,2,1,1];b=G[1,1,0,0,1,1,0,0,2,1,1];c=G[3,-1,0,0,-1,3,0,0,2,1,
 candidate=a+b-2 c;
 fin=BuildFiniteBasis[f,{x candidate,y candidate}];
 assert[AssociationQ[ConformalIBP`Private`finiteBasisContract[f,fin]],"certified constant cover accepted"];
+assert[TrueQ[ConformalIBP`Private`finiteBasisContract[f,fin,{x candidate,y candidate}]["OrderingPreferencePreserved"]],"finite combination of surviving atoms preserves ordering"];
+assert[MatchQ[ConformalIBP`Private`finiteBasisContract[f,fin,{a,b}],Failure["OrderingPreferenceViolation",_]],"a certified finite expression cannot reintroduce an eliminated integral"];
 bad=Join[fin,<|"Basis"->Append[fin["Basis"],a]|>];
 assert[MatchQ[ConformalIBP`Private`finiteBasisContract[f,bad],Failure["FiniteBasisCountMismatch",_]],"hidden extra basis element rejected"];
 variable=Join[fin,<|"Basis"->(x fin["Basis"]),"Combinations"->(x fin["Combinations"]),"Weights"->fin["Weights"]/x|>];
@@ -26,6 +28,8 @@ assert[MissingQ[report["ActualRationalRank"]] && !report["ActualRankVerified"],"
 assert[!report["FullClosureVerified"] && !report["ClosedOnSameInput"] && report["UnclosedDERows"]==={1},"unclosed derivative rows and closure level remain explicit"];
 assert[report["VariableCoefficientDecision"]===decision && report["ReplayNumber"]===2,"decision and replay identity preserved"];
 f1=LadderFamily[1,kinematics,{x,y}];g=G[1,1,1,1,1];
+scaled=<|"Basis"->{2 g},"SingleFinite"->{},"Combinations"->{2 g},"ExactCoverage"->True|>;
+assert[MatchQ[ConformalIBP`Private`finiteBasisContract[f1,scaled,{g}],Failure["PreferredFiniteSinglesOmitted",_]],"even an equivalent finite cover cannot replace a preferred finite single by a new definition"];
 d1=DifferentiateIntegrals[f1,{g}];d2=DifferentiateIntegrals[f1,{x g}];
 assert[ConformalIBP`Private`zero[d2["Rows"][x][[1]]-g-x d1["Rows"][x][[1]]],"variable coefficient derivative includes product rule"];
 assert[$MessageList==={},"no unexpected messages"];Quit[0];
