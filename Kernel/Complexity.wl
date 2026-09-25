@@ -14,7 +14,7 @@ complexityFlag[p_Association]:=p["NumeratorDegree"]>=3 && p["Dots"]>=3;
 Options[AssessBasisComplexity]={"EquationPoolHash"->None,"SectorProfiles"->{},"FiniteBasisPolicy"->"StrictOrdering"};
 AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPattern[]]:=Module[
  {atoms=support[basis],profiles,known=Association[Lookup[reduction,"Rules",{}]],sectorProfiles=OptionValue["SectorProfiles"],suspect,aboveReference,records,flagged,nfTargets,unqueried,physical,flaggedAtoms,canonicalAtoms,policy=OptionValue["FiniteBasisPolicy"]},
- If[!MemberQ[{"StrictOrdering","PreserveActualSpan"},policy],Return[fail["FiniteBasisPolicy","Unknown finite-cover policy."]]];
+ If[!MemberQ[{"StrictOrdering","PreserveActualSpan","FiniteSupportThenSpan"},policy],Return[fail["FiniteBasisPolicy","Unknown finite-cover policy."]]];
  If[!AllTrue[atoms,validIntegral[f,#]&],Return[fail["IntegralShape","Malformed basis in complexity audit."]]];
  If[!ListQ[sectorProfiles] || !AllTrue[sectorProfiles,AssociationQ[#] &&
    Lookup[#,"FamilyHash",None]===f["Hash"] && ListQ[Lookup[#,"Sector",None]] &&
@@ -53,8 +53,8 @@ AssessBasisComplexity[f_Association,basis_List,reduction_Association,OptionsPatt
  "SecondOrderGrowthAloneBlocksAdvancement"->False,"AboveReferenceAloneProvesReducibility"->False,
  "SimplerRepresentativeSearchTargets"->Lookup[Select[physical,TrueQ[#["RequiresComplexityReview"]]&],"Expression",{}],
  "FiniteBasisPolicy"->policy,
- "RepresentativeSearchScope"->If[policy==="StrictOrdering","Surviving ordered atoms in actually allowed sectors","Verified finite representatives inside the actual rational span in actually allowed sectors"],
- "OrderingPreferenceMustBePreserved"->(policy==="StrictOrdering"),"ReintroducingEliminatedQueriesAllowed"->(policy==="PreserveActualSpan"),
+ "RepresentativeSearchScope"->Switch[policy,"StrictOrdering","Surviving ordered atoms in actually allowed sectors","FiniteSupportThenSpan","Retain all finite normal-form atoms; with divergent support, verify finite representatives inside the actual rational span",_,"Verified finite representatives inside the actual rational span in actually allowed sectors"],
+ "OrderingPreferenceMustBePreserved"->(policy==="StrictOrdering"),"ReintroducingEliminatedQueriesAllowed"->(policy=!="StrictOrdering"),
  "RepresentativeReplacementTargets"->Lookup[Select[flagged,#["Classification"]==="ReplaceComplexRepresentative"&],"Canonical",{}],
  "TargetedSeedTargets"->Union[nfTargets,unqueried],"SectorProfiles"->sectorProfiles,
  "ComplexityProvesReducibility"->False,"OutputCountIsMasterCount"->False,

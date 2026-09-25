@@ -1,0 +1,16 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialization"];
+f=LadderFamily[1,kinematics,{x,y}];g=G[1,1,1,1,1];
+dir=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"dci-binary-checkpoint-"<>CreateUUID[]}]];
+Needs["ProcessLink`"];
+ProcessLink`Private`$TempPrefix=FileNameJoin[{dir,"wl-stream-std"}];
+r=RunDE[f,g,"CheckpointFormat"->"MX","OutputDirectory"->dir,"MasterCountStrategy"->"UserEstimate","MasterCountUserUpperBound"->4,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect","QueryCoveragePolicy"->"ActualRows","ProgressFunction"->None];
+assert[r["Closed"]&&r["FlatnessVerified"],"binary-checkpoint campaign closes normally"];
+d=Get[FileNameJoin[{dir,"Checkpoint.wl"}]];
+assert[AssociationQ[d]&&d["Hash"]===Hash[d["State"],"SHA256"]&&d["State"]["Basis"]===r["Basis"],"ordinary Get reads the hash-verified binary checkpoint index"];
+again=ResumeRun[dir];assert[again["Closed"]&&again["FlatnessVerified"]&&again["Basis"]===r["Basis"],"same frozen implementation resumes from MX"];
+assert[Length[FileNames["Checkpoint-*.mx",dir]]>0&&FileByteCount[FileNameJoin[{dir,"Checkpoint.wl"}]]<1024,"immutable local binary snapshots have a small atomic index"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

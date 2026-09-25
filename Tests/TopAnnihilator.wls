@@ -1,0 +1,12 @@
+Get[FileNameJoin[{DirectoryName[DirectoryName[$InputFileName]],"Kernel","ConformalIBP.wl"}]];
+assert[test_,name_]:=If[TrueQ[test],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+a=TopAnnihilatorRankBound[{dx^2,dy^2},{dx,dy},{x,y}];
+assert[a["UpperBound"]===4&&Sort[a["StandardDerivativeExponents"]]==={{0,0},{0,1},{1,0},{1,1}},"two second-order scalar equations bound all mixed derivatives by four"];
+b=TopAnnihilatorRankBound[{dx-y,dy-x},{dx,dy},{x,y}];
+assert[b["UpperBound"]===1,"compatible variable-coefficient system for exp(x y)"];
+c=TopAnnihilatorRankBound[{dx-y,dy},{dx,dy},{x,y}];
+assert[c["UpperBound"]===0,"Leibniz commutator detects incompatible nonzero solution"];
+d=TopAnnihilatorRankBound[{dx},{dx,dy},{x,y}];
+assert[FailureQ[d],"unconstrained derivative direction produces no finite bound"];
+assert[!a["OperatorIdentitiesVerified"],"algebra alone never certifies operators as identities for a physical top"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

@@ -22,12 +22,17 @@ ReduceIntegrals::usage="ReduceIntegrals[family,targets,equations] performs verif
 ReduceTargetIntegrals::usage="ReduceTargetIntegrals[family,targets,equations] verifies a target reduction using a dependency-selected subset of original equations and returns its certificate.";
 RunReduction::usage="RunReduction[family,targets,options] generates and iterates a target reduction campaign.";
 RunDE::usage="RunDE[family,inputs,options] restarts from the original inputs after every system extension and tests actual derivative closure.";
+CriticalPointCount::usage="CriticalPointCount[polynomial,variables] counts isolated proper critical points with multiplicity by a saturated ideal. Method->Euler uses a generic logarithmic critical ideal on the torus. Geometric counts are not automatically physical MI bounds.";
+ParametricRepresentation::usage="ParametricRepresentation[family,ordinaryPropagatorIDs] constructs the affine-chart U,F reference polynomials, retaining the unverified strict-four-dimensional applicability explicitly.";
+MasterIntegralCount::usage="MasterIntegralCount[family,inputs] counts ordinary reference sectors and their subsectors before a DE campaign. It returns a reference estimate until applicability and completeness are certified.";
+TopAnnihilatorRankBound::usage="TopAnnihilatorRankBound[operators,derivativeSymbols,kinematicVariables] bounds a top-generated cyclic differential space by a differential Groebner staircase, conditional on independently verified annihilator identities.";
+TopDerivativeBound::usage="TopDerivativeBound[family,top] builds a bounded derivative ansatz and fresh FiniteFlow IBP identities, then certifies a top-space upper bound without selecting a finite basis or running DE rounds. Insufficient annihilators return no bound.";
 ResumeRun::usage="ResumeRun[directory] resumes a versioned, hash-checked trusted local checkpoint.";
 InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirectory] loads an optional FiniteFlow installation without hard-coded paths.";
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.4.0";
+$ConformalIBPVersion="0.5.0";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -39,7 +44,7 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","SpanPreservingFiniteBasis.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
+ {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","SpanPreservingFiniteBasis.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","MasterCount.wl","TopAnnihilator.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
@@ -327,5 +332,7 @@ Get[FileNameJoin[{DirectoryName[$InputFileName],"Reduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Coupled.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"TargetReduction.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"ClosurePreference.wl"}]];
+Get[FileNameJoin[{DirectoryName[$InputFileName],"MasterCount.wl"}]];
+Get[FileNameJoin[{DirectoryName[$InputFileName],"TopAnnihilator.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Iteration.wl"}]];
 End[];EndPackage[];

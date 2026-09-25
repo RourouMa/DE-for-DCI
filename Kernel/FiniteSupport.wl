@@ -1,3 +1,7 @@
+$deferBoundaryCoefficientSimplification=False;
+closureLinear[e_]:=If[!TrueQ[$deferBoundaryCoefficientSimplification],canonicalLinear[e],Module[{m=linearMapNoExpand[e]},
+ If[FailureQ[m],Return[m]];
+ Total[KeyValueMap[If[MatchQ[#1,_G],Together[#2],#2] #1&,m]]]];
 linearMapNoExpand[e_]:=Module[{walk,terms,result,const,tag=Unique[]},
  walk[z_]:=Which[
   MatchQ[z,_G|_BoundaryIntegral],{z->1},

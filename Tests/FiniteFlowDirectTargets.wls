@@ -1,0 +1,28 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+assert[x_,label_]:=If[TrueQ[x],Print["PASS ",label],Print["FAIL ",label];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialization"];
+kin={SP[X1,X1]->2 x,SP[X3,X3]->2 x,SP[X2,X2]->2 y,SP[X4,X4]->2 y,SP[X1,X3]->1+x^2,SP[X2,X4]->1+y^2,SP[X1,X2]->0,SP[X1,X4]->0,SP[X2,X3]->0,SP[X3,X4]->0};
+f=LadderFamily[2,kin,{x,y}];g=CanonicalIntegral[f,G@@Join[f["TopSector"],{1,1}]];
+b1=BoundaryIntegral[1,{1,1,1,1,1}];b2=BoundaryIntegral[1,{2,0,2,0,1}];b3=BoundaryIntegral[1,{3,0,1,0,1}];b4=BoundaryIntegral[1,{4,0,0,0,1}];
+eq={g-b1,b1-x b2,b3-3 b4};
+red=ReduceTargetIntegrals[f,{g,b1},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect"];
+If[!AssociationQ[red],Print[red]];
+full=ReduceIntegrals[f,{g,b1},eq,"Solver"->"FiniteFlow"];
+assert[AssociationQ[red] && red["ReducedTargets"]===full["ReducedTargets"],"target and source forms agree with full reconstruction"];
+assert[red["VerificationScope"]==="FullPoolTargetNormalForms" && red["FullPoolTargetAgreement"] && !red["FullPoolEquationResidualsChecked"],"accurate numerical certificate scope"];
+assert[FreeQ[red["ColumnOrder"],b3|b4],"unneeded columns are not reconstructed"];
+cached=ReduceTargetIntegrals[f,{g+b1},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect"];
+assert[TrueQ[cached["ReductionReused"]] && cached["ReducedTargets"]==={2 x b2},"same-pool verified targets reused for a combined query"];
+Needs["ProcessLink`"];
+streams=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"ff-direct-test-"<>CreateUUID[]}]];
+Block[{ProcessLink`Private`$TempPrefix=FileNameJoin[{streams,"wl-stream-std"}]},
+ free=ReduceTargetIntegrals[f,{b4},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect"];
+ assert[AssociationQ[free] && free["ReducedTargets"]==={b4},"all-free target preserved"];
+ empty=ReduceTargetIntegrals[f,{g},{},"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect"];
+ assert[AssociationQ[empty] && empty["ReducedTargets"]==={g},"empty pool preserves unknown target"];
+];
+stronger=ReduceTargetIntegrals[f,{g,b3},Append[eq,b2-b4],"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect"];
+assert[AssociationQ[stronger] && stronger["ReducedTargets"]==={x b4,3 b4},"extension updates normal forms"];
+bad=Block[{FiniteFlow`FFSparseSolve=Function[Null,{g->0,b1->0},HoldAll]},ReduceTargetIntegrals[f,{g,b1},eq,"Solver"->"FiniteFlow","TargetSelector"->"FiniteFlowDirect","ReuseVerifiedReduction"->False]];
+assert[FailureQ[bad] && bad[[1]]==="FullPoolTargetMismatch","fresh full pool rejects spurious zero"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

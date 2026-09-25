@@ -180,12 +180,14 @@ constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons,failed=False},
    mons=Union[Flatten[First /@ CoefficientRules[#,vars]& /@ poly,1]];
    Do[AppendTo[atoms,Fold[Coefficient[#1,First[#2],Last[#2]]&,#,Transpose[{vars,mon}]]& /@ poly],{mon,mons}]],{row,c}];
  If[failed,$Failed,atoms]];
-BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,
+BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,maps,highRows,
  basis,m,bp,w,residue,den,definitions},
  safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];
  If[div==={},Return[directFiniteSupport[rows,gs]],
-  If[!And@@(zero /@ ((rows/.Dispatch[Join[Thread[div->ConstantArray[1,Length[div]]],Thread[safe->ConstantArray[0,Length[safe]]]]])-(rows/._G->0))),Return[fail["NoConstantZeroSumCover","Divergent coefficient sums are nonzero; additional relations/ordering are needed."]]];
-  c=coeff[rows,div];atoms=constantAtoms[c,f["Variables"]];If[atoms===$Failed,Return[fail["NonRationalCoefficients","Coefficient extraction requires rational kinematic functions."]]];
+  maps=linearMapNoExpand /@ rows;If[AnyTrue[maps,FailureQ],Return[First[Select[maps,FailureQ]]]];
+  highRows=Total[KeyValueMap[If[MatchQ[#1,_G],#2 #1,0]&,#]]& /@ maps;
+  If[!And@@(zero /@ (highRows/.Dispatch[Join[Thread[div->ConstantArray[1,Length[div]]],Thread[safe->ConstantArray[0,Length[safe]]]]])),Return[fail["NoConstantZeroSumCover","Divergent coefficient sums are nonzero; additional relations/ordering are needed."]]];
+  c=coeff[highRows,div];atoms=constantAtoms[c,f["Variables"]];If[atoms===$Failed,Return[fail["NonRationalCoefficients","Coefficient extraction requires rational kinematic functions."]]];
   env=rr[atoms];p=pivots[env];rank=Length[env];
   inside[v_]:=And@@(zero /@ (v-v[[p]].env));
   pool=Join[Select[(UnitVector[Length[div],#[[1]]]-UnitVector[Length[div],#[[2]]]& /@ Subsets[Range[Length[div]],{2}]),inside],primitive /@ env];
@@ -194,8 +196,8 @@ BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,a
   If[Length[chosen]!=rank,Return[fail["UnverifiedFiniteCover","Actual coefficient blocks cannot all be certified finite; they will not be differentiated.",<|"RequiredRank"->rank,"CertifiedRank"->Length[chosen]|>]]];
   basis=Join[safe,(#.div& /@ chosen)]];
  m=coeff[basis,gs];bp=pivots[rr[m]];
- w=If[basis==={},ConstantArray[{},Length[rows]],Map[Together,coeff[rows,gs][[All,bp]].linearInverse[m[[All,bp]]],{2}]];
- residue=canonicalLinear /@ (rows-w.basis);residue=residue/._BoundaryIntegral->0;
+ w=If[basis==={},ConstantArray[{},Length[rows]],Map[Together,coeff[rows/._BoundaryIntegral->0,gs][[All,bp]].linearInverse[m[[All,bp]]],{2}]];
+ residue=canonicalLinear /@ (highRows-w.basis);
  If[!And@@(zero /@ residue),Return[fail["FiniteReconstruction","Finite basis does not cover the entire input/DE."]]];
  <|"Basis"->basis,"SingleFinite"->safe,"Combinations"->(#.div& /@ chosen),"Weights"->w,
   "BoundaryRows"->(rows/._G->0),"ConstantCombinationRank"->rank,

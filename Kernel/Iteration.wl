@@ -55,18 +55,47 @@ generateSharded[f_,targets_,options_]:=Module[{n=options["Workers"],ops,shards,d
   "SeedingDeduplication"->plan["SeedingDeduplication"],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllGeneratedSupportCanonicalized"->True,"IndependentKernels"->n,"WorkerPayload"->payloadAudit,"JobDirectory"->dir|>];
 
-Options[RunDE]={"OutputDirectory"->None,"MaxRounds"->8,"MaxSystemExpansions"->12,
+Options[RunDE]={"OutputDirectory"->None,"CheckpointFormat"->"WL","DeferBoundaryCoefficientSimplification"->False,"MaxRounds"->8,"MaxSystemExpansions"->12,
+ "MasterCountPreflight"->"Advisory","MasterCountStrategy"->"Geometry","MasterCountOptions"->{},"MasterCountTimeLimit"->60,"MasterCountReason"->None,"MasterCountUserUpperBound"->Automatic,
  "Solver"->Automatic,"MaxExactColumns"->1500,"MaxPrimes"->80,"VerificationMode"->"Numerical","NumericalVerificationPoints"->Automatic,"Workers"->1,"VerificationWorkers"->1,"SeedPlanningWorkers"->Automatic,"SeedPlanningThreshold"->64,
  "KernelExecutable"->Automatic,"InitialEquations"->{},"BoundaryPolicy"->"Retain",
- "GenerationPolicy"->"OnDemand","ReductionScope"->"Targets","BasisPreference"->"None","FiniteBasisPolicy"->"StrictOrdering",
+ "GenerationPolicy"->"OnDemand","QueryCoveragePolicy"->"AllTargets","ReductionScope"->"Targets","TargetSelector"->Automatic,"BasisPreference"->"None","FiniteBasisPolicy"->"StrictOrdering",
  "SeedDomain"->"Original","BlockExpansion"->"Cartesian","SeedGeometry"->"ComponentAxial","InverseOperatorPolicy"->"Complete","GapSeeding"->True,"ComplexityDecision"->Automatic,"ComplexitySectorProfiles"->{},"ProgressFunction"->Print};
 Options[RunReduction]=Options[RunDE];
 progress[o_,a_]:=If[o["ProgressFunction"]=!=None,o["ProgressFunction"][a]];
-checkpoint[state_,dir_]:=If[StringQ[dir],Module[{path,tmp,saved},
+(* MXFileHash checks the immutable serialized bytes before loading them. Legacy
+   WL/MX snapshots retain their expression-level state hash. *)
+checkpointIntegrityQ[data_]:=AssociationQ[data] && If[Lookup[data,"HashType","ExpressionSHA256"]==="MXFileSHA256",
+ With[{file=Lookup[data,"File",None]},StringQ[file]&&FileExistsQ[file]&&FileHash[file,"SHA256"]===Lookup[data,"Hash",None]],
+ Lookup[data,"Hash",None]===Hash[Lookup[data,"State",None],"SHA256"]];
+checkpoint[state_,dir_]:=If[StringQ[dir],Module[{path,tmp,saved,data,mxPath,mxTmp,format,fileHash,index},
  If[!DirectoryQ[dir],CreateDirectory[dir,CreateIntermediateDirectories->True]];
  path=FileNameJoin[{dir,"Checkpoint.wl"}];tmp=path<>".tmp";
  saved=Append[state,"SymmetryCache"->exportSymmetryCache[state["Family"]]];
- Put[<|"Version"->$ConformalIBPVersion,"Hash"->Hash[saved,"SHA256"],"State"->saved|>,tmp];
+ format=Lookup[state["Options"],"CheckpointFormat","WL"];
+ If[format==="MXFileHash",
+  data=<|"Version"->$ConformalIBPVersion,"State"->saved|>;
+  mxTmp=FileNameJoin[{dir,"Checkpoint-"<>CreateUUID[]<>".mx.tmp"}];
+  Block[{$checkpointPayload=data},DumpSave[mxTmp,$checkpointPayload]];
+  fileHash=FileHash[mxTmp,"SHA256"];
+  mxPath=ExpandFileName[FileNameJoin[{dir,"Checkpoint-"<>IntegerString[fileHash,16]<>".mx"}]];
+  If[FileExistsQ[mxPath],DeleteFile[mxTmp],RenameFile[mxTmp,mxPath]];
+  index=With[{file=mxPath,expected=fileHash},HoldComplete[With[{p=file,h=expected},
+   If[FileExistsQ[p]&&FileHash[p,"SHA256"]===h,
+    Get[p];Join[ConformalIBP`Private`$checkpointPayload,<|"HashType"->"MXFileSHA256","Hash"->h,"File"->p|>],
+    Failure["CheckpointMismatch",<|"MessageTemplate"->"Serialized checkpoint SHA256 does not match.","File"->p|>]]]]];
+  Export[tmp,ToString[index,InputForm],"Text"];
+  (* Remove the holding wrapper in text, without evaluating the index here. *)
+  index=Import[tmp,"Text"];Export[tmp,StringDrop[StringDrop[index,StringLength["HoldComplete["]],-1]<>"\n","Text"];
+  RenameFile[tmp,path,OverwriteTarget->True];Return[]];
+ data=<|"Version"->$ConformalIBPVersion,"Hash"->Hash[saved,"SHA256"],"State"->saved|>;
+ If[format==="MX",
+  mxPath=FileNameJoin[{dir,"Checkpoint-"<>IntegerString[data["Hash"],16]<>".mx"}];
+  If[!FileExistsQ[mxPath],mxTmp=mxPath<>".tmp";
+   Block[{$checkpointPayload=data},DumpSave[mxTmp,$checkpointPayload]];
+   RenameFile[mxTmp,mxPath,OverwriteTarget->True]];
+  Export[tmp,"Get["<>ToString[ExpandFileName[mxPath],InputForm]<>"];ConformalIBP`Private`$checkpointPayload\n","Text"],
+  Put[data,tmp]];
  RenameFile[tmp,path,OverwriteTarget->True]]];
 saveRound[dir_,epoch_,round_,record_]:=If[StringQ[dir],Module[{path=FileNameJoin[{dir,"epoch"<>ToString[epoch],"round"<>ToString[round]}]},
  If[!DirectoryQ[path],CreateDirectory[path,CreateIntermediateDirectories->True]];
@@ -87,7 +116,7 @@ RunDE[f_Association,input_ /; !ListQ[input],opts:OptionsPattern[]]:=RunDE[f,{inp
 RunReduction[f_Association,input_ /; !ListQ[input],opts:OptionsPattern[]]:=RunReduction[f,{input},opts];
 ResumeRun[dir_String]:=Module[{data=Get[FileNameJoin[{dir,"Checkpoint.wl"}]],s},
  If[!AssociationQ[data] || Lookup[data,"Version",None]=!=$ConformalIBPVersion ||
-  Lookup[data,"Hash",None]=!=Hash[Lookup[data,"State",None],"SHA256"],Return[fail["CheckpointMismatch","Checkpoint version or content hash does not match."]]];
+  !TrueQ[checkpointIntegrityQ[data]],Return[fail["CheckpointMismatch","Checkpoint version or content hash does not match."]]];
  s=data["State"];If[Lookup[s,"ImplementationHash",None]=!=$implementationHash,
   Return[fail["ImplementationMismatch","Package source changed. Start a new campaign; old application ledgers must not be reused."]]];
  If[familyHash[s["Family"]]=!=s["FamilyHash"],Return[fail["FamilyMismatch","Checkpoint family changed."]]];
@@ -98,27 +127,50 @@ relationFrontier[f_,masters_List,rows_List]:=Module[{groups,atoms,keys},
    Scan[(Sow[atoms,#])&,Intersection[atoms,masters]],{row,rows}],_G,(#1->Union[Flatten[#2]])&]]];
  keys=Association[(#->simpleKey[f,#])& /@ Union[masters,Flatten[Values[groups]]]];
  Union[Flatten[Table[Select[Lookup[groups,master,{}],#=!=master && OrderedQ[{keys[master],keys[#]}]&],{master,masters}]]]];
-runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initial["Options"],basis,pass,der,rows,targets,
+runCampaign[initial_Association]:=Block[{$deferBoundaryCoefficientSimplification=TrueQ[Lookup[initial["Options"],"DeferBoundaryCoefficientSimplification",False]]},runCampaignCore[initial]];
+runCampaignCore[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initial["Options"],basis,pass,der,rows,targets,
  reduction,query,generated,new,finite,records,historyRules={},oldResidual,ci,cd,vars,r,p,cl,coordinates,
  fullInput,fullDE,input,de,boundary,matrices,sourcesRows,reason,changed,replay=True,epoch,startEpoch,
  unclosedRows,independent,selectedRows,originalCount,curvature,allCoordinates,inputCoordinates,allSources,inputSources,
- frontier,masters,canonicalRows,generationNeeded,cacheImport,seedTargets,seedOptions,gapTargets,focused,fallback,complexityAudit,complexityGate},
+ frontier,masters,canonicalRows,generationNeeded,cacheImport,seedTargets,seedOptions,gapTargets,focused,fallback,complexityAudit,complexityGate,countPreflight,countAudit,startRound,continuation},
  If[familyHash[f]=!=s["FamilyHash"],Return[fail["FamilyMismatch","Family metadata hash changed."]]];
+ If[!MemberQ[{"WL","MX","MXFileHash"},Lookup[o,"CheckpointFormat","WL"]],Return[fail["CheckpointFormat","Use portable WL or local MX/MXFileHash checkpoints."]]];
+ If[!MemberQ[{"AllTargets","ActualRows"},Lookup[o,"QueryCoveragePolicy","AllTargets"]],Return[fail["QueryCoveragePolicy","Use AllTargets or ActualRows."]]];
  If[!MemberQ[{"Retain","Quotient"},o["BoundaryPolicy"]],Return[fail["BoundaryPolicy","BoundaryPolicy must be Retain or Quotient."]]];
  If[!MemberQ[{"Always","OnDemand"},o["GenerationPolicy"]],Return[fail["GenerationPolicy","GenerationPolicy must be Always or OnDemand."]]];
  If[!MemberQ[{"Full","Targets"},o["ReductionScope"]],Return[fail["ReductionScope","ReductionScope must be Full or Targets."]]];
  If[!MemberQ[{"FamilyAfterClosure","None"},o["BasisPreference"]],Return[fail["BasisPreference","Use FamilyAfterClosure or None."]]];
- If[!MemberQ[{"StrictOrdering","PreserveActualSpan"},o["FiniteBasisPolicy"]],Return[fail["FiniteBasisPolicy","Use StrictOrdering or the explicit adaptive PreserveActualSpan policy."]]];
- If[o["FiniteBasisPolicy"]==="PreserveActualSpan"&&!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowRequired","Initialize FiniteFlow for PreserveActualSpan."]]];
+ If[!MemberQ[{"StrictOrdering","PreserveActualSpan","FiniteSupportThenSpan"},o["FiniteBasisPolicy"]],Return[fail["FiniteBasisPolicy","Use StrictOrdering, PreserveActualSpan or FiniteSupportThenSpan."]]];
+ If[o["FiniteBasisPolicy"]=!="StrictOrdering"&&!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowRequired","Initialize FiniteFlow for adaptive finite-basis policies."]]];
  If[!MemberQ[{"ComponentAxial","InverseTargets"},o["SeedGeometry"]] || !MemberQ[{"Complete","DirectHit"},o["InverseOperatorPolicy"]] || !MemberQ[{"Original","Extended"},o["SeedDomain"]] || !MemberQ[{"Cartesian","SingleBlock"},o["BlockExpansion"]] || !MemberQ[{True,False},o["GapSeeding"]],Return[fail["SeedPolicy","Invalid campaign seeding policy."]]];
  If[s["Mode"]==="DE" && (f["Variables"]==={} || !And@@(FiniteIntegralQ[f,#]& /@ s["OriginalInputs"])),
   Return[fail["UnverifiedInput","DE inputs must pass the finite-integral check and kinematic variables must be supplied."]]];
+ If[s["Mode"]==="DE" && !KeyExistsQ[s,"MasterCountPreflight"],
+  progress[o,<|"Event"->"MasterCountPreflightStarted","BeforeDifferentiation"->True|>];
+  countPreflight=masterCountPreflight[s];
+  If[FailureQ[countPreflight],Return[countPreflight]];
+  s["MasterCountPreflight"]=countPreflight;
+  progress[o,<|"Event"->"MasterCountPreflightFinished","Status"->countPreflight["Status"],
+   "CanStartDE"->countPreflight["CanStartDE"],"CertifiedUpperBound"->Lookup[countPreflight,"CertifiedUpperBound",Missing["NotCertified"]],
+   "StoppingThreshold"->Lookup[countPreflight,"StoppingThreshold",Missing["NotAvailable"]],"ThresholdOrigin"->Lookup[countPreflight,"ThresholdOrigin",None]|>];
+  If[!TrueQ[countPreflight["CanStartDE"]],s["Status"]="MasterCountUncertified";checkpoint[s,o["OutputDirectory"]];Return[s]]];
+ If[s["Mode"]==="DE" && !TrueQ[s["MasterCountPreflight"]["CanStartDE"]],Return[s]];
  If[KeyExistsQ[s,"SymmetryCache"],cacheImport=importSymmetryCache[f,s["SymmetryCache"]];If[FailureQ[cacheImport],Return[cacheImport]]];
  startEpoch=s["Epoch"];reason="ExpansionLimit";s["Closed"]=False;
  If[KeyExistsQ[s,"PendingRelations"],s["Equations"]=Union[s["Equations"],s["PendingRelations"]];
-  s=KeyDrop[s,"PendingRelations"];s["Epoch"]++];
+  s=KeyDrop[s,{"PendingRelations","VerifiedRoundContinuation"}];s["Epoch"]++];
  While[replay && s["Epoch"]-startEpoch<=o["MaxSystemExpansions"],
-  replay=False;basis=s["OriginalInputs"];records={};
+  replay=False;basis=s["OriginalInputs"];records={};startRound=1;
+  If[KeyExistsQ[s,"VerifiedRoundContinuation"],
+   continuation=s["VerifiedRoundContinuation"];s=KeyDrop[s,"VerifiedRoundContinuation"];
+   If[!AssociationQ[continuation]||Lookup[continuation,"Epoch",None]=!=s["Epoch"]||Lookup[continuation,"EquationPoolHash",None]=!=Hash[s["Equations"],"SHA256"]||
+    !IntegerQ[Lookup[continuation,"Round",None]]||continuation["Round"]<1||!ListQ[Lookup[continuation,"Inputs",None]]||!AllTrue[continuation["Inputs"],FiniteIntegralQ[f,#]&]||
+    !ListQ[Lookup[continuation,"History",None]]||Lookup[continuation["History"],"Round",{}]=!=Range[continuation["Round"]-1]||
+    !AllTrue[continuation["History"],Lookup[#,"Epoch",None]===s["Epoch"]&&Lookup[#,"EquationPoolHash",None]===continuation["EquationPoolHash"]&&Lookup[#,"Event",None]==="RoundVerified"&&TrueQ[Lookup[#,"ExactCoverage",False]]&],
+    Return[fail["InvalidRoundContinuation","Only verified earlier rounds in the identical pool can be continued."]]];
+   basis=continuation["Inputs"];records=continuation["History"];startRound=continuation["Round"];
+   progress[o,Join[reportContext[s,startRound],<|"Event"->"ContinuingVerifiedPool","PriorVerifiedRounds"->Length[records],"OriginalInputsRetained"->True|>]]];
+  s["TopBoundBasisScopePreserved"]=True;
   Do[
    progress[o,Join[reportContext[s,pass],<|"Event"->"RoundStarted","InputCount"->Length[basis],"StartFromOriginalTop"->(pass===1)|>]];
    der=If[s["Mode"]==="DE",DifferentiateIntegrals[f,basis],<|"Rows"-><||>,"Targets"->support[basis]|>];
@@ -128,33 +180,39 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
    query=Union[s["HistoricalTargets"],s["PreviousRepresentatives"],targets];
    If[o["ReductionScope"]==="Targets",query=Union[query,support[Lookup[s,"HistoricalRules",{}]],sources[Lookup[s,"HistoricalRules",{}]]]];
    reduction=If[o["ReductionScope"]==="Targets",ReduceTargetIntegrals,ReduceIntegrals][f,query,s["Equations"],"Solver"->o["Solver"],"MaxExactColumns"->o["MaxExactColumns"],"MaxPrimes"->o["MaxPrimes"],"VerificationMode"->o["VerificationMode"],"NumericalVerificationPoints"->o["NumericalVerificationPoints"],"VerificationWorkers"->o["VerificationWorkers"],"KernelExecutable"->o["KernelExecutable"],
+    Sequence@@If[o["ReductionScope"]==="Targets",{"TargetSelector"->Lookup[o,"TargetSelector",Automatic]},{}],
     "ProgressFunction"->Function[event,progress[o,Join[<|"Epoch"->s["Epoch"],"Round"->pass|>,event]]]];
    If[FailureQ[reduction],reason=reduction;Break[]];
    historyRules=Lookup[s,"HistoricalRules",{}];
-   If[historyRules=!={},oldResidual=If[o["VerificationMode"]==="Exact",canonicalLinear /@ (((First /@ historyRules)-(Last /@ historyRules))/.Dispatch[reduction["Rules"]]),sampledRuleResiduals[(First /@ historyRules)-(Last /@ historyRules),reduction["Rules"],coefficientParameters[Join[Last /@ historyRules,Last /@ reduction["Rules"]]],o["NumericalVerificationPoints"]]];
-    If[FailureQ[oldResidual] || !And@@(zero /@ oldResidual),reason=fail["HistoricalRegression","An old reduction identity is not reproduced."];Break[]]];
+   If[historyRules=!={},progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Checking historical reduction identities"|>];
+    oldResidual=If[o["VerificationMode"]==="Exact",canonicalLinear /@ (((First /@ historyRules)-(Last /@ historyRules))/.Dispatch[reduction["Rules"]]),sampledRuleResiduals[(First /@ historyRules)-(Last /@ historyRules),reduction["Rules"],If[KeyExistsQ[reduction,"CoefficientParameters"],reduction["CoefficientParameters"],coefficientParameters[Join[Last /@ historyRules,Last /@ reduction["Rules"]]]],o["NumericalVerificationPoints"]]];
+    If[FailureQ[oldResidual] || !And@@(zero /@ oldResidual),reason=fail["HistoricalRegression","An old reduction identity is not reproduced."];Break[]];
+    progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Historical reduction identities verified"|>]];
    s["HistoricalRules"]=reduction["Rules"];s["LastReduction"]=reduction;
    s["CurrentRound"]=pass;s["CurrentInputs"]=basis;
    s["Status"]="ReductionVerified";checkpoint[s,o["OutputDirectory"]];
-   progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->If[Lookup[reduction,"VerificationScope","Full"]==="SelectedOriginalEquations","Target reduction verified using selected original equations","Full reduction verified; continuing same-loop closure"],
+   progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->Switch[Lookup[reduction,"VerificationScope","Full"],"SelectedOriginalEquations","Target reduction verified using selected original equations","FullPoolTargetNormalForms","Target normal forms verified against the full pool; continuing same-loop closure",_,"Full reduction verified; continuing same-loop closure"],
     "Columns"->reduction["Columns"],"Queries"->Length[query],
-    "BoundaryRuleCount"->Count[reduction["BoundaryRules"],Rule[a_,b_]/;!zero[a-b]]|>];
-   fullInput=canonicalLinear /@ ((canonExpr[f,#]& /@ basis)/.Dispatch[reduction["Rules"]]);
-   fullDE=canonicalLinear /@ ((canonExpr[f,#]& /@ rows)/.Dispatch[reduction["Rules"]]);
+    "BoundaryRuleCount"->Count[reduction["BoundaryRules"],Rule[a_,b_]/;a=!=b]|>];
+   fullInput=closureLinear /@ ((canonExpr[f,#]& /@ basis)/.Dispatch[reduction["Rules"]]);
+   fullDE=closureLinear /@ ((canonExpr[f,#]& /@ rows)/.Dispatch[reduction["Rules"]]);
    input=fullInput/._BoundaryIntegral->0;de=fullDE/._BoundaryIntegral->0;
+   countAudit=If[s["Mode"]==="DE",masterCountRankAudit[s,input,de],<|"Exceeded"->False|>];s["MasterCountRankAudit"]=countAudit;
+   If[TrueQ[countAudit["Exceeded"]],s["UnverifiedRows"]=Join[fullInput,fullDE];progress[o,Join[reportContext[s,pass],<|"Event"->"MasterCountBoundExceeded","Audit"->countAudit,"Action"->"Repair the relation pool before accepting more DE inputs"|>]]];
    If[s["Mode"]==="DE",
     complexityAudit=AssessBasisComplexity[f,basis,reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}],"FiniteBasisPolicy"->o["FiniteBasisPolicy"]];
     s["ComplexityAudit"]=complexityAudit;
     complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
-    If[FailureQ[complexityGate],reason=complexityGate;s["UnverifiedRows"]=Join[fullInput,fullDE];
+    If[FailureQ[complexityGate] && !TrueQ[countAudit["Exceeded"]],reason=complexityGate;s["UnverifiedRows"]=Join[fullInput,fullDE];
      progress[o,Join[reportContext[s,pass],<|"Event"->"ComplexityReviewRequired","Audit"->complexityAudit,"NoIntegralsDiscarded"->True,"FullClosureVerified"->False|>]];Break[]]];
    s["PreviousRepresentatives"]=Union[s["PreviousRepresentatives"],support[{fullInput,fullDE}]];
    masters=support[{fullInput,fullDE}];frontier={};generationNeeded=True;
-   If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand",
-    finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
-    generationNeeded=FailureQ[finite] || reduction["UnseenTargets"]=!={}];
+   If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && !TrueQ[countAudit["Exceeded"]],
+    finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query,rows],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
+    generationNeeded=FailureQ[finite] || (Lookup[o,"QueryCoveragePolicy","AllTargets"]==="AllTargets"&&reduction["UnseenTargets"]=!={})];
+   generationNeeded=generationNeeded||TrueQ[countAudit["Exceeded"]];
    If[generationNeeded,
-   gapTargets=Union[reduction["UnseenTargets"],If[s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite],masters,{}]];
+   gapTargets=Union[reduction["UnseenTargets"],If[TrueQ[countAudit["Exceeded"]]||(s["Mode"]==="DE" && o["GenerationPolicy"]==="OnDemand" && FailureQ[finite]),masters,{}]];
    focused=TrueQ[o["GapSeeding"]] && s["Equations"]=!={} && gapTargets=!={};
    If[!focused,
     progress[o,<|"Epoch"->s["Epoch"],"Round"->pass,"Action"->"Building relation frontier for broad seeding"|>];
@@ -193,16 +251,19 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
     checkpoint[s,o["OutputDirectory"]];Break[]];
    If[new=!={},reason="ExpansionLimit";s["PendingRelations"]=new;Break[]];
    If[s["Mode"]==="Reduction",s["ReducedInputs"]=fullInput;reason="ReductionFixedPoint";Break[]];
+   If[TrueQ[countAudit["Exceeded"]],reason=fail["MasterCountBoundExceeded","The same-loop input/derivative rank still exceeds the recorded stopping threshold after the attempted pool repair. No new DE inputs were accepted; the audit records whether the threshold is user-estimated or certified.",countAudit];s["UnverifiedRows"]=Join[fullInput,fullDE];Break[]];
    vars=support[{input,de}];ci=coeff[input,vars];cd=coeff[de,vars];r=rr[ci];p=pivots[r];
    unclosedRows=Select[Range[Length[cd]],!And@@(zero /@ If[r==={},cd[[#]],cd[[#]]-cd[[#,p]].r])&];cl=unclosedRows==={};
-   finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
+   finite=finiteBasisContract[f,campaignFiniteCover[f,Join[fullInput,fullDE],Join[basis,query,rows],reduction,o["FiniteBasisPolicy"]],Join[fullInput,fullDE],o["FiniteBasisPolicy"]];
    If[FailureQ[finite],reason=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
     progress[o,Join[reportContext[s,pass],rawSupportReport[f,{fullInput,fullDE}],<|"Event"->"FiniteCoverFailed","Reason"->finite,"InputCount"->Length[basis],"OutputCount"->Missing["NotAccepted"],"FullClosureVerified"->False,"NextAction"->"Inspect uncovered combinations and missing relations; retain previous verified basis"|>]];Break[]];
    complexityAudit=AssessBasisComplexity[f,finite["Basis"],reduction,"EquationPoolHash"->Hash[s["Equations"],"SHA256"],"SectorProfiles"->Lookup[o,"ComplexitySectorProfiles",{}],"FiniteBasisPolicy"->o["FiniteBasisPolicy"]];
    s["ComplexityAudit"]=complexityAudit;
    complexityGate=complexityAdvanceContract[complexityAudit,Lookup[o,"ComplexityDecision",Automatic]];
    If[FailureQ[complexityGate],reason=complexityGate;s["CandidateFiniteBasis"]=finite;s["UnverifiedRows"]=Join[fullInput,fullDE];
-    progress[o,Join[reportContext[s,pass],<|"Event"->"ComplexityReviewRequired","Audit"->complexityAudit,"NoIntegralsDiscarded"->True,"FullClosureVerified"->False|>]];Break[]];
+     progress[o,Join[reportContext[s,pass],<|"Event"->"ComplexityReviewRequired","Audit"->complexityAudit,"NoIntegralsDiscarded"->True,"FullClosureVerified"->False|>]];Break[]];
+   If[TrueQ[Lookup[countAudit,"ApplicableToCurrentBasis",False]] && Lookup[countAudit,"ThresholdOrigin",None]=!="UserEstimate",
+    s["TopBoundBasisScopePreserved"]=TrueQ[Lookup[finite,"SpanPreserving",False]]||Length[finite["Basis"]]<=countAudit["InputAndDerivativeRank"]];
    AppendTo[records,finiteRoundReport[s,pass,basis,der,fullInput,fullDE,reduction,finite,Length[r],unclosedRows]];
    saveRound[o["OutputDirectory"],s["Epoch"],pass,<|"Input"->basis,"Derivatives"->der,"Reduction"->reduction,
     "ReducedInput"->fullInput,"ReducedDE"->fullDE,"FiniteBasis"->finite,"Summary"->Last[records]|>];
@@ -233,7 +294,7 @@ runCampaign[initial_Association]:=Module[{s=initial,f=initial["Family"],o=initia
      If[!TrueQ[s["FlatnessVerified"]],s["Closed"]=False;reason=fail["Curvature","Closed candidate failed the flatness check."]]];
     Break[]];
    basis=finite["Basis"];reason="RoundLimit",
-   {pass,o["MaxRounds"]}];
+   {pass,startRound,o["MaxRounds"]}];
   s["History"]=records;checkpoint[s,o["OutputDirectory"]]
  ];
  s["Status"]=reason;s["Closed"]=TrueQ[Lookup[s,"Closed",False]];

@@ -1,0 +1,230 @@
+{
+  "version": "0.5.0",
+  "date": "2026-09-25",
+  "platform": "Linux x86_64",
+  "passed": true,
+  "groups": 44,
+  "tests": [
+    {
+      "test": "MasterCount",
+      "exit_code": 0,
+      "seconds": 4.909
+    },
+    {
+      "test": "TopAnnihilator",
+      "exit_code": 0,
+      "seconds": 4.817
+    },
+    {
+      "test": "UserMasterCount",
+      "exit_code": 0,
+      "seconds": 7.508
+    },
+    {
+      "test": "Reporting",
+      "exit_code": 0,
+      "seconds": 4.853
+    },
+    {
+      "test": "DirectFiniteSupport",
+      "exit_code": 0,
+      "seconds": 4.791
+    },
+    {
+      "test": "OrderingStrategies",
+      "exit_code": 0,
+      "seconds": 4.819
+    },
+    {
+      "test": "TennisTopology",
+      "exit_code": 0,
+      "seconds": 4.808
+    },
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 4.832
+    },
+    {
+      "test": "ContactSourceValidity",
+      "exit_code": 0,
+      "seconds": 4.848
+    },
+    {
+      "test": "CompleteInverseActions",
+      "exit_code": 0,
+      "seconds": 5.004
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 12.704
+    },
+    {
+      "test": "CoupledDisjoint",
+      "exit_code": 0,
+      "seconds": 5.433
+    },
+    {
+      "test": "CoupledDegree",
+      "exit_code": 0,
+      "seconds": 4.883
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 11.451
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 4.84
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 4.834
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 7.532
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 29.17
+    },
+    {
+      "test": "ParallelSeedPlanning",
+      "exit_code": 0,
+      "seconds": 46.9
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 8.385
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 4.898
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 20.025
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 5.694
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 4.702
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 4.748
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 4.74
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 4.765
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 5.779
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 4.799
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 4.826
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 7.027
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 12.444
+    },
+    {
+      "test": "TopDerivativeBound",
+      "exit_code": 0,
+      "seconds": 8.736
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 6.024
+    },
+    {
+      "test": "FiniteFlowDirectTargets",
+      "exit_code": 0,
+      "seconds": 5.68
+    },
+    {
+      "test": "FiniteFlowLinearAlgebra",
+      "exit_code": 0,
+      "seconds": 5.073
+    },
+    {
+      "test": "PreserveActualSpan",
+      "exit_code": 0,
+      "seconds": 4.897
+    },
+    {
+      "test": "FiniteSupportThenSpan",
+      "exit_code": 0,
+      "seconds": 7.392
+    },
+    {
+      "test": "PhysicalConstantCandidates",
+      "exit_code": 0,
+      "seconds": 4.906
+    },
+    {
+      "test": "BinaryCheckpoint",
+      "exit_code": 0,
+      "seconds": 6.954
+    },
+    {
+      "test": "FileHashedCheckpoint",
+      "exit_code": 0,
+      "seconds": 6.907
+    },
+    {
+      "test": "DeferredBoundaryCoefficients",
+      "exit_code": 0,
+      "seconds": 4.912
+    },
+    {
+      "test": "VerifiedRoundContinuation",
+      "exit_code": 0,
+      "seconds": 10.517
+    },
+    {
+      "test": "AdaptiveCampaign",
+      "exit_code": 0,
+      "seconds": 15.78
+    }
+  ],
+  "scope": "Package regressions with FiniteFlow; not a four-loop closure certificate"
+}

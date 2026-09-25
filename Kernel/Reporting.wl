@@ -3,8 +3,13 @@ constantCombinationQ[e_]:=AllTrue[Flatten[coeff[{e},support[e]]],MatchQ[Together
 variableDecisionQ[d_]:=AssociationQ[d] && AllTrue[
  {"Reason","ConstantSearchSummary","RelationAudit","AlternativesCompared"},
  StringQ[Lookup[d,#,None]] && StringLength[StringTrim[Lookup[d,#,""]]]>0&];
-finiteBasisContract[f_,finite_,normalFormRows_:Automatic,policy_:"StrictOrdering"]:=Module[{basis,single,combinations,raw,extra,missing},
+finiteBasisContract[f_,finite_,normalFormRows_:Automatic,policy_:"StrictOrdering"]:=Module[{basis,single,combinations,raw,extra,missing,effective,checked},
  If[FailureQ[finite],Return[finite]];
+ If[policy==="FiniteSupportThenSpan",
+  If[!ListQ[normalFormRows],Return[fail["FiniteBasisRows","FiniteSupportThenSpan requires the full normal-form rows."]]];
+  effective=effectiveFiniteBasisPolicy[f,normalFormRows,policy];
+  checked=finiteBasisContract[f,finite,normalFormRows,effective];
+  Return[If[FailureQ[checked],checked,Join[checked,<|"FiniteBasisPolicy"->policy,"EffectiveFiniteBasisPolicy"->effective|>]]]];
  If[!AssociationQ[finite]||!TrueQ[Lookup[finite,"ExactCoverage",False]],Return[fail["UnverifiedFiniteCover","No next-round basis without a complete coverage certificate."]]];
  basis=Lookup[finite,"Basis",{}];single=Lookup[finite,"SingleFinite",{}];combinations=Lookup[finite,"Combinations",{}];
  If[Sort[Join[single,combinations]]=!=Sort[basis]||!AllTrue[single,MatchQ[#,_G]&],
@@ -43,6 +48,7 @@ finiteRoundReport[s_,round_,basis_,der_,fullInput_,fullDE_,reduction_,finite_,in
  "VariableCoefficientDecision"->Lookup[finite,"VariableCoefficientDecision",Missing["NotNeeded"]],
  "InputRationalRank"->inputRank,"ActualRationalRank"->rank,"ActualRankVerified"->IntegerQ[rank],
  "OutputCountIsMasterCount"->False,"ExactCoverage"->True,"ClosedOnSameInput"->closed,
+ "EffectiveFiniteBasisPolicy"->Lookup[finite,"EffectiveFiniteBasisPolicy",Lookup[finite,"FiniteBasisPolicy","StrictOrdering"]],
  "UnclosedDERowCount"->Length[unclosedRows],"UnclosedDERows"->unclosedRows,
  "FullClosureVerified"->False,"FlatnessVerified"->Missing["NotCheckedAtRoundStage"],
  "FactorizedSingleFinite"->Count[(Length[parts[f,#]]>1& /@ finite["SingleFinite"]),True],

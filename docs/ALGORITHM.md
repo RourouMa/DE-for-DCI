@@ -60,6 +60,29 @@ The result distinguishes raw support, single finite integrals, constant and vari
 
 Local relation neighbors are essential even for a one-loop box: an unconstrained single axial shift changes conformal weight, so degree-zero operators may initially receive only the center itself. When that center survives, the system automatically follows simpler neighbors in its existing IBP rows. For example, the regression suite recovers `G[-2,2,4,0,1] = (1+x^2+x^4)/(3 x^2) G[0,0,2,2,1]` without importing any precomputed one-loop identity.
 
+### Posterior seeding after a reduction
+
+Use complete reduced input/DE expressions to locate uncovered directions and
+surviving complex representatives. A missing intermediate query or a self-rule
+alone does not measure the closure gap. With explicit
+`SeedGeometry -> "InverseTargets"`, inverse operator shifts select seeds;
+`InverseOperatorPolicy -> "Complete"` applies every degree-compatible supplied operator to each selected
+seed, including auxiliary actions with no direct target coefficient. The default
+geometry remains `ComponentAxial`.
+
+Validate complete actions and contracted source expressions, deduplicate by
+operator and seed within the current family/implementation, and extend symmetry
+in the same declared domain. Screen batches on fixed inputs and ordering using
+both actual span ranks and representative complexity. Every accepted pool
+expansion requires historical re-reduction and replay from the original input.
+Retain valid old rows; generator corrections require revalidation or regeneration.
+Single-point gap tests and homogeneous curvature do not certify a full sourced DE.
+
+The [three-loop posterior seeding guide](THREE_LOOP_POSTERIOR_SEEDING.zh-CN.md)
+records corrected evidence, historical counterexamples, acceptance criteria and
+the current automation limits. Batch-benefit scheduling and recursive lower-loop
+closure are not fully automated by the generic campaign interface.
+
 ## Finite Cover
 
 Write the divergent part of all reduced rows as `C(z) H`. Clear rational denominators and collect polynomial coefficients in all kinematic variables. The row span over the rational numbers of those coefficient vectors is the required constant envelope.

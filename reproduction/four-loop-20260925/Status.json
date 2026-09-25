@@ -1,0 +1,74 @@
+{
+  "SnapshotDate": "2026-09-25",
+  "Epoch": 3,
+  "RawRelations": 210881,
+  "CompletedOperatorApplications": 602136,
+  "HighestLoopClosed": false,
+  "LowerLoopDEStarted": false,
+  "ThresholdOrigin": "UserEstimate",
+  "Threshold": 100,
+  "VerifiedRounds": [
+    {
+      "Round": 1,
+      "InputCount": 1,
+      "InputRank": 1,
+      "InputAndDERank": 3,
+      "FiniteBasisCount": 4,
+      "SingleFinite": 4,
+      "Combinations": 0,
+      "ClosedOnSameInput": false
+    },
+    {
+      "Round": 2,
+      "InputCount": 4,
+      "InputRank": 4,
+      "InputAndDERank": 9,
+      "FiniteBasisCount": 13,
+      "SingleFinite": 13,
+      "Combinations": 0,
+      "ClosedOnSameInput": false
+    },
+    {
+      "Round": 3,
+      "InputCount": 13,
+      "InputRank": 13,
+      "InputAndDERank": 28,
+      "FiniteBasisCount": 37,
+      "SingleFinite": 37,
+      "Combinations": 0,
+      "ClosedOnSameInput": false
+    },
+    {
+      "Round": 4,
+      "InputCount": 37,
+      "InputRank": 37,
+      "InputAndDERank": 64,
+      "FiniteBasisCount": 68,
+      "SingleFinite": 68,
+      "Combinations": 0,
+      "ClosedOnSameInput": false
+    },
+    {
+      "Round": 5,
+      "InputCount": 68,
+      "InputRank": 68,
+      "InputAndDERank": 100,
+      "FiniteBasisCount": 100,
+      "SingleFinite": 86,
+      "Combinations": 14,
+      "ClosedOnSameInput": false
+    }
+  ],
+  "Round6BoundAudit": {
+    "LoopCount": 4,
+    "Scope": "HighestLoopModuloBoundary",
+    "InputRank": 100,
+    "InputAndDerivativeRank": 166,
+    "CertifiedUpperBound": null,
+    "StoppingThreshold": 100,
+    "ThresholdOrigin": "UserEstimate",
+    "Exceeded": true,
+    "LowerLoopSourcesRetained": true
+  },
+  "NextAction": "Expand valid highest-loop relation pool and replay original top"
+}

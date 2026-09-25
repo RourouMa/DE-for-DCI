@@ -1,3 +1,13 @@
+## 0.5.0 collaborator release (2026-09-25)
+
+All 44 groups in [the release validation record](VALIDATION_0.5.0.json) pass,
+including finite-field target reconstruction, preserved contact sources,
+count-threshold repair, adaptive finite covers, local checkpoint integrity and
+verified continuation. This does not certify four-loop closure. The corrected
+three-loop full-system certificates and current four-loop status are summarized
+in [the collaborator handoff](COLLABORATOR_HANDOFF.md). Entries below are dated
+historical validation records; earlier limitations are not current result counts.
+
 ## 0.3.1: reporting and finite-basis decision contract
 
 Targeted validation passed on 2026-09-23: `Reporting` (12 assertions), `OnDemandDE` (12 assertions), and `RunTests` (29 core assertions). Tests distinguish raw divergent support from finite basis counts, reject hidden elements and unassessed variable choices, accept a finite variable cover with a recorded decision, preserve coefficient derivatives, keep unknown ranks unknown, and verify expansion/top-replay events plus final exact one-loop closure and flatness. This is not a new tennis-court closure certificate or an automated variable-coefficient search. Running experimental snapshots remain separate from this package version.

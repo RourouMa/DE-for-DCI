@@ -1,0 +1,15 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]];
+f=LadderFamily[1,kinematics,{x,y}];a=CanonicalIntegral[f,G[1,1,1,1,1]];b=CanonicalIntegral[f,G[2,1,1,0,1]];
+physical={x(a+b)/(1-y)};identity=<|"Rules"->{a->a,b->b}|>;
+candidates=ConformalIBP`Private`physicalConstantCandidates[f,physical];
+assert[MemberQ[candidates,a+b]&&AllTrue[candidates,ConformalIBP`Private`constantCombinationQ],"whole rational expression supplies its finite constant coefficient block"];
+cover=BuildSpanPreservingFiniteBasis[f,physical,physical,identity];
+assert[AssociationQ[cover]&&cover["ActualRationalRank"]===1&&cover["Basis"]==={a+b},"constant pair covers one actual direction without admitting two independent atoms"];
+assert[AllTrue[physical-cover["Weights"].cover["ReducedBasis"]-cover["BoundaryRows"],ConformalIBP`Private`zero],"exact physical reconstruction"];
+incomplete=BuildSpanPreservingFiniteBasis[f,{a+x b},{a+x b},identity];
+assert[FailureQ[incomplete],"coefficient blocks outside the actual rational span are rejected"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

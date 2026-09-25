@@ -1,0 +1,28 @@
+root=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialized"];
+f4=LadderFamily[4,kinematics,{x,y}];top=G@@Join[f4["TopSector"],ConstantArray[1,4]];
+d=DifferentiateIntegrals[f4,{top}];rows=ConformalIBP`Private`canonExpr[f4,#]& /@ Join[{top},Flatten[Values[d["Rows"]],1]];
+atoms=ConformalIBP`Private`support[rows];identity=<|"Rules"->Thread[atoms->atoms]|>;
+direct=Block[{BuildSpanPreservingFiniteBasis=(Throw["Unexpected span search"]&)},ConformalIBP`Private`campaignFiniteCover[f4,rows,atoms,identity,"FiniteSupportThenSpan"]];
+checked=ConformalIBP`Private`finiteBasisContract[f4,direct,rows,"FiniteSupportThenSpan"];
+assert[AssociationQ[checked]&&Length[checked["Basis"]]===4&&checked["FiniteCoverSearchSkipped"]&&checked["EffectiveFiniteBasisPolicy"]==="StrictOrdering","four-loop first derivative retains all four finite atoms without a span search"];
+assert[AllTrue[rows-checked["Weights"].checked["Basis"]-checked["BoundaryRows"],ConformalIBP`Private`zero],"first derivative is exactly reconstructed"];
+f=LadderFamily[2,kinematics,{x,y}];
+(* Explicit extra sector makes this collision-cancellation fixture canonicalizable. *)
+f=CreateFamily[Join[f,<|"SuperSectors"->{{1,2,5,6,9}}|>]];
+a=G[2,0,0,0,0,2,0,0,2,1,1];b=G[1,1,0,0,1,1,0,0,2,1,1];c=G[3,-1,0,0,-1,3,0,0,2,1,1];candidate=a+b-2 c;
+raw={a,b,c};canonical=CanonicalIntegral[f,#]& /@ raw;identity=<|"Rules"->Thread[canonical->canonical]|>;
+candidate=ConformalIBP`Private`canonExpr[f,candidate];source=BoundaryIntegral[1,{1,1,1,1,1}];rows={x candidate+source,y candidate};
+span=ConformalIBP`Private`campaignFiniteCover[f,rows,{candidate},identity,"FiniteSupportThenSpan"];
+checked=ConformalIBP`Private`finiteBasisContract[f,span,rows,"FiniteSupportThenSpan"];
+If[FailureQ[checked],Print[InputForm[<|"Candidate"->candidate,"Raw"->raw,"Canonical"->canonical,"Rows"->rows,"Identity"->identity,"Span"->span,"Checked"->checked|>]]];
+assert[AssociationQ[checked]&&checked["SpanPreserving"]&&checked["ActualRationalRank"]===1&&checked["EffectiveFiniteBasisPolicy"]==="PreserveActualSpan","divergent support uses the certified one-dimensional finite combination"];
+assert[AllTrue[rows-checked["Weights"].checked["ReducedBasis"]-checked["BoundaryRows"],ConformalIBP`Private`zero]&&checked["BoundaryRows"]==={source,0},"source retained with exact adaptive reconstruction"];
+assert[FailureQ[ConformalIBP`Private`finiteBasisContract[f,KeyDrop[span,"SpanPreserving"],rows,"FiniteSupportThenSpan"]],"adaptive branch rejects missing membership certification"];
+f1=LadderFamily[1,kinematics,{x,y}];g=G[1,1,1,1,1];
+run=RunDE[f1,g,"FiniteBasisPolicy"->"FiniteSupportThenSpan","MasterCountStrategy"->"UserEstimate","MasterCountUserUpperBound"->4,"ProgressFunction"->None];
+assert[run["Closed"]&&run["FlatnessVerified"]&&Length[run["Basis"]]===4,"hybrid campaign closes at the user threshold with full flatness"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

@@ -17,7 +17,8 @@ ReduceTargetIntegrals[f_Association,targets_List,equations_List,opts:OptionsPatt
  {rows,ct,atoms,all,position,triples={},gs,values,samples={},sample,prime,point,numeric,attempt,samplingParameters,
   dir,inputFile,outputFile,script,process,selection,ids,red,needed,keep,images,rules,result,report=OptionValue["ProgressFunction"],
   started=AbsoluteTime[],selectionSeconds,baseOptions,certificate,nontrivial,rankWitness=Missing["UnprunedSystem"],rankCertified=False,samplingKey,samplingReused=False},
- If[!MemberQ[{Automatic,"Python","FiniteFlow"},OptionValue["TargetSelector"]],Return[fail["TargetSelector","Unknown target selector."]]];
+ If[!MemberQ[{Automatic,"Python","FiniteFlow","FiniteFlowDirect"},OptionValue["TargetSelector"]],Return[fail["TargetSelector","Unknown target selector."]]];
+ If[OptionValue["TargetSelector"]==="FiniteFlowDirect",Return[reduceTargetsFFDirect[f,targets,equations,Association[Join[Options[ReduceTargetIntegrals],{opts}]]]]];
  If[OptionValue["TargetSelector"]==="FiniteFlow" || (OptionValue["TargetSelector"]===Automatic && (OptionValue["Solver"]==="FiniteFlow" || (OptionValue["Solver"]===Automatic && MemberQ[$Packages,"FiniteFlow`"])) && Length[equations]>=OptionValue["MinimumSelectionRows"]),
   Return[reduceTargetsFF[f,targets,equations,Association[Join[Options[ReduceTargetIntegrals],{opts}]]]]];
  baseOptions=FilterRules[{opts},Options[ReduceIntegrals]];
@@ -128,3 +129,66 @@ reduceTargetsFF[f_,targets_,equations_,o_]:=Module[
   "FullPoolEquationResidualsChecked"->(Length[mapped]===Length[rows]),"FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->o["VerificationMode"],
   "SelectionSeconds"->(selectedSeconds+inner["SelectionSeconds"]),"FullPoolTargetCheckSeconds"->fullSeconds|>]
 ];
+
+(* Reconstruct only queried normal forms. A fresh graph checks those forms and
+   every free image atom against the FULL input pool at the requested point.
+   This certificate deliberately does not claim full symbolic row residuals. *)
+$lastVerifiedTargetReduction=<||>;
+reduceTargetsFFDirect[f_,targets_,equations_,o_]:=Module[
+ {rows,ct,atoms,all,parameters,rawRules,keep,images,rules,reference,raw,result,
+  report=o["ProgressFunction"],start=AbsoluteTime[],solveSeconds,checkSeconds,fallback,cacheKey,dispatch},
+ fallback[]:=ReduceTargetIntegrals[f,targets,equations,Sequence@@Normal[Join[o,<|"TargetSelector"->"FiniteFlow"|>]]];
+ If[o["VerificationMode"]=!="Numerical",Return[fallback[]]];
+ If[!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowNotLoaded","FiniteFlow direct target reduction requires FiniteFlow."]]];
+ rows=DeleteCases[canonExpr[f,#]& /@ equations,0];ct=canonExpr[f,#]& /@ targets;
+ If[AnyTrue[Join[rows,ct],FailureQ],Return[First[Select[Join[rows,ct],FailureQ]]]];
+ atoms=Join[support[ct],sources[ct]];
+ If[rows==={} || atoms==={},Return[fallback[]]];
+ all=Join[SortBy[Union[support[rows],support[ct]],simpleKey[f,#]&],sources[{rows,ct}]];
+ cacheKey=Hash[{f["Hash"],$implementationHash,rows,all,o["MaxPrimes"],o["VerificationMode"],o["NumericalVerificationPoints"]},"SHA256"];
+ If[TrueQ[o["ReuseVerifiedReduction"]] && Lookup[$lastVerifiedTargetReduction,"Key",None]===cacheKey && Complement[atoms,$lastVerifiedTargetReduction["Result"]["ColumnOrder"]]==={},
+  result=Join[$lastVerifiedTargetReduction["Result"],<|"ReductionReused"->True|>];
+  If[report=!=None,report[<|"Action"->"Reusing verified full-pool target normal forms","Queries"->Length[atoms]|>]];
+  Return[directTargetMetadata[result,ct,rows]]];
+ parameters=coefficientParameters[rows];
+ If[report=!=None,report[<|"Action"->"Starting direct full-pool target solve","Rows"->Length[rows],"Columns"->Length[all],"NeededColumns"->Length[atoms],"PreparationSeconds"->(AbsoluteTime[]-start)|>]];
+ start=AbsoluteTime[];
+ rawRules=FiniteFlow`FFSparseSolve[#==0& /@ rows,all,"NeededVars"->atoms,"Parameters"->parameters,"SparseOutput"->True,"MaxPrimes"->o["MaxPrimes"]];
+ If[!ListQ[rawRules] || !AllTrue[rawRules,MatchQ[#,_Rule]&],Return[fallback[]]];
+ images=atoms/.Dispatch[rawRules];
+ keep=Union[atoms,support[images],sources[images]];
+ keep=Join[SortBy[Select[keep,MatchQ[#,_G]&],simpleKey[f,#]&],Select[keep,MatchQ[#,_BoundaryIntegral]&]];
+ rules=Thread[keep->(keep/.Dispatch[rawRules])];solveSeconds=AbsoluteTime[]-start;
+ If[report=!=None,report[<|"Action"->"Direct target reconstruction completed","ReconstructedRules"->Length[rawRules],"RetainedColumns"->Length[keep],"Seconds"->solveSeconds|>]];
+ start=AbsoluteTime[];
+ reference=fullPoolNumericalAgreement[rows,all,keep,rules,parameters,o["NumericalVerificationPoints"]];
+ If[FailureQ[reference],Return[reference]];
+ If[!TrueQ[reference["Passed"]],Return[fail["FullPoolTargetMismatch","Direct target normal forms differ from a fresh full-pool numerical solve."]]];
+ raw=Join[support[Last /@ rules],sources[Last /@ rules]];
+ If[!sampledRuleAgreement[raw,rules,{},parameters,o["NumericalVerificationPoints"]],Return[fail["NonIdempotentReduction","Direct target images are not normal forms."]]];
+ checkSeconds=AbsoluteTime[]-start;
+ result=<|"Rules"->rules,"ColumnOrder"->keep,"Columns"->Length[keep],"FullPoolColumns"->Length[all],
+  "SameLoopRules"->Select[rules,MatchQ[First[#],_G]&],"BoundaryRules"->Select[rules,MatchQ[First[#],_BoundaryIntegral]&],
+  "BoundaryConstraintOrigin"->"Existing input equations only","EquationCount"->Length[rows],"OriginalEquationCount"->Length[rows],
+  "ExactEquationResidualsZero"->False,"NumericalEquationResidualsZero"->False,"FullPoolEquationResidualsChecked"->False,
+  "VerificationScope"->"FullPoolTargetNormalForms","VerificationMode"->"Numerical","NumericalVerificationPoints"->numericalPoints[parameters,o["NumericalVerificationPoints"]],
+  "Idempotent"->True,"Solver"->"FiniteFlow","CoefficientParameters"->parameters,"Ordering"->Lookup[f,"IntegralOrdering","LadderFirst"],"ReductionReused"->False,
+  "StageTimings"-><|"TargetSolve"->solveSeconds,"FullPoolTargetCheck"->checkSeconds|>,
+  "FullPoolTargetAgreement"->True,"FullPoolTargetVerificationMode"->"Numerical",
+  "VerificationCertificate"-><|"OriginalPoolHash"->Hash[rows,"SHA256"],"SelectionBackend"->"FiniteFlowDirect", "CheckedColumns"->keep,
+   "FullPoolTargetAgreement"->True,"NumericalReference"->reference,"Idempotent"->True,"SymbolicResidualVerificationPerformed"->False|>|>;
+ If[report=!=None,report[<|"Action"->"Direct target normal forms agree with fresh full-pool numerical solve","Queries"->Length[keep],"Seconds"->checkSeconds|>]];
+ If[TrueQ[o["ReuseVerifiedReduction"]],$lastVerifiedTargetReduction=<|"Key"->cacheKey,"Result"->result|>];
+ If[report=!=None,report[<|"Action"->"Building direct target metadata","Queries"->Length[ct]|>]];
+ result=directTargetMetadata[result,ct,rows];
+ If[report=!=None,report[<|"Action"->"Direct target metadata completed"|>]];result
+];
+
+(* An atomic query is already a reconstructed normal form. Avoid expanding its
+   rational coefficients merely to return it; combined physical rows still use
+   canonicalLinear and undergo the usual exact finite-cover checks. *)
+directTargetMetadata[result_,targets_,rows_]:=Module[{dispatch=Dispatch[result["Rules"]],images},
+ images=If[MatchQ[#,_G|_BoundaryIntegral],#/.dispatch,canonicalLinear[#/.dispatch]]& /@ targets;
+ Join[result,<|"ReducedTargets"->images,"RawMasters"->support[images],"BoundarySources"->sources[images],
+  "SelfReducedTargets"->Select[support[targets],selfReducedIntegralQ[#,#/.dispatch]&],
+  "UnseenTargets"->Complement[support[targets],support[rows]]|>]];

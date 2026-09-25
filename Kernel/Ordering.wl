@@ -30,10 +30,14 @@ ordering01InnerKey[f_,g_G]:=Module[{a=List@@g,ps=parts[f,g],off,ext,box=0,score=
   score=Total[If[KeyExistsQ[$ordering01Sets,Length[#]] && KeyExistsQ[$ordering01Sets[Length[#]],G@@ordering01FactorVector[f,a,#]],Length[#],0]& /@ ps]];
  {Boole[fac],-Total[Max[#,0]& /@ a[[off]]],-Total[Abs[a[[off]]]],-box,score,
   -Boole[Max[a[[ext]]]>=4 || Min[Take[a,Length[f["Propagators"]]]]<=-2],legacySimpleKey[f,g]}];
-simpleKey[f_,g_G]:=Switch[Lookup[f,"IntegralOrdering","TierReference"],
+$simpleKeyCache=<||>;
+simpleKey[f_,g_G]:=Module[{key={f["Hash"],Lookup[f,"IntegralOrdering","TierReference"],g},value},
+ If[KeyExistsQ[$simpleKeyCache,key],Return[$simpleKeyCache[key]]];
+ value=Switch[Lookup[f,"IntegralOrdering","TierReference"],
  "TierReference",Prepend[ordering01InnerKey[f,g],fourTier[f,g]],
  "TierLadder",Join[{fourTier[f,g],Boole[originalDomainIntegralQ[f,g]]},legacySimpleKey[f,g]],
  "TierBlocks",Prepend[legacySimpleKey[f,g],fourTier[f,g]],
  "Reference",ordering01InnerKey[f,g],
  "LadderFirst",Prepend[legacySimpleKey[f,g],Boole[originalDomainIntegralQ[f,g]]],
  _,legacySimpleKey[f,g]];
+ AssociateTo[$simpleKeyCache,key->value];value];

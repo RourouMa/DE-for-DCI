@@ -8,6 +8,7 @@ family=LadderFamily[4,kinematics,{x,y}];
 top=G@@Join[family["TopSector"],ConstantArray[1,4]];
 Print["Propagators: ",FamilyPropagators[family]];Print["Top: ",top];
 result=RunDE[family,top,"Workers"->4,"MaxRounds"->1,"MaxSystemExpansions"->1,
+ Sequence@@Get[FileNameJoin[{root,"Examples","four-loop-count-policy.wl"}]],
  "OutputDirectory"->FileNameJoin[{root,"runs","four-loop"}]];
 Print[KeyTake[result,{"Status","History","Closed"}]];
 Quit[If[FailureQ[result] || FailureQ[Lookup[result,"Status",None]],1,0]];

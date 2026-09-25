@@ -14,11 +14,11 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 output = args.output or Path(tempfile.mkdtemp(prefix='conformal-ibp-tests-'))
 output.mkdir(parents=True, exist_ok=True)
-tests = ['Reporting', 'DirectFiniteSupport', 'OrderingStrategies', 'TennisTopology', 'ClosurePreference', 'ContactSourceValidity', 'CompleteInverseActions', 'CoupledIBP', 'CoupledDisjoint', 'CoupledDegree', 'RunTests', 'NumericalVerification', 'FiniteZeroSumPrefilter', 'SeedPolicies', 'SeedDeduplication', 'ParallelSeedPlanning', 'GapCampaign', 'RelationFrontier', 'ParallelResiduals', 'CoefficientParameters', 'SelfReducedTargets', 'LinearNormalization', 'BoundaryReduction',
+tests = ['MasterCount', 'TopAnnihilator', 'UserMasterCount', 'Reporting', 'DirectFiniteSupport', 'OrderingStrategies', 'TennisTopology', 'ClosurePreference', 'ContactSourceValidity', 'CompleteInverseActions', 'CoupledIBP', 'CoupledDisjoint', 'CoupledDegree', 'RunTests', 'NumericalVerification', 'FiniteZeroSumPrefilter', 'SeedPolicies', 'SeedDeduplication', 'ParallelSeedPlanning', 'GapCampaign', 'RelationFrontier', 'ParallelResiduals', 'CoefficientParameters', 'SelfReducedTargets', 'LinearNormalization', 'BoundaryReduction',
          'ReductionReuse', 'TargetReduction', 'SymmetryReuse', 'RelabelCache',
          'OnDemandDE', 'Workers']
 if os.environ.get('FINITEFLOW_ROOT'):
-    tests.extend(['FiniteFlowTargetSelection', 'FiniteFlowLinearAlgebra', 'PreserveActualSpan', 'AdaptiveCampaign'])
+    tests.extend(['TopDerivativeBound', 'FiniteFlowTargetSelection', 'FiniteFlowDirectTargets', 'FiniteFlowLinearAlgebra', 'PreserveActualSpan', 'FiniteSupportThenSpan', 'PhysicalConstantCandidates', 'BinaryCheckpoint', 'FileHashedCheckpoint', 'DeferredBoundaryCoefficients', 'VerifiedRoundContinuation', 'AdaptiveCampaign'])
 results = []
 for name in tests:
     started = time.monotonic()

@@ -1,0 +1,15 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];
+Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[t_,name_]:=If[TrueQ[t],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+ff=Environment["FINITEFLOW_ROOT"];assert[TrueQ[InitializeFiniteFlow[ff,FileNameJoin[{ff,"mathlink"}]]],"FiniteFlow initialized"];
+f=LadderFamily[1,kinematics,{x,y}];top=G[1,1,1,1,1];
+r=TopDerivativeBound[f,top,"ProgressFunction"->None];
+assert[AssociationQ[r]&&r["Status"]==="CertifiedTopUpperBound"&&r["CertifiedUpperBound"]===4,"fresh top ansatz gives certified upper bound four before DE rounds"];
+assert[r["Proof"]["ExactRationalRowSpacesEqual"]&&r["Proof"]["VerificationPoints"]===1,"exact containment and one-point rank witness certify the identities"];
+assert[r["Scope"]==="HighestLoopModuloBoundary"&&r["LoopUpperBounds"][1]===4&&r["NoLowerLoopSourcesDiscarded"],"count is attached to its loop grade and retains source rows"];
+assert[!r["DECampaignRun"]&&!r["FiniteBasisSelectionPerformed"],"no DE campaign or finite basis selection used in preflight"];
+assert[Sort[r["Bound"]["StandardDerivativeExponents"]]==={{0,0},{0,1},{1,0},{1,1}},"all higher derivatives reduce into a four-element staircase"];
+events={};s=RunDE[f,top,"MasterCountStrategy"->"TopAnnihilator","MasterCountPreflight"->"Required","Solver"->"FiniteFlow","MaxRounds"->1,"MaxSystemExpansions"->0,"ProgressFunction"->(AppendTo[events,#]&)];
+assert[AssociationQ[s]&&s["MasterCountPreflight"]["CertifiedUpperBound"]===4&&AnyTrue[events,Lookup[#,"Event",None]==="RoundStarted"&],"certified preflight permits the DE campaign to start"];
+assert[First[FirstPosition[Lookup[events,"Event",None],"MasterCountPreflightFinished"]]<First[FirstPosition[Lookup[events,"Event",None],"RoundStarted"]],"certificate precedes the first DE round"];
+assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

@@ -2,18 +2,72 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.4.0 is an experimental, tested extraction of the ladder workflow. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.5.0 is an experimental research package. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
 
-For the ongoing four-loop computation, legacy checkpoint status and migration to a larger Ubuntu host, read the [Chinese handoff note](docs/UBUNTU_HANDOFF.zh-CN.md). It distinguishes the published package from the separate large production archives.
+## Start here: collaborator release (25 September 2026)
+
+The [English collaborator handoff](docs/COLLABORATOR_HANDOFF.md) explains the
+current strategy, verified three-loop counts, open four-loop problem, dependencies
+and hardware. The corrected complete systems have **19+7+4 = 30** ladder elements
+and **31+11+4 = 46** tennis-court elements. The current four-loop fifth round has a
+100-element finite cover, but the sixth-round input-plus-DE rank is **166**;
+it is not closed. Lower-loop DE work waits for verified highest-loop closure.
+
+Use `python3 scripts/run-four-loop.py --help` for the configurable production
+launcher. A portable [epoch-3 relation-pool snapshot](reproduction/four-loop-20260925/README.md)
+is supplied separately as a Release asset; a clone contains code, documentation,
+small basis/status files and corrected three-loop matrices. There is no Codex or
+Claude runtime dependency. See [0.5.0 validation](docs/VALIDATION_0.5.0.json) for the
+44 regression groups passed on the release source.
+
+## Counting before DE iteration (0.5.0)
+
+The four-loop ladder campaign uses the user-estimated same-loop threshold **100**:
+`MasterCountStrategy -> "UserEstimate", MasterCountUserUpperBound -> 100`.
+When the rational rank of the input plus both derivatives exceeds this value,
+the campaign repairs the relation pool and replays from the original top before
+advancing differentiation. This operational threshold is not a certified count;
+all lower-loop sources and the full closure checks remain required. The reusable
+configuration is [four-loop-count-policy.wl](Examples/four-loop-count-policy.wl).
+
+`RunDE` first attempts a budgeted geometric reference count, separately for the
+active loop order, using the input's sectors and exact kinematic symmetries.
+The default `MasterCountPreflight -> "Advisory"` allows DE work to proceed when
+the 60-second counting budget expires or applicability remains uncertified;
+such an estimate never truncates a basis. `"Required"` instead returns an
+explicit diagnostic before the first DE round if no usable bound was established,
+unless the explicit `"UserEstimate"` strategy supplies a positive stopping threshold.
+
+`CriticalPointCount` includes multiplicities and detects nonisolated critical
+loci. `TopDerivativeBound` is an optional tighter route using fresh FiniteFlow
+relations for a bounded top-derivative ansatz. Its default scope is the highest
+loop quotient, with all lower-loop source rows retained. A one-loop top bound
+of four was established independently of the known MI and DE. Two/three-loop
+cost tests did not establish a certified tight bound within the chosen budgets,
+so this method is retained as a reserve, not the default preflight.
+See [counting scopes, certificates and cost results](docs/MASTER_COUNT_BOUND.zh-CN.md).
+
+The [older Ubuntu note](docs/UBUNTU_HANDOFF.zh-CN.md) is a historical archive guide, not the current run configuration. Use the English handoff above for this release.
 
 
 ## Current seeding and finite-priority policy (0.4.0)
+
+For the three-loop experience, read the [posterior seeding guide (Chinese)](docs/THREE_LOOP_POSTERIOR_SEEDING.zh-CN.md):
+use complete DE residuals to select seeds, complete their compatible operator
+blocks, extend symmetry in the same domain, and replay after pool expansion.
+The guide separates corrected full-system evidence from historical pool
+comparisons and states which scheduling steps still require campaign scripts.
 
 - `FiniteBasisPolicy -> "StrictOrdering"` remains the default. Explicit
   `"PreserveActualSpan"` selects simple finite representatives inside the actual
   reduced input/DE span, with exact membership and coverage checks. It is a
   separate basis policy, not strict preservation of ordering free columns.
   See [the method and its validation scope](docs/PRESERVE_ACTUAL_SPAN.zh-CN.md).
+- `"FiniteSupportThenSpan"` retains every normal-form atom when all are individually
+  finite, and uses `"PreserveActualSpan"` when divergent support remains. The active
+  branch is recorded per round. The four-loop campaign uses this policy to avoid
+  unnecessary first-round relation searches; its threshold 100 applies to the
+  whole same-loop space even when direct finite support enlarges the top span.
 - `SeedGeometry -> "InverseTargets"` now applies every degree-compatible operator
   to each inverse-selected seed (`InverseOperatorPolicy -> "Complete"`). The old
   `"DirectHit"` mode remains available for controlled comparisons. See
@@ -61,7 +115,7 @@ Older checkpoint hashes remain incompatible; start a fresh package campaign.
 Historical research snapshots require separate validation against the corrected
 admission rules.
 
-**Reproduce the legacy fourth round (66 finite elements):** use the [frozen ordering01 snapshot](reproduction/ordering01/README.zh-CN.md). Its private Release assets include the complete solved linear system, exact column order, seed/operator records, reduction rules and finite combinations. A normal `git pull` does not download these assets; run its `fetch.py` first. This is a separate reproducibility fixture, not a claim that the generic package or the four-loop DE is closed.
+**Reproduce the legacy fourth round (66 finite elements):** use the [frozen ordering01 snapshot](reproduction/ordering01/README.zh-CN.md). Its historical Release assets include the complete solved linear system, exact column order, seed/operator records, reduction rules and finite combinations. A normal `git pull` does not download these assets; run its `fetch.py` first. This is a separate reproducibility fixture, not a claim that the generic package or the four-loop DE is closed.
 
 ## Quick Start
 
@@ -170,7 +224,15 @@ Contacts are retained as `BoundaryIntegral[L, indices]` in the standard lower-lo
 - `"RoundLimit"`, `"ExpansionLimit"`, or a `Failure`: unfinished computation, not closure.
 - `"ReductionFixedPoint"`: the current degree-matched local search generated no new rows. It is not a proof of global IBP completeness.
 
-Read `Basis`, `Matrices`, `BoundaryRows`, `AllInputDEResidualSources`, and `InputReconstructionSources` together. To build a full triangular system, solve the retained lower-loop families separately and connect their DEs; do not erase the sources.
+Read `Basis`, `Matrices`, `BoundaryRows`, `AllInputDEResidualSources`, and `InputReconstructionSources` together. **Close the highest-loop block first**, retaining every lower-loop source symbolically. Only after that closure is verified, collect the final source list and solve the lower-loop families together, then connect their DEs. Computing lower-loop closure during an unfinished highest-loop search repeats work whenever a new source appears.
+
+For large pools, `"TargetSelector" -> "FiniteFlowDirect"` reconstructs only the queried normal forms. A fresh full-pool finite-field solve checks all retained query and image columns. Its certificate has `"VerificationScope" -> "FullPoolTargetNormalForms"`; it does not claim that unrequested rules or every symbolic equation residual were reconstructed. Numerical verification is the default; explicitly requested exact verification uses the existing selected-equation backend.
+
+Verified target forms can be reused when the implementation, family, complete ordered pool and verification settings match, and every new query atom is already covered by that certificate. Atomic queries retain their reconstructed coefficients without redundant expansion; combined physical expressions still pass the usual exact coverage checks.
+
+`"QueryCoveragePolicy" -> "ActualRows"` allows an on-demand campaign to continue when the complete input and derivative rows have a certified finite cover, even if an intermediate atom is absent from the pool. Historical identities and the master-count threshold still apply. The default remains `"AllTargets"`. `"CheckpointFormat" -> "MX"` writes local binary snapshots behind the usual hash-checked `Checkpoint.wl` entry point; use the default `"WL"` format for portable checkpoints. For large local states, `"CheckpointFormat" -> "MXFileHash"` verifies SHA256 of the immutable serialized file before loading it, avoiding repeated hashing of the full symbolic state. Its `"HashType"` explicitly distinguishes the storage hash from the legacy expression hash. Both native formats require a compatible local Wolfram runtime.
+
+`"DeferBoundaryCoefficientSimplification" -> True` combines highest-loop coefficients while retaining the complete, unsimplified source coefficients during the search. It changes no source term or relation. Source coefficients are fully combined when same-loop closure is established. The default is `False`.
 
 ## FiniteFlow and Independent Kernels
 
