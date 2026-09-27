@@ -1,0 +1,49 @@
+{
+  "Name": "ladder",
+  "BasisCount": 12,
+  "SingleIntegralCount": 5,
+  "CombinationCount": 7,
+  "ConstantCombinationCount": 3,
+  "KinematicCombinationCount": 4,
+  "SupportSizes": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    5,
+    8,
+    10
+  ],
+  "CombinationIndices": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "ConstantCoefficientBasisIndices": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "KinematicCoefficientBasisIndices": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "MaximumCombinationSupport": 10,
+  "HighestLoopFileSHA256": 30112267036130829781974414240879678519830647607461037544663037495609489636414
+}

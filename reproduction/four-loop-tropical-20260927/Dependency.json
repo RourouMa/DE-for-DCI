@@ -1,0 +1,11 @@
+{
+  "Repository": "https://github.com/michibo/feyntrop",
+  "Commit": "ad0d683274977836f5c2ab3e71496ba307413d63",
+  "License": "MIT",
+  "SourceVendored": false,
+  "PilotExecutableSHA256": "4637197e83a562bee10569038b5e0a7a885523cd0ab11377381261c76d135afb",
+  "Threads": 2,
+  "ThreadModel": "OpenMP; independent jumped xoshiro streams and local accumulators",
+  "Interface": "low-level graph JSON, finite leading epsilon coefficient",
+  "Paper": "https://arxiv.org/abs/2302.08955"
+}

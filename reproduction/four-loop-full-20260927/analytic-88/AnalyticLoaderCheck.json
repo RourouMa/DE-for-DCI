@@ -1,0 +1,16 @@
+{
+	"LoaderDimension":88,
+	"NativeFunctionsCount":88,
+	"AllOneLoopGPLConversionsMatchKnownFunctions":true,
+	"AbsoluteErrors":[
+		"0``34.27300127206374",
+		"0``34.27897527165944",
+		"0``34.40414708741836",
+		"0``34.41012108701406"
+	],
+	"Point":[
+		0.25,
+		0.75
+	],
+	"GPLMappingAndOrientationChecked":true
+}

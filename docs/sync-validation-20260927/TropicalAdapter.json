@@ -1,0 +1,73 @@
+{
+  "Passed": true,
+  "Checks": {
+    "oneloopNormalization": true,
+    "topNormalization": true,
+    "boundary_mergedNormalization": true,
+    "RejectNumerator": true,
+    "RejectMomentumViolation": true,
+    "RejectEpsilonNormalization": true,
+    "KnownOneLoopWithinFiveReportedErrors": true,
+    "PrecisionFlagMatchesActualError": true
+  },
+  "SmokeRun": {
+    "Status": "Computed",
+    "Samples": 1000000,
+    "Seed": 264575,
+    "Threads": 2,
+    "Timeout": 600,
+    "RelativeErrorTarget": 0.001,
+    "Executable": "/home/april/Documents/ChatGPT/DE for DCI/external-tools/feyntrop/feyntrop",
+    "ExecutableSHA256": "4637197e83a562bee10569038b5e0a7a885523cd0ab11377381261c76d135afb",
+    "InputSHA256": "d70f05faada1978e61564e204229e5431edebb49d022c0428de6bb1536c368af",
+    "Normalization": {
+      "Loops": 1,
+      "Edges": 4,
+      "Vertices": 4,
+      "IntegrationDimension": 3,
+      "Omega": 2.0,
+      "Prefactor": 1.0,
+      "Convention": "Gamma(sum(nu)-L*D/2)/product Gamma(nu); positive-propagator convention",
+      "SubgraphFinitenessCertifiedByAdapter": false,
+      "NativeIntegralGraphMappingCertifiedByAdapter": false
+    },
+    "AnalyticReferenceRead": false,
+    "StoppingRule": "Fixed sample count and timeout; no reference-dependent stopping",
+    "StartedUnix": 1790489496.570025,
+    "ExitCode": 0,
+    "SecondsWall": 0.22058606147766113,
+    "ActualThreads": 2,
+    "DroppedSampleWarning": false,
+    "KinematicRegimeLog": [
+      "(Effective) kinematic regime: Minkowski (exceptional).",
+      "Warning: Kinematics are non-Euclidean and (very) exceptional. Detailed info on the N[F] polytope is needed. The integration might fail or be unstable. Check the result by 1) varying the number of sample points 2) evaluating at multiple kinematic points close to the current one (i.e. by making the kinematics more generic) 3) increasing the spacetime dimension D0.",
+      "The generalized permutahedron property seems fulfilled. This is a good sign that the integration might succeed anyway."
+    ],
+    "Value": 1.949563623680109,
+    "ReportedError": 0.0030670811951201945,
+    "ImaginaryValue": 0.0,
+    "ImaginaryReportedError": 0.0,
+    "RawResult": {
+      "IGtr": 4.0,
+      "integral": [
+        [
+          [
+            1.949563623680109,
+            0.0030670811951201945
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ]
+      ],
+      "seconds preprocessing": 0.000231207,
+      "seconds sampling": 0.217902118
+    },
+    "RelativeReportedError": 0.001573214209511457,
+    "PrecisionTargetReached": false,
+    "UsableSampleRun": true,
+    "PostRunReference": 1.9446834460534868,
+    "PostRunPull": 1.5911471904906802
+  }
+}

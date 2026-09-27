@@ -1,0 +1,2 @@
+out=DirectoryName[$InputFileName];sol=FileNameJoin[{DirectoryName[out],"solution"}];ti=Get[sol<>"/CanonicalToNative88.wl"];Print[Head[ti]];If[AssociationQ[ti],Print[Keys[ti]]];
+If[!MatrixQ[ti],Quit[2]];p=Map[Factor[#/.{x->1/4,y->3/4,DCIAnalytic`x->1/4,DCIAnalytic`y->3/4}]&,ti,{2}];If[!AllTrue[Flatten[p],MatchQ[#,_Integer|_Rational]&],Print["Nonrational inverse entry"];Quit[3]];r=Map[ToString[#,InputForm]&,p,{2}];Export[out<>"/NativeInverseAtPoint.json",r,"RawJSON"];Quit[0];

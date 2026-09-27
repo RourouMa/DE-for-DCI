@@ -1,0 +1,26 @@
+{
+  "At": "2026-09-27T11:30:33.102811+08:00",
+  "Event": "Source cache was reserialized by full-v4 launcher after lower-35 construction",
+  "AffectedLowerMatrixNotModified": true,
+  "PrimaryIndependentVerificationUsesImmutablePhysicalPoolMX": true,
+  "PrimaryPhysicalPool": "four-loop-full-closure-20260927/lower-gap-closure/epoch1/PhysicalPool.mx",
+  "PrimaryPhysicalPoolSHA256": 69050949490576748966230168216043195429484990670581088407508673201319565897302,
+  "NativeRowsHashesPreservedByFullV4CacheIndex": true,
+  "Caches": [
+    {
+      "CachePath": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-full-closure-20260927/lower-source-relations/CanonicalPool.mx",
+      "RecordedSerializationSHA256": 79232483191909392166460611864134377589779095305923174445188707346848251568901,
+      "CurrentSerializationSHA256": 54989449175331199391670757474906024494209938182070391965641588069720916935260,
+      "SameSerialization": false,
+      "NativeCanonicalRowsHash": 57966004229739032034675306637713977950648318297912001759560383068862634347265
+    },
+    {
+      "CachePath": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-full-closure-20260927/lower-gap-relations/CanonicalPool.mx",
+      "RecordedSerializationSHA256": 81300131256318172031415398282223749925892900042128141081894026511894607760828,
+      "CurrentSerializationSHA256": 81300131256318172031415398282223749925892900042128141081894026511894607760828,
+      "SameSerialization": true,
+      "NativeCanonicalRowsHash": 94915517837416619761489376038027550611679402069481135733278965327398078260917
+    }
+  ],
+  "Note": "The older cache byte hash is historical, not the current file hash. The completed lower-35 result remains tied to its unchanged complete physical pool and has passed a fresh independent solve of that pool. Retain this audit rather than rewriting the verified result or its hash."
+}

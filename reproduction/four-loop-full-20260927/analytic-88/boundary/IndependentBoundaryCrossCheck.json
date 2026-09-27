@@ -1,0 +1,31 @@
+{
+	"IndependentForwardTaylorBoundaryMatchesGlobalConstraintBoundary":true,
+	"TwoGenericRaysExactlyAgree":true,
+	"AllEightVanishingLetterResiduesAnnihilateBoundary":true,
+	"VanishingLetters":[
+		"1 - x",
+		"1 - y",
+		"-x + y",
+		"1 - x*y",
+		"-x + y^2",
+		"1 - x*y^2",
+		"-x + y^3",
+		"1 - x*y^3"
+	],
+	"Ray4Checks":{
+		"AllNegativeLaurentTermsCancel":true,
+		"LowerResidueAnnihilatesBoundary":true,
+		"SourceResidueHasNoLog":true,
+		"NativeSourceBoundaryMatchesB4":true,
+		"FullResidueAnnihilatesBoundary":true,
+		"RadialResidueNilpotentPower10Zero":true
+	},
+	"Ray5Checks":{
+		"AllNegativeLaurentTermsCancel":true,
+		"LowerResidueAnnihilatesBoundary":true,
+		"SourceResidueHasNoLog":true,
+		"NativeSourceBoundaryMatchesB4":true,
+		"FullResidueAnnihilatesBoundary":true,
+		"RadialResidueNilpotentPower10Zero":true
+	}
+}

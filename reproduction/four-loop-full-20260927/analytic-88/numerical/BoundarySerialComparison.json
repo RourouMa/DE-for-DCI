@@ -1,0 +1,66 @@
+{
+  "Point": [
+    1,
+    1
+  ],
+  "AnalyticReference": "0.11219177606114858480690791706371149136611577352483171811974558790114647036653491353285918508905",
+  "AnalyticSource": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/B4RadialCheck.json",
+  "AnalyticSourceSHA256": "898976bab53f8bd099ef111c413b6a2bcbdd14942b8ae0c0c985339c0b457f73",
+  "NewSerialSectorChecks": [
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/BoundaryDirectSerial-20260927.json",
+      "Status": "Computed",
+      "AnalyticReferenceReadDuringIntegration": false,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 20260927,
+        "MaxEval": 100000000,
+        "WallClockLimit": 600,
+        "AmplitudeThreads": 1,
+        "IntegratorThreads": 2,
+        "EpsRel": 1e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "MinM": 32,
+        "MinN": 10000
+      },
+      "Value": "0.112189582673036567",
+      "ReportedError": "4.61371823710320118e-6",
+      "AnalyticMinusDirect": "0.000002193388112017806907917064",
+      "DifferenceOverReportedError": "0.475405735525575",
+      "WithinOneReportedError": true,
+      "RequestedRelativePrecisionReached": false,
+      "Seconds": 440.70662635800545
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/BoundaryDirectSerial-918273.json",
+      "Status": "Computed",
+      "AnalyticReferenceReadDuringIntegration": false,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 918273,
+        "MaxEval": 100000000,
+        "WallClockLimit": 600,
+        "AmplitudeThreads": 1,
+        "IntegratorThreads": 2,
+        "EpsRel": 1e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "MinM": 32,
+        "MinN": 10000
+      },
+      "Value": "0.112189889377692309",
+      "ReportedError": "4.30943485377973098e-6",
+      "AnalyticMinusDirect": "0.000001886683456275806907917064",
+      "DifferenceOverReportedError": "0.437802988162364",
+      "WithinOneReportedError": true,
+      "RequestedRelativePrecisionReached": false,
+      "Seconds": 437.9784248190117
+    }
+  ],
+  "BothNewChecksWithinOneReportedError": true,
+  "RequestedRelativePrecisionReachedByBoth": false,
+  "LegacyConcurrentBoundaryQMCExcluded": true,
+  "Interpretation": "The two new serial-sector controls support the analytic boundary within their reported errors; neither reaches the requested 1e-5 relative precision. Exact B4 and canonical boundary derivation remain independent of these direct estimates.",
+  "AffinityNote": "Seed 20260927 initially shared CPUs26/31 with the other run and was later moved to CPUs24/25; seed and stopping rules were unchanged."
+}

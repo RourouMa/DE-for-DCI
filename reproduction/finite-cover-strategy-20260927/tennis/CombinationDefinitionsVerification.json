@@ -1,0 +1,17 @@
+{
+	"Passed":true,
+	"ExactCoefficientAgreement":true,
+	"BasisIndices":[
+		16,
+		17,
+		18,
+		19,
+		20,
+		21,
+		22,
+		23
+	],
+	"Combinations":8,
+	"IntegralAtomCount":31,
+	"DefinitionsSHA256":53183130412806141952185591657303675159098674848303231351204413093658284248386
+}

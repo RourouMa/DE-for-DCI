@@ -1,0 +1,14 @@
+{
+  "Measure": "d^4 z / pi^2",
+  "GeneralFiniteSphereFlux": "(H div(v)+v dot grad(H))/2 at z=0",
+  "ExistingEndpointContact": "-2 sigma H at z=0",
+  "ProjectedRotationDivergenceMinusFourSigma": true,
+  "NeighborGeneratorProjectedVectorVanishes": true,
+  "NeighborGeneratorFluxEqualsExistingContact": true,
+  "NeighborGeneratorFlux": "2*H*beta",
+  "PrimitiveInfinityFilterReadAt": "DE-for-DCI-publish/Kernel/ConformalIBP.wl:280",
+  "WholeOrCoupledSafetyInferredFromInfinityFilterAlone": false,
+  "ActualSelectedDECounterexampleFoundByThisDerivation": false,
+  "ProofSHA256": "601c17b27f8756563e25f4f897e8c0fb8fd7ce106f2bcd936d756e22c971ceb3",
+  "KernelSHA256": "240d1a7fb01749a233677e01ec3c5b67806bec18c44add14bad11f4b21482bb5"
+}

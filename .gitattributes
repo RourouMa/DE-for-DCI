@@ -1,0 +1,3 @@
+# Wolfram Put emits trailing spaces in generated expressions. Preserve the
+# certified bytes and hashes instead of reformatting mathematical artifacts.
+reproduction/**/*.wl whitespace=-blank-at-eol linguist-generated=true

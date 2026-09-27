@@ -1,0 +1,87 @@
+{
+  "IndependentOfDEAndFourLoopData": true,
+  "ExactTestIntegrals": [
+    1,
+    3
+  ],
+  "ExactSum": 4,
+  "VegasSharedObjectConcurrentErrorReproduced": true,
+  "QMCConcurrentNumericalErrorIndependentlyReproduced": false,
+  "QMCSharedMutableStateObserved": true,
+  "Results": [
+    {
+      "File": "four-loop-dlog-analytic-20260927/numerical/reproduce-shared-vegas.log",
+      "SHA256": "531b3a3f6f8698c51b89e712a9e33aa480facb302a569f74b596e2a0a5570e82",
+      "Cases": [
+        {
+          "Line": "serial 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 0 0.99999999999808376 2.9400000000046855 sum 3.9400000000027693 expected 4",
+          "Sum": "3.9400000000027693",
+          "CorrectWithin1eMinus8": false
+        },
+        {
+          "Line": "parallel 1 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 2 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 3 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 4 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        }
+      ]
+    },
+    {
+      "File": "four-loop-dlog-analytic-20260927/numerical/reproduce-shared-vegas-two-cores.log",
+      "SHA256": "3cbfb23b890f2999510c010b0c7e1a27926e03996bfe8816d79d19188ecfc016",
+      "Cases": [
+        {
+          "Line": "serial 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 0 0.99999999999808376 0.99999999999808376 sum 1.9999999999961675 expected 4",
+          "Sum": "1.9999999999961675",
+          "CorrectWithin1eMinus8": false
+        },
+        {
+          "Line": "parallel 1 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 2 0.99999999999808376 2.960000000004817 sum 3.9600000000029008 expected 4",
+          "Sum": "3.9600000000029008",
+          "CorrectWithin1eMinus8": false
+        },
+        {
+          "Line": "parallel 3 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        },
+        {
+          "Line": "parallel 4 0.99999999999808376 3.000000000005079 sum 4.0000000000031628 expected 4",
+          "Sum": "4.0000000000031628",
+          "CorrectWithin1eMinus8": true
+        }
+      ]
+    }
+  ],
+  "SourceSHA256": "0897ca5ac97a178637a19a9cb2c1aed5fe22c28ddc273bf37b91cd3cba92313a",
+  "BinarySHA256": "9f19a71153cde389feeb49a3373a26299fe02a79d03b43ed5201498da8c371d8"
+}

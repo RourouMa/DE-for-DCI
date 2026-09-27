@@ -1,0 +1,25 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[q_,name_]:=If[TrueQ[q],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialized"];
+f=LadderFamily[1,kinematics,{x,y}];top=G[1,1,1,1,1];old=RunDE[f,top,"MasterCountStrategy"->"UserEstimate","MasterCountUserUpperBound"->4,"Solver"->"Exact","ProgressFunction"->None];
+b1=BoundaryIntegral[2,{1,1,1,0,1,0,1,1,1,1,1}];b2=BoundaryIntegral[2,{1,1,0,1,0,1,1,1,1,1,1}];
+out=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"retained-physical-sources-"<>CreateUUID[]}]];
+full=ReconstructFiniteCoordinateSystem[<|1->f|>,old["Basis"],{top},Append[old["Equations"],b1-b2],"OutputDirectory"->FileNameJoin[{out,"full"}],"Workers"->1];
+assert[AssociationQ[full]&&TrueQ[full["Report"]["FullDEClosed"]]&&full["Report"]["UnmappedPoolSourceCount"]===2,"unmapped source columns are retained through a complete closed-system reconstruction"];
+manifest=ConformalIBP`Private`readCoordinateManifest[full["SourceManifest"]];Get[manifest["PhysicalPool"]];
+assert[ConformalIBP`Private`sources[ConformalIBP`Private`fullCoordinatePool["Rows"]]===Union[{b1,b2}],"both opaque sources remain in the saved complete physical pool"];
+cf=<|"Variables"->{x,y},"Hash"->7,"SourceTreatment"->"RetainAll"|>;a=G[1];
+makeReference[rows_,rules_,tag_]:=Module[{dir,benchmarkFile,manifestFile},
+ dir=CreateDirectory[FileNameJoin[{out,tag}]];benchmarkFile=FileNameJoin[{dir,"Benchmark.mx"}];manifestFile=FileNameJoin[{dir,"Manifest.mx"}];
+ Block[{ConformalIBP`Private`benchmark=<|"Rows"->rows,"Columns"->{a,b1},"Queries"->{a,b1}|>},DumpSave[benchmarkFile,ConformalIBP`Private`benchmark]];
+ Block[{ConformalIBP`Private`sourceManifest=<|"FullPoolHash"->0,"OriginalEquationsHash"->Hash[rows,"SHA256"]|>},DumpSave[manifestFile,ConformalIBP`Private`sourceManifest]];
+ <|"FamilyHash"->7,"FullPoolHash"->0,"FullReferenceBenchmark"->benchmarkFile,"FullReferenceSourceManifest"->manifestFile,"FullReferenceQueries"->{a,b1},"FullPoolNumericalRules"->rules,"Point"->{11,17},"Prime"->FiniteFlow`FFPrimeNo[0]|>];
+ref=makeReference[{},{a->a,b1->b1},"free-source"];
+bad=ConformalIBP`Private`projectRowsInPhysicalBasis[cf,{a+b1},{a},ref,FileNameJoin[{out,"bad-span"}],1];
+assert[FailureQ[bad],"an unresolved source cannot be discarded to manufacture full-system coverage"];
+accidental=ConformalIBP`Private`projectRowsInPhysicalBasis[cf,{a+(x-11)b1},{a},ref,FileNameJoin[{out,"point-zero-source"}],1];
+assert[FailureQ[accidental],"a source vanishing only at the numerical point is still rejected by rational reconstruction"];
+ref=makeReference[{b1},{a->a,b1->0},"proved-zero-source"];
+good=ConformalIBP`Private`projectRowsInPhysicalBasis[cf,{a+b1},{a},ref,FileNameJoin[{out,"proved-span"}],1];
+assert[AssociationQ[good]&&good["Weights"]==={{1}}&&good["BoundarySourceTreatment"]==="RetainAll","a source may disappear only by using the supplied physical equations"];
+Put[<|"Run"->out,"FullRun"->FileNameJoin[{out,"full"}]|>,FileNameJoin[{out,"Regression.wl"}]];Print["Regression run: ",out];assert[$MessageList==={},"no unexpected messages"];Quit[0];

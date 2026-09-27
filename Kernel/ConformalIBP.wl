@@ -31,8 +31,12 @@ ResumeRun::usage="ResumeRun[directory] resumes a versioned, hash-checked trusted
 InitializeFiniteFlow::usage="InitializeFiniteFlow[installDirectory,mathlinkDirectory] loads an optional FiniteFlow installation without hard-coded paths.";
 RecommendedWorkerCount::usage="RecommendedWorkerCount[] recommends four fifths of logical processors, rounded to the nearest integer and at least one; RecommendedWorkerCount[n] uses n processors.";
 $ConformalIBPVersion::usage="Package version used in checkpoint compatibility checks.";
+ReconstructFiniteCoordinateSystem::usage="ReconstructFiniteCoordinateSystem[loopFamilies,basis,originalInputs,physicalEquations,options] rebuilds a full finite DE from native derivatives and a complete source-retaining physical pool, using no saved DE matrices or rules.";
+RunPhysicalCoordinateDE::usage="RunPhysicalCoordinateDE[family,inputs,equations,options] replays from original inputs using finite physical-basis coordinates, low-pole preference, complete-pool point checks and a growth-chain repair gate.";
+AssessGrowthChains::usage="AssessGrowthChains[family,history,rows,round,threshold] detects repeated fixed unit index-transfer chains in actual reduced rows; threshold defaults to three increases and triggers relation repair.";
+DifferentiatePhysicalRelations::usage="DifferentiatePhysicalRelations[family,completeSourceFreeRows] derives new physical identities only from complete native-finite source-free parents, retaining kinematic coefficient derivatives.";
 Begin["`Private`"];
-$ConformalIBPVersion="0.5.0";
+$ConformalIBPVersion="0.6.0";
 RecommendedWorkerCount[n_Integer?Positive]:=Max[1,Round[4 n/5]];
 RecommendedWorkerCount[]:=Module[{n=$ProcessorCount,osCount},
  If[$OperatingSystem==="Unix" && FileExistsQ["/proc/cpuinfo"],
@@ -44,18 +48,26 @@ $packageFile=$InputFileName;
 $implementationHash=Hash[Function[name,Module[{stream,data},
  stream=OpenRead[FileNameJoin[{DirectoryName[$packageFile],name}]];
  data=ReadString[stream];Close[stream];data]] /@
- {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","SpanPreservingFiniteBasis.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","MasterCount.wl","TopAnnihilator.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls"},"SHA256"];
+ {"Ordering.wl","Ordering01Reference.wl","Ordering01Symmetry.wl","FiniteSupport.wl","SpanPreservingFiniteBasis.wl","LinearAlgebra.wl","ConformalIBP.wl","Coupled.wl","ClosurePreference.wl","Reduction.wl","Reporting.wl","Complexity.wl","MasterCount.wl","TopAnnihilator.wl","Iteration.wl","TargetReduction.wl","SeedPlanning.wl","../scripts/select-equation-rows.py","../scripts/verify-residual-worker.wls","../scripts/ibp-worker.wls","../scripts/seed-plan-worker.wls","PhysicalCoordinateCore.wl","PhysicalCoordinateReference.wl","PhysicalConstruction.wl","FiniteRepresentativePreference.wl","ConstantPoleCancellations.wl","PhysicalCoordinateSelection.wl","CoordinateReconstruction.wl","GrowthChains.wl","PhysicalRelationDerivatives.wl","PhysicalCoordinateCampaign.wl","FiniteCoordinateSystem.wl"},"SHA256"];
 fail[tag_,message_,data_:<||>]:=Failure[tag,Join[<|"MessageTemplate"->message|>,data]];
 zero[e_]:=TrueQ[Together[e]===0];
 support[e_]:=Union[Cases[{e},_G,Infinity]];
 sources[e_]:=Union[Cases[{e},_BoundaryIntegral,Infinity]];
-canonicalLinear[e_]:=Module[{atoms=Join[support[e],sources[e]],terms},
+canonicalLinearExpanded[e_]:=Module[{atoms=Join[support[e],sources[e]],terms},
  If[atoms==={},Return[If[zero[e],0,fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]]];
  terms=Quiet[Check[CoefficientRules[Expand[e],atoms],$Failed]];
  If[!ListQ[terms] || !And@@(Total[First[#]]===1 && FreeQ[Last[#],_G|_BoundaryIntegral]& /@ terms),
   Return[fail["NonlinearIntegralExpression","Expected an exact linear integral expression."]]];
  Total[(Together[Last[#]] atoms[[First[FirstPosition[First[#],1]]]])& /@ terms]];
-coeff[rows_,vars_]:=Table[With[{expanded=Expand[r]},Together[Coefficient[expanded,#]]& /@ vars],{r,rows}];
+(* Keep rational coefficients factored while collecting integral atoms. The
+   expanded fallback retains cancellation semantics for nonlinear-looking input. *)
+canonicalLinear[e_]:=Module[{m=linearMapNoExpand[e]},
+ If[FailureQ[m],canonicalLinearExpanded[e],Total[KeyValueMap[Together[#2] #1&,m]]]];
+coeff[rows_,vars_]:=Module[{m},
+ If[AllTrue[vars,MatchQ[#,_G|_BoundaryIntegral]&],
+  m=linearMapNoExpand /@ rows;
+  If[AllTrue[m,AssociationQ],Return[Map[Together,Lookup[#,vars,0]& /@ m,{2}]]]];
+ Table[With[{expanded=Expand[r]},Together[Coefficient[expanded,#]]& /@ vars],{r,rows}]];
 Get[FileNameJoin[{DirectoryName[$packageFile],"LinearAlgebra.wl"}]];
 Get[FileNameJoin[{DirectoryName[$packageFile],"FiniteSupport.wl"}]];
 pivots[m_]:=First[FirstPosition[#,a_/;!zero[a],Missing[],{1},Heads->False]]& /@ m;
@@ -335,4 +347,16 @@ Get[FileNameJoin[{DirectoryName[$InputFileName],"ClosurePreference.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"MasterCount.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"TopAnnihilator.wl"}]];
 Get[FileNameJoin[{DirectoryName[$InputFileName],"Iteration.wl"}]];
+
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalCoordinateCore.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalCoordinateReference.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalConstruction.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"FiniteRepresentativePreference.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"ConstantPoleCancellations.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalCoordinateSelection.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"CoordinateReconstruction.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"GrowthChains.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalRelationDerivatives.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"PhysicalCoordinateCampaign.wl"}]];
+Get[FileNameJoin[{DirectoryName[$packageFile],"FiniteCoordinateSystem.wl"}]];
 End[];EndPackage[];

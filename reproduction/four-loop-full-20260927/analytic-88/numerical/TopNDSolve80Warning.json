@@ -1,0 +1,16 @@
+{
+	"TopValue":"1.29497744543463120267568644229141429292883290037858379704164417728743456671077`65.",
+	"WorkingPrecision":80,
+	"AccuracyGoal":50,
+	"PrecisionGoal":50,
+	"InitialTaylorDegree":88,
+	"ResidueNilpotenceIndex":4,
+	"InitialTaylorTail":"1.19763419437666297426900185438613830338335321505131136510569472283993865748943717508775164576`78.01831746638015*^-62",
+	"BoundaryResidueResidual":"0``77.84718706418835",
+	"Point":[
+		"1\/4",
+		"3\/4"
+	],
+	"DirectEstimateUsedForBoundary":false,
+	"Seconds":27.034422
+}

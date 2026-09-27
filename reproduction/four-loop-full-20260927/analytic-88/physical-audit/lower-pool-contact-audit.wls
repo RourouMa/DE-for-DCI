@@ -1,0 +1,4 @@
+r="/home/april/Documents/ChatGPT/DE for DCI";d=DirectoryName[$InputFileName];Get[r<>"/DE-for-DCI-publish/Kernel/ConformalIBP.wl"];
+Get[r<>"/four-loop-full-closure-20260927/lower-source-relations/Generation.mx"];Get[r<>"/four-loop-full-closure-20260927/lower-gap-relations/Generation.mx"];
+rs=Table[g=src["NativeGeneration"];<|"Rows"->Length[src["Equations"]],"Applications"->Length[g["Applications"]],"AllAtomicG"->AllTrue[g["Applications"],MatchQ[#,{_Integer,_ConformalIBP`G}]&],"BadExamples"->(ToString[#,InputForm]& /@ Select[g["Applications"],!MatchQ[#,{_Integer,_ConformalIBP`G}]&,3]),"CompletedCoupledGroups"->Lookup[g,"CompletedCoupledGroups",{}],"CoupledSearches"->Lookup[g,"CoupledSearches",{}],"GenerationKeys"->Keys[g]|>,{src,{lowerSourceGeneration,lowerGapGeneration}}];
+Print[rs];Export[d<>"/LowerPoolContactAudit.json",<|"Source"->rs[[1]],"Gap"->rs[[2]]|>,"RawJSON"];Quit[];

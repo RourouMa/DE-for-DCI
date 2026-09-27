@@ -1,7 +1,8 @@
 # Collaborator handoff: conformal ladder and tennis-court DEs
 
-Snapshot: 25 September 2026, package 0.5.0. Start here for the current computation;
-the older Ubuntu and ordering01 notes describe separate historical campaigns.
+Historical release snapshot: 25 September 2026, package 0.5.0. For the 27 September
+local update, see [0.6.0 strategy notes](STRATEGIES_0.6.0.zh-CN.md).
+The counts and four-loop status below describe that earlier release.
 Repository: <https://github.com/RourouMa/DE-for-DCI>.
 
 This is the Wolfram Language package developed with Codex assistance, together

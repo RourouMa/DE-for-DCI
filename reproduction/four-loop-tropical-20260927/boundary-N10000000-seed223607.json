@@ -1,0 +1,48 @@
+{
+  "Status": "Computed",
+  "Name": "boundary",
+  "Samples": 10000000,
+  "Seed": 223607,
+  "Threads": 2,
+  "Timeout": 600,
+  "Point": [
+    "1",
+    "1"
+  ],
+  "Prefactor": 24,
+  "Executable": "/home/april/Documents/ChatGPT/DE for DCI/external-tools/feyntrop/feyntrop",
+  "ExecutableSHA256": "4637197e83a562bee10569038b5e0a7a885523cd0ab11377381261c76d135afb",
+  "InputSHA256": "e211f8770cf5054a51a1efe80038a5d5200b66e862e0eb53216c9d5bd2ba5d5c",
+  "AnalyticReferenceRead": false,
+  "StoppingRule": "Fixed sample count and timeout, independent of result or analytic reference",
+  "StartedUnix": 1790488209.916336,
+  "ExitCode": 0,
+  "SecondsWall": 11.9276864528656,
+  "DroppedSampleWarning": false,
+  "KinematicRegimeLog": [
+    "(Effective) kinematic regime: Minkowski (exceptional).",
+    "Warning: Kinematics are non-Euclidean and (very) exceptional. Detailed info on the N[F] polytope is needed. The integration might fail or be unstable. Check the result by 1) varying the number of sample points 2) evaluating at multiple kinematic points close to the current one (i.e. by making the kinematics more generic) 3) increasing the spacetime dimension D0.",
+    "The generalized permutahedron property seems fulfilled. This is a good sign that the integration might succeed anyway."
+  ],
+  "RawResult": {
+    "IGtr": 269.99999999999994,
+    "integral": [
+      [
+        [
+          0.00467745763554512,
+          1.1599581787205007e-05
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    ],
+    "seconds preprocessing": 0.17064585100000002,
+    "seconds sampling": 11.755101675
+  },
+  "Value": 0.1122589832530829,
+  "ReportedError": 0.00027838996289292016,
+  "ImaginaryValue": 0.0,
+  "ImaginaryReportedError": 0.0
+}

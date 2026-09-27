@@ -1,0 +1,91 @@
+{
+  "AllPassed": true,
+  "Method": "Exact spanning-tree/two-forest polynomial comparison with independent LoopIntegralFromPropagators",
+  "Rows": [
+    {
+      "Name": "top",
+      "Point": [
+        "1/4",
+        "3/4"
+      ],
+      "Loops": 4,
+      "Edges": 13,
+      "Vertices": 10,
+      "UTerms": 209,
+      "FTerms": 1029,
+      "ExactUPolynomialMatchesOriginal": true,
+      "ExactFPolynomialMatchesOriginal": true,
+      "AllFCoefficientsPositive": true,
+      "NormalizationMatchesOriginal": true,
+      "Prefactor": 24,
+      "NativeBasisIndex": 1,
+      "NativeIndicesExactlyMatch": true,
+      "AnalyticReferenceRead": false,
+      "InputSHA256": "947226b4973819e2f5b12592f0920c467eb981c5e478295446489d5b065c2af6"
+    },
+    {
+      "Name": "boundary",
+      "Point": [
+        "1",
+        "1"
+      ],
+      "Loops": 4,
+      "Edges": 13,
+      "Vertices": 10,
+      "UTerms": 209,
+      "FTerms": 1029,
+      "ExactUPolynomialMatchesOriginal": true,
+      "ExactFPolynomialMatchesOriginal": true,
+      "AllFCoefficientsPositive": true,
+      "NormalizationMatchesOriginal": true,
+      "Prefactor": 24,
+      "NativeBasisIndex": 1,
+      "NativeIndicesExactlyMatch": true,
+      "AnalyticReferenceRead": false,
+      "InputSHA256": "ab3a06f344e05904bf732a611616d322b32f04c23c006c3ccd697135d7ae4f90"
+    },
+    {
+      "Name": "oneloop",
+      "Point": [
+        "1/4",
+        "3/4"
+      ],
+      "Loops": 1,
+      "Edges": 4,
+      "Vertices": 4,
+      "UTerms": 4,
+      "FTerms": 6,
+      "ExactUPolynomialMatchesOriginal": true,
+      "ExactFPolynomialMatchesOriginal": true,
+      "AllFCoefficientsPositive": true,
+      "NormalizationMatchesOriginal": true,
+      "Prefactor": 1,
+      "NativeBasisIndex": 83,
+      "NativeIndicesExactlyMatch": true,
+      "AnalyticReferenceRead": false,
+      "InputSHA256": "7b8bb3c62cddf6d21a2e6a16289544df544a29a278f0bb774e52b8290945ae34"
+    },
+    {
+      "Name": "boundary_merged",
+      "Point": [
+        "1",
+        "1"
+      ],
+      "Loops": 4,
+      "Edges": 9,
+      "Vertices": 6,
+      "UTerms": 55,
+      "FTerms": 165,
+      "ExactUPolynomialMatchesOriginal": true,
+      "ExactFPolynomialMatchesOriginal": true,
+      "AllFCoefficientsPositive": true,
+      "NormalizationMatchesOriginal": true,
+      "Prefactor": 24,
+      "NativeBasisIndex": null,
+      "NativeIndicesExactlyMatch": null,
+      "AnalyticReferenceRead": false,
+      "InputSHA256": "10c790859a4eef511f35cb1b63d5c3c900ae772da696df4146bc4ef7e38f7192"
+    }
+  ],
+  "NativeDefinitionsSHA256": "2423f72b900be84e23defd971b966ec320f87a3a6aa251f32b76fb691ca43357"
+}

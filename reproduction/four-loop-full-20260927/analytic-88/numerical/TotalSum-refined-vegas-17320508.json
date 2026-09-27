@@ -1,0 +1,48 @@
+{
+  "PredeclaredPlan": {
+    "Method": "Vegas-single-total-sum",
+    "Seed": 17320508,
+    "MinEval": 1000000,
+    "MaxEval": 1000000,
+    "TimeLimit": 900,
+    "EpsRel": 0.001,
+    "NStart": 10000,
+    "NIncrease": 10000,
+    "CubaWorkerProcesses": 2,
+    "AmplitudeThreads": 1,
+    "Sectors": 1492,
+    "SectorValuesSummedBeforeQuadrature": true,
+    "ReferenceRead": false,
+    "StoppingRule": "Fixed one-million minimum and maximum budget, or fixed time limit. Cuba may finish its final iteration beyond maxeval. No estimate-dependent stopping."
+  },
+  "ExecutableSHA256": "de63f8f0b7042aeb16b496a2be8850617272782487ae2df7e5df82f70ff2bd72",
+  "SourceSHA256": "e0ffea8aa1c4639a6dbe67eee58c52405f484e52927f81003bf4f3d997478e30",
+  "StartedUnix": 1790486604.7378585,
+  "PID": 742569,
+  "Command": [
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/direct-total-sum-vegas-v2",
+    "17320508",
+    "1000000"
+  ],
+  "ExitCode": 0,
+  "Status": "Computed",
+  "Seconds": 227.0470380783081,
+  "RawOutput": "{\"Method\":\"Vegas-single-total-sum\",\"Seed\":17320508,\"MinEval\":1000000,\"MaxEval\":1000000,\"ActualEval\":1050000,\"CubaFail\":0,\"CubaChiSquareProbability\":0.23900642159390462,\"Sectors\":1492,\"Dimension\":12,\"Prefactor\":24,\"Value\":1.2956802216716055,\"Error\":0.0004717138515080891,\"Seconds\":227.026324117,\"SingleTotalIntegrand\":true,\"ReferenceRead\":false}\n",
+  "Result": {
+    "Method": "Vegas-single-total-sum",
+    "Seed": 17320508,
+    "MinEval": 1000000,
+    "MaxEval": 1000000,
+    "ActualEval": 1050000,
+    "CubaFail": 0,
+    "CubaChiSquareProbability": 0.23900642159390462,
+    "Sectors": 1492,
+    "Dimension": 12,
+    "Prefactor": 24,
+    "Value": 1.2956802216716055,
+    "Error": 0.0004717138515080891,
+    "Seconds": 227.026324117,
+    "SingleTotalIntegrand": true,
+    "ReferenceRead": false
+  }
+}

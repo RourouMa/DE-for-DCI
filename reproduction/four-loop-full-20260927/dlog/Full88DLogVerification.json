@@ -1,0 +1,25 @@
+{
+  "Passed": true,
+  "Dimension": 88,
+  "AllRowsIndependentlyChecked": true,
+  "CheckedRows": 88,
+  "LeftAndRightInverseExactlyVerified": true,
+  "BothNativeGaugeIdentitiesExactlyVerified": true,
+  "ConstantResidueDLogExactlyVerified": true,
+  "FullSymbolicCurvatureExactlyZero": true,
+  "CurvatureEntriesChecked": 7744,
+  "LetterCount": 18,
+  "CandidateSHA256": "90922fd24225c32d50cd2c65c4ff03465d7bc56b73ef910c05b2d2ea9f7f78d6",
+  "NativeAxSHA256": "a796841a483a5bc78265149e54a90a48e2a9fe0f808aac4be40f7d843e9aa87f",
+  "NativeAySHA256": "af999f7787ccdc00df4d9dfadf8218c85bde6ed90e238ff96d3b2f241d23c09c",
+  "Workers": 4,
+  "WorkerSeconds": [
+    19.203464,
+    19.329719,
+    24.955498,
+    31.364567
+  ],
+  "UpdatedAt": "2026-09-27T12:39:58.195032+08:00",
+  "Convention": "J=T I; B_z=(partial_z T+T A_z)T_inverse",
+  "PureOrEpsilonFormClaimed": false
+}

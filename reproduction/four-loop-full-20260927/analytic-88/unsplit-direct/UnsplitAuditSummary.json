@@ -1,0 +1,80 @@
+{
+  "OriginalUnsplitAndPrimaryRepresentationsImplemented": true,
+  "OriginalUAndF20PointAuditPassed": true,
+  "DEOrBoundaryUsed": false,
+  "Runs": [
+    {
+      "File": "Direct-20260927.json",
+      "Seed": 20260927,
+      "MaxEval": 50000000,
+      "Evaluations": 52000000,
+      "CubaFail": 1,
+      "Value": 1.1045498219504646,
+      "ReportedError": 0.009727616011462704,
+      "CubaProbability": 0.999374450783347,
+      "Seconds": 45.576662979
+    },
+    {
+      "File": "Direct-27182818.json",
+      "Seed": 27182818,
+      "MaxEval": 50000000,
+      "Evaluations": 52000000,
+      "CubaFail": 1,
+      "Value": 1.117129759180059,
+      "ReportedError": 0.010304881346941653,
+      "CubaProbability": 0.9999938468596028,
+      "Seconds": 25.52104429
+    },
+    {
+      "File": "Primary-20260927.json",
+      "Representation": 1,
+      "Seed": 20260927,
+      "MaxEval": 10000000,
+      "Evaluations": 10000000,
+      "CubaFail": 1,
+      "Value": 1.2439222833516461,
+      "ReportedError": 0.004213717844934103,
+      "CubaProbability": 0.9999835565541477,
+      "Seconds": 46.764161829
+    },
+    {
+      "File": "Primary-27182818.json",
+      "Representation": 1,
+      "Seed": 27182818,
+      "MaxEval": 10000000,
+      "Evaluations": 10000000,
+      "CubaFail": 1,
+      "Value": 1.2164936831026585,
+      "ReportedError": 0.01169520670882588,
+      "CubaProbability": 0.9987719969262798,
+      "Seconds": 46.657516168
+    },
+    {
+      "File": "Primary4-20260927.json",
+      "Representation": 2,
+      "Seed": 20260927,
+      "MaxEval": 50000000,
+      "Evaluations": 52800000,
+      "CubaFail": 1,
+      "Value": 1.2640504883609893,
+      "ReportedError": 0.0028027594811838095,
+      "CubaProbability": 0.9384031679074402,
+      "Seconds": 263.55429008
+    },
+    {
+      "File": "Primary4-27182818.json",
+      "Representation": 2,
+      "Seed": 27182818,
+      "MaxEval": 50000000,
+      "Evaluations": 52800000,
+      "CubaFail": 1,
+      "Value": 1.2658485039351601,
+      "ReportedError": 0.003175679227151996,
+      "CubaProbability": 0.6988813933883099,
+      "Seconds": 262.549968744
+    }
+  ],
+  "AnyRunReachedRequestedAccuracy": false,
+  "AcceptedAsDirectValidation": false,
+  "Reason": "All six fixed-budget runs failed the predeclared requested accuracy; substantial endpoint variance and iteration instability remain. No failed result was discarded."
+}

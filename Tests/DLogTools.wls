@@ -1,0 +1,28 @@
+base=DirectoryName[DirectoryName[$InputFileName]];
+Get[FileNameJoin[{base,"Adapters","DLogTools.wl"}]];
+$HistoryLength=0;
+checks=<||>;
+check[name_,test_]:=(AssociateTo[checks,name->TrueQ[test]];If[!TrueQ[test],Print["FAIL: ",name];Exit[1]]);
+ax={{0,1/x},{0,0}};ay=ConstantArray[0,{2,2}];
+t={{1/x,0},{0,1}};ti={{x,0},{0,1}};
+bx=Map[Cancel,(D[t,x]+t.ax).ti,{2}];by=ay;
+check["ExactConstantResidues",ConformalIBPDLog`FindConstantDLog[ax,ay,{x},{x,y}]["Passed"]];
+check["RejectNonDLogPole",!ConformalIBPDLog`FindConstantDLog[bx,by,{x},{x,y}]["Passed"]];
+(* A nontrivial rational gauge from a double pole to a constant dlog connection. *)
+ok=ConformalIBPDLog`VerifyGauge[bx,by,ti,t,ax,ay,{x},{x,y}];
+check["BothGaugeIdentities",ok["Passed"]];
+bad=ConformalIBPDLog`VerifyGauge[bx,by,ti,IdentityMatrix[2],ax,ay,{x},{x,y}];
+check["RejectWrongInverse",!bad["Passed"]];
+check["RejectDependentAlphabet",FailureQ[ConformalIBPDLog`FindConstantDLog[ax,ay,{x,x^2},{x,y}]]];
+check["RejectAllSingularSamples",FailureQ[ConformalIBPDLog`FindConstantDLog[ax,ay,{x},{x,y},"SamplePoints"->{{0,1}}]]];
+f=3/(x-y)^4+2/(x-1)^2+5/(x+1)+x^2;
+h=ConformalIBPDLog`RationalPrimitivePart[f,x];
+check["HermiteDerivativeResidual",SameQ[Cancel[Together[f-D[h,x]-5/(x+1)]],0]];
+dir=FileNameJoin[{base,"reproduction","four-loop-full-20260927","dlog"}];
+bx88=Get[FileNameJoin[{dir,"B_x.wl"}]];
+by88=Get[FileNameJoin[{dir,"B_y.wl"}]];
+letters=Get[FileNameJoin[{dir,"Alphabet.wl"}]];
+actual=ConformalIBPDLog`FindConstantDLog[bx88,by88,letters,{x,y}];
+check["Full88ExactReconstruction",actual["Passed"]&&actual["ConstantResidues"]];
+Print[ExportString[<|"Passed"->True,"Checks"->checks,"FullDimension"->Length[bx88],"Letters"->Length[letters]|>,"RawJSON"]];
+Exit[0];

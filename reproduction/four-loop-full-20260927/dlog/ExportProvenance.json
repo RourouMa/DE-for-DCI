@@ -1,0 +1,8 @@
+{
+	"CandidatePath":"\/home\/april\/Documents\/ChatGPT\/DE for DCI\/four-loop-dlog-20260927\/structure\/Full88DLogCandidate.wl",
+	"CandidateSHA256":"90922fd24225c32d50cd2c65c4ff03465d7bc56b73ef910c05b2d2ea9f7f78d6",
+	"CandidateConstantDLogCertificatePassed":true,
+	"IndependentFullGaugeValidation":"Performed separately by root; this exporter does not repeat it",
+	"OriginalAxSHA256":"a796841a483a5bc78265149e54a90a48e2a9fe0f808aac4be40f7d843e9aa87f",
+	"OriginalAySHA256":"af999f7787ccdc00df4d9dfadf8218c85bde6ed90e238ff96d3b2f241d23c09c"
+}

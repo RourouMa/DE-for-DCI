@@ -1,0 +1,12 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[q_,name_]:=If[TrueQ[q],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[1,kinematics,{x,y}];h=<||>;
+Do[h=AssessGrowthChains[f,h,{G@@{2-k,k,1,1,1}},k,3];assert[h["Triggered"]===(k>=4),"threshold counts increases, not members "<>ToString[k]],{k,1,4}];
+assert[Length[h["Chains"]]===1&&h["Chains"][[1]]["GrowthSteps"]===3,"fixed other indices and three first-appearance steps"];
+fresh=AssessGrowthChains[f,<||>,Table[G@@{2-k,k,1,1,1},{k,1,4}],1,3];assert[!fresh["Triggered"],"several powers first seen together do not fabricate a temporal chain"];
+reverse=<||>;Do[reverse=AssessGrowthChains[f,reverse,{G@@{k,2-k,1,1,1}},k,3],{k,1,4}];assert[reverse["Triggered"],"opposite index-transfer orientation is detected"];
+assert[!h["InfiniteDimensionalityProved"],"repair decision is not an infinite-rank theorem"];
+pointRows=ConformalIBP`Private`growthChainPointRows[{101 G[1,1,1,1,1]+(1/2)G[0,2,1,1,1]},101];
+assert[pointRows==={51 G[0,2,1,1,1]},"modular-zero coefficients cannot create phantom chain support"];
+assert[FailureQ[ConformalIBP`Private`growthChainPointRows[{G[1,1,1,1,1]/101},101]],"a singular point is rejected before tracking support"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

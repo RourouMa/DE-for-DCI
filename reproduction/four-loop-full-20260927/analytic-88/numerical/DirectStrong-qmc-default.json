@@ -1,0 +1,31 @@
+{
+  "PredeclaredPlan": {
+    "Integrator": "Qmc",
+    "Seed": 314159,
+    "MaxEval": 4000000000,
+    "WallClockLimit": 900,
+    "Threads": 4,
+    "EpsRel": 5e-05,
+    "EpsAbs": 1e-08,
+    "Transform": "korobov3",
+    "FitFunction": "default",
+    "MinM": 128
+  },
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "IntegralIndex": 1,
+  "Loops": 4,
+  "Library": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/numerical-work/four_top_p1/four_top_p1_pylink.so",
+  "LibrarySHA256": "828be769cf8a7c65a5058d3e1ba80f567da07b9daba513025ec482b5cefd9587",
+  "PID": 639244,
+  "StartedUnix": 1790484672.071367,
+  "DirectEstimateUsedForBoundary": false,
+  "DEOrAnalyticReferenceRead": false,
+  "StoppingRule": "Requested error or fixed maxeval or fixed wall clock only; no reference-value stopping",
+  "Status": "TimedOut",
+  "Seconds": 962.9956419467926,
+  "HardDeadlineGraceSeconds": 60,
+  "ReasonForTermination": "Fixed wall clock budget plus 60-second shutdown grace exceeded; no estimate-based stopping."
+}

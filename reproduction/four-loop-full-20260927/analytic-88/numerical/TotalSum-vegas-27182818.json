@@ -1,0 +1,40 @@
+{
+  "PredeclaredPlan": {
+    "Method": "vegas",
+    "Seed": 27182818,
+    "MaxTotalIntegrandEvaluations": 100000,
+    "TimeLimit": 600,
+    "EpsRel": 0.001,
+    "Sectors": 1492,
+    "SectorValuesSummedBeforeQuadrature": true,
+    "ReferenceRead": false,
+    "StoppingRule": "Error target, fixed evaluation budget or fixed time; no estimate-dependent stopping"
+  },
+  "ExecutableSHA256": "8a9229144ed1c36faf02bec5d9db2e57ef00a15d8d94a0ebc6c4b3abcd42f661",
+  "SourceSHA256": "8f1ea7aade496e6f92732718e353f7718b6429d41bdcd98e941f97f0bfec4aa6",
+  "StartedUnix": 1790486393.4918513,
+  "PID": 722901,
+  "Command": [
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/direct-total-sum",
+    "vegas",
+    "27182818",
+    "100000"
+  ],
+  "ExitCode": 0,
+  "Status": "Computed",
+  "Seconds": 54.965283155441284,
+  "RawOutput": "{\"Method\":\"vegas\",\"Seed\":27182818,\"MaxEval\":100000,\"Sectors\":1492,\"Dimension\":12,\"Prefactor\":24,\"Value\":1.2976376007479031,\"Error\":0.0027172414357952489,\"Seconds\":54.929124858000002,\"SingleTotalIntegrand\":true,\"ReferenceRead\":false}\n",
+  "Result": {
+    "Method": "vegas",
+    "Seed": 27182818,
+    "MaxEval": 100000,
+    "Sectors": 1492,
+    "Dimension": 12,
+    "Prefactor": 24,
+    "Value": 1.2976376007479031,
+    "Error": 0.002717241435795249,
+    "Seconds": 54.929124858,
+    "SingleTotalIntegrand": true,
+    "ReferenceRead": false
+  }
+}

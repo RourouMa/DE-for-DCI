@@ -16,6 +16,7 @@ s["VerifiedRoundContinuation"]=bundle;
 continued=ConformalIBP`Private`runCampaign[s];
 assert[continued["Closed"]&&continued["FlatnessVerified"]&&continued["Basis"]===full["Basis"]&&continued["Matrices"]===full["Matrices"],"continuation with deferred sources matches the full closed campaign"];
 assert[First[Select[events,Lookup[#,"Event",None]==="RoundStarted"&]]["Round"]===2&&continued["OriginalInputs"]==={g},"continue the saved round while retaining original top"];
+assert[continued["GrowthChainAudit"]["FirstAppearance"]===full["GrowthChainAudit"]["FirstAppearance"],"continuation preserves first appearances for chain detection in the identical pool"];
 events={};extended=Join[s,<|"PendingRelations"->{0}|>];res=ConformalIBP`Private`runCampaign[extended];
 assert[First[Select[events,Lookup[#,"Event",None]==="RoundStarted"&]]["Round"]===1&&res["Closed"],"pool expansion always restarts from original top"];
 invalid=Join[s,<|"VerifiedRoundContinuation"->Append[bundle,"EquationPoolHash"->0]|>];

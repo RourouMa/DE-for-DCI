@@ -1,0 +1,39 @@
+{
+  "PredeclaredPlan": {
+    "Integrator": "Qmc",
+    "Seed": 918273,
+    "MaxEval": 100000000,
+    "WallClockLimit": 600,
+    "AmplitudeThreads": 1,
+    "IntegratorThreads": 2,
+    "EpsRel": 1e-05,
+    "EpsAbs": 1e-08,
+    "Transform": "korobov3",
+    "MinM": 32,
+    "MinN": 10000
+  },
+  "Point": [
+    1,
+    1
+  ],
+  "IntegralIndex": 1,
+  "Loops": 4,
+  "Library": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/boundary-numerical-work/four_boundary/four_boundary_pylink.so",
+  "LibrarySHA256": "8583050c8cdb7c4d2700f68a7e8bb93298116be2161b7ff2f750178d43a1b720",
+  "PID": 680752,
+  "StartedUnix": 1790486148.5309207,
+  "DEOrAnalyticReferenceRead": false,
+  "Reason": "Serial sector controls for shared mutable integrator; independent seeds and fixed budgets.",
+  "StoppingRule": "Requested error, fixed maxeval, or fixed wall clock; no reference comparison",
+  "Status": "Computed",
+  "Seconds": 437.9784248190117,
+  "SympyResult": [
+    "(0.112189889377692309+0*I) + O(eps)",
+    "(4.30943485377973098e-06+0*I) + O(eps)"
+  ],
+  "RawResult": [
+    " + ((1.12189889377692309e-01,0.00000000000000000e+00) +/- (4.30943485377973098e-06,0.00000000000000000e+00)) + O(eps)",
+    "1",
+    " + ((1.12189889377692309e-01,0.00000000000000000e+00) +/- (4.30943485377973098e-06,0.00000000000000000e+00)) + O(eps)\n"
+  ]
+}

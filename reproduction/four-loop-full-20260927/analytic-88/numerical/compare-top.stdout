@@ -1,0 +1,76 @@
+{
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "DETopValueConservative40Digits": "1.294977445434631202675686442291414292929",
+  "DETopValueNDSolve": "1.294977445434631202675686442291414292928832900378583797041644177287435",
+  "MaximumDifferenceAcrossThreeAlgorithmsAndPaths": "4.52442840989275092070642575066e-46",
+  "MaxCanonical88DifferenceAcrossTwoTaylorPaths": "5.0099563962642870297319192346e-46",
+  "DECrossCheckAgreesAt40DecimalPlaces": true,
+  "NoDirectEstimateUsedForBoundary": true,
+  "NDSolveWarning": null,
+  "NDSolveSettings": "80-digit initial Taylor arithmetic, 70-digit NDSolve with 50-digit error goals; rerun completed without warnings. Precision claim additionally requires cross-method agreement.",
+  "DirectComparisons": [
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumerical-20260927.json",
+      "Value": "1.28678601192980158",
+      "ReportedError": "0.00105664284534977542",
+      "DEMinusDirect": "0.00819143350482962267568644229141",
+      "DifferenceOverReportedError": "7.7523200397179159225",
+      "WithinThreeReportedErrors": false,
+      "EligibleForValidation": false,
+      "ConfigurationAudit": "Multiple sector threads share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumerical-918273.json",
+      "Value": "1.28964076360234836",
+      "ReportedError": "0.00099894594415108999",
+      "DEMinusDirect": "0.00533668183228284267568644229141",
+      "DifferenceOverReportedError": "5.3423129284718059466",
+      "WithinThreeReportedErrors": false,
+      "EligibleForValidation": false,
+      "ConfigurationAudit": "Multiple sector threads share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumericalRefined-20260927.json",
+      "Value": "1.29098057924056109",
+      "ReportedError": "0.000745475000844100289",
+      "DEMinusDirect": "0.00399686619407011267568644229141",
+      "DifferenceOverReportedError": "5.3615026520600512929",
+      "WithinThreeReportedErrors": false,
+      "EligibleForValidation": false,
+      "ConfigurationAudit": "Multiple sector threads share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumericalRefined-918273.json",
+      "Value": "1.29018378031000358",
+      "ReportedError": "0.000700369982736128208",
+      "DEMinusDirect": "0.00479366512462762267568644229141",
+      "DifferenceOverReportedError": "6.8444754098401825245",
+      "WithinThreeReportedErrors": false,
+      "EligibleForValidation": false,
+      "ConfigurationAudit": "Multiple sector threads share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectStrong-vegas.json",
+      "Value": "1.29263096328823335",
+      "ReportedError": "0.0000616304247380276582",
+      "DEMinusDirect": "0.00234648214639785267568644229141",
+      "DifferenceOverReportedError": "38.073437857552342883",
+      "WithinThreeReportedErrors": false,
+      "EligibleForValidation": false,
+      "ConfigurationAudit": "Multiple sector threads share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": true
+    }
+  ],
+  "OriginalRefinedDirectValidationPassed": false,
+  "OriginalRefinedEligibleForValidation": false,
+  "ReliableDirectChecksCompleted": 0,
+  "ReliableDirectChecksAllWithinThreeReportedErrors": null,
+  "Interpretation": "DE integration agrees with independent algorithms and paths. Concurrent-sector direct calls have a shared mutable integrator problem (Vegas independently reproduced) and are excluded from acceptance. Only serial-sector controls are eligible. All original results are retained. Statistical error bars are not rigorous bounds."
+}

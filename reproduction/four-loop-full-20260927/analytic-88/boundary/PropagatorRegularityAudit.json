@@ -1,0 +1,1102 @@
+{
+  "AllInternalGraphsForests": true,
+  "AllInternalPowers0or1": true,
+  "AllDCIVertexSums4": true,
+  "MaxExternalNumeratorPowerCount": 2,
+  "Entries": [
+    {
+      "Index": 1,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 2,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 3,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 4,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 5,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 6,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 7,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 8,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 9,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 10,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 11,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 12,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 13,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 14,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 15,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 16,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 17,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 18,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 19,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 20,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 21,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 22,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 23,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 24,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 25,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 26,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 27,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 28,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 29,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 30,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 31,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 32,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 33,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 34,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 35,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 36,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 37,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 38,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 39,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 40,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 41,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 42,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 43,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 44,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 45,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 46,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 47,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 48,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 49,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 50,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 51,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 52,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 2
+    },
+    {
+      "Index": 53,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 2
+    },
+    {
+      "Index": 54,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3,
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 55,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4,
+        4,
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 56,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 57,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 58,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 59,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 60,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 61,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 62,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 63,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 64,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 65,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 66,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 67,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 68,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 69,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 70,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 71,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 72,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 73,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 74,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4,
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 75,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 76,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4,
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 77,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 1
+    },
+    {
+      "Index": 78,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 79,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 80,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 81,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 82,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 83,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 84,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 85,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        4,
+        4,
+        4
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 86,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 87,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    },
+    {
+      "Index": 88,
+      "InternalPowersOnly0or1": true,
+      "InternalGraphForest": true,
+      "ExternalNetPowerAtEachVertex": [
+        3,
+        2,
+        3
+      ],
+      "DCIVertexSum4": true,
+      "ExternalNumeratorPowerCount": 0
+    }
+  ]
+}

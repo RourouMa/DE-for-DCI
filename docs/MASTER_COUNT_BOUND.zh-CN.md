@@ -1,14 +1,16 @@
 # 用主积分上限指导 DE 迭代
 
-## 四圈当前策略：用户估定 100（2026-09-25）
+## 四圈当前策略：用户估定 70（2026-09-27）
 
-用户指定四圈 ladder 的四圈主积分上限为 **100**。当前四圈计算不再等待 critical-point 或 annihilator 计数。使用
-`MasterCountStrategy -> "UserEstimate"`、`MasterCountUserUpperBound -> 100`；配置保存在
+用户将四圈 ladder 的四圈主积分上限从100调整为 **70**。当前四圈计算不再等待 critical-point 或 annihilator 计数。使用
+`MasterCountStrategy -> "UserEstimate"`、`MasterCountUserUpperBound -> 70`；配置保存在
 [four-loop-count-policy.wl](../Examples/four-loop-count-policy.wl)。其它任务的几何参考计数默认值不变。
 
-100 是四圈空间模去低圈源项后的调度阈值，包含同圈子 sectors 及 factorized 方向，不是仅 top sector 的计数，也不是整个含低圈系统的总基数。每轮比较输入加两个方向导数的实际有理秩。超过 100 时停止接受下一轮求导基，保留完整残差，扩充有效 IBP 与同域 symmetry，并从原 top 重放；不得截断到 100 项。定向补关系未能解决时保存诊断，继续审查关系缺口或阈值适用性。
+70 是四圈空间模去低圈源项后的调度阈值，包含同圈子 sectors 及 factorized 方向，不是仅 top sector 的计数，也不是整个含低圈系统的总基数。每轮比较输入加两个方向导数的实际有理秩。超过70时停止接受下一轮求导基，保留完整残差，扩充有效 IBP 与同域 symmetry，并从原 top 重放；不得截断到70项。定向补关系未能解决时保存诊断，继续审查关系缺口或阈值适用性。旧检查点保留原来的100及内容哈希，活动调度读取新的70，不改写历史证书。
 
-审计记录 `ThresholdOrigin -> "UserEstimate"` 和 `StoppingThreshold -> 100`，数学认证字段保持未认证；未计算的低圈上限仍为未知。显式选择此策略时，`MasterCountPreflight -> "Required"` 允许启动，因为要求的是已给定调度阈值。几何策略的 `"Required"` 仍要求适用证书。低圈源项只在秩比较中投影，完整 DE 中继续保留。
+有限覆盖项数大于70，而输入＋DE 的实际秩仍在阈值内时，先检查更小的保跨度有限覆盖，不能仅凭扩大后的支撑数触发扩池。旧100门槛下，四圈 epoch 4 第五轮曾实证：102项有限支撑可以换成72个单积分＋8个常系数组合，精确覆盖同一个80维空间；80本身已超过新的70门槛。候选常系数组合不足时，应扩大候选搜索；允许变量系数后备的分支须保存选择理由，并通过有限性、实际跨度及精确覆盖检查。见 [PreserveActualSpan](PRESERVE_ACTUAL_SPAN.zh-CN.md)。
+
+审计记录 `ThresholdOrigin -> "UserEstimate"` 和 `StoppingThreshold -> 70`，数学认证字段保持未认证；未计算的低圈上限仍为未知。显式选择此策略时，`MasterCountPreflight -> "Required"` 允许启动，因为要求的是已给定调度阈值。几何策略的 `"Required"` 仍要求适用证书。低圈源项只在秩比较中投影，完整 DE 中继续保留。
 
 `Tests/UserMasterCount.wls` 覆盖 100／101 的边界、原子数与秩的区别、超过阈值后的扩池重放与停止，以及阈值内完整闭合验证。下列几何计数内容保留为研究背景和可选方法，不是当前四圈的前置任务。
 

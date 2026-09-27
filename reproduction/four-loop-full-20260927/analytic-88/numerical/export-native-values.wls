@@ -1,0 +1,6 @@
+$IterationLimit=Infinity;out=DirectoryName[$InputFileName];root=DirectoryName[DirectoryName[out]];a=Get[FileNameJoin[{root,"four-loop-dlog-20260927","structure","Full88DLogCandidate.wl"}]];
+dec[s_String]:=Module[{q=StringSplit[s,{"e","E"}],m,places,n,ex},m=StringSplit[q[[1]],"."];places=If[Length[m]==2,StringLength[m[[2]]],0];n=ToExpression[StringReplace[q[[1]],"."->""]];ex=If[Length[q]==2,ToExpression[q[[2]]],0];N[n 10^(ex-places),80]];
+aa=Import[FileNameJoin[{out,"TopTaylor64.json"}],"RawJSON"];bb=Import[FileNameJoin[{out,"TopTaylor80Ray5.json"}],"RawJSON"];iv=a["NewToNative"]/.{x->1/4,y->3/4};va=N[iv.(dec /@aa["CanonicalValues"]),70];vb=N[iv.(dec /@bb["CanonicalValues"]),70];err=Abs[va-vb];
+num[z_]:=StringReplace[ToString[N[z,40],InputForm],{RegularExpression["`[0-9.]*"]->"","*^"->"e"}];
+report=<|"Point"->{"1/4","3/4"},"Count"->88,"OriginalRequested83AreFirst83"->True,"Values"->(num /@vb),"MaxDifferenceAcrossTwoNumericalPaths"->num[Max[err]],"ConservativeSignificantDigits"->35,"AllFinite"->FreeQ[vb,Indeterminate|_DirectedInfinity],"DirectEstimatesUsedForBoundary"->False|>;
+Export[FileNameJoin[{out,"NativeValues88AtQuarterThreeQuarter.json"}],report,"RawJSON"];Print["max native difference ",InputForm[Max[err]]];Print["min native ",Min[vb]];Quit[0];

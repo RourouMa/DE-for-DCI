@@ -1,0 +1,103 @@
+{
+  "CurrentFirstIntegralExactlyMatchesOriginalDirectInput": true,
+  "IntegralIndex": 1,
+  "OrdinaryPropagatorCount": 13,
+  "MeasureTail": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "ExternalMassSquared": [
+    "x",
+    "y",
+    "x",
+    "y"
+  ],
+  "ExternalGramExactlyMatchesNativeKinematics": true,
+  "ExternalGram": [
+    [
+      "2*x",
+      "0",
+      "x**2 + 1",
+      "0"
+    ],
+    [
+      "0",
+      "2*y",
+      "0",
+      "y**2 + 1"
+    ],
+    [
+      "x**2 + 1",
+      "0",
+      "2*x",
+      "0"
+    ],
+    [
+      "0",
+      "y**2 + 1",
+      "0",
+      "2*y"
+    ]
+  ],
+  "InternalPairOrder": [
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      4
+    ]
+  ],
+  "TopInternalPowers": [
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+  ],
+  "InputPoint": [
+    "1/4",
+    "3/4"
+  ],
+  "FreshParameters": 13,
+  "FreshUTerms": 209,
+  "FreshFTerms": 1029,
+  "FreshGammaFactor": "-gamma(4*eps + 5)",
+  "SignPrefactor": -1,
+  "CombinedGammaAtEpsilonZero": "24",
+  "CompiledLeadingPrefactorIs24": true,
+  "CompiledSectors": 1492,
+  "CompiledRuntimeRealParameters": 0,
+  "AllUCoefficientsNonnegative": true,
+  "AllFCoefficientsNonnegative": true,
+  "RegeneratedMetadataAgrees": true,
+  "NormalizationNote": "At eps=0, nu=13,L=4,D=4 gives Gamma(5)=24,U^3/F^5; projective measure indices are not propagators. Legacy boundary QMC used concurrent sectors and is excluded as evidence. B4 normalization relies on separate radial/spectral analytic derivations.",
+  "FilesSHA256": {
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/feynman_four.py": "ededc770708e0f18a67f5df3d998cbab2e3e11a1380970fd9f2252698a6953ca",
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/generate-top-numerical.py": "db9060a08c879cee6645764c30a31ff4f5e1ecf9af3286eea2a726e37b515735",
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopParametricConstruction.json": "f1496810cdb15dc464247e0a19e754c7122d12719b79319f0b487dfd0fe1cc00",
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/numerical-work/four_top_p1/four_top_p1_pylink.so": "828be769cf8a7c65a5058d3e1ba80f567da07b9daba513025ec482b5cefd9587",
+    "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/numerical-work/four_top_p1/four_top_p1_integral/src/prefactor.cpp": "7498de3b229d48047cb3e2c4877e05f54ce72836fbdfdf14f92dffbec2f50a0e"
+  },
+  "LegacyBoundaryQMCEligibleForValidation": false
+}

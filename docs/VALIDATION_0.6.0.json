@@ -1,0 +1,362 @@
+{
+  "Version": "0.6.0",
+  "GroupsPassed": 52,
+  "AllPassed": true,
+  "Tests": [
+    {
+      "test": "NativeLinearCollection",
+      "exit_code": 0,
+      "seconds": 2.135
+    },
+    {
+      "test": "ConstantCoefficientBlocks",
+      "exit_code": 0,
+      "seconds": 2.058
+    },
+    {
+      "test": "CollectedGeneration",
+      "exit_code": 0,
+      "seconds": 2.395
+    },
+    {
+      "test": "GrowthChains",
+      "exit_code": 0,
+      "seconds": 2.05
+    },
+    {
+      "test": "MasterCount",
+      "exit_code": 0,
+      "seconds": 2.172
+    },
+    {
+      "test": "TopAnnihilator",
+      "exit_code": 0,
+      "seconds": 2.192
+    },
+    {
+      "test": "UserMasterCount",
+      "exit_code": 0,
+      "seconds": 4.057
+    },
+    {
+      "test": "Reporting",
+      "exit_code": 0,
+      "seconds": 2.128
+    },
+    {
+      "test": "DirectFiniteSupport",
+      "exit_code": 0,
+      "seconds": 2.063
+    },
+    {
+      "test": "OrderingStrategies",
+      "exit_code": 0,
+      "seconds": 2.075
+    },
+    {
+      "test": "TennisTopology",
+      "exit_code": 0,
+      "seconds": 2.081
+    },
+    {
+      "test": "ClosurePreference",
+      "exit_code": 0,
+      "seconds": 2.081
+    },
+    {
+      "test": "ContactSourceValidity",
+      "exit_code": 0,
+      "seconds": 2.074
+    },
+    {
+      "test": "CompleteInverseActions",
+      "exit_code": 0,
+      "seconds": 2.221
+    },
+    {
+      "test": "CoupledIBP",
+      "exit_code": 0,
+      "seconds": 5.667
+    },
+    {
+      "test": "CoupledDisjoint",
+      "exit_code": 0,
+      "seconds": 2.553
+    },
+    {
+      "test": "CoupledDegree",
+      "exit_code": 0,
+      "seconds": 2.13
+    },
+    {
+      "test": "RunTests",
+      "exit_code": 0,
+      "seconds": 6.658
+    },
+    {
+      "test": "NumericalVerification",
+      "exit_code": 0,
+      "seconds": 2.096
+    },
+    {
+      "test": "FiniteZeroSumPrefilter",
+      "exit_code": 0,
+      "seconds": 2.08
+    },
+    {
+      "test": "SeedPolicies",
+      "exit_code": 0,
+      "seconds": 4.226
+    },
+    {
+      "test": "SeedDeduplication",
+      "exit_code": 0,
+      "seconds": 11.446
+    },
+    {
+      "test": "ParallelSeedPlanning",
+      "exit_code": 0,
+      "seconds": 22.513
+    },
+    {
+      "test": "GapCampaign",
+      "exit_code": 0,
+      "seconds": 4.323
+    },
+    {
+      "test": "RelationFrontier",
+      "exit_code": 0,
+      "seconds": 2.035
+    },
+    {
+      "test": "ParallelResiduals",
+      "exit_code": 0,
+      "seconds": 9.058
+    },
+    {
+      "test": "CoefficientParameters",
+      "exit_code": 0,
+      "seconds": 3.001
+    },
+    {
+      "test": "SelfReducedTargets",
+      "exit_code": 0,
+      "seconds": 2.073
+    },
+    {
+      "test": "LinearNormalization",
+      "exit_code": 0,
+      "seconds": 2.311
+    },
+    {
+      "test": "BoundaryReduction",
+      "exit_code": 0,
+      "seconds": 2.214
+    },
+    {
+      "test": "ReductionReuse",
+      "exit_code": 0,
+      "seconds": 2.109
+    },
+    {
+      "test": "TargetReduction",
+      "exit_code": 0,
+      "seconds": 3.116
+    },
+    {
+      "test": "SymmetryReuse",
+      "exit_code": 0,
+      "seconds": 2.157
+    },
+    {
+      "test": "RelabelCache",
+      "exit_code": 0,
+      "seconds": 2.18
+    },
+    {
+      "test": "OnDemandDE",
+      "exit_code": 0,
+      "seconds": 3.673
+    },
+    {
+      "test": "Workers",
+      "exit_code": 0,
+      "seconds": 5.509
+    },
+    {
+      "test": "PropagatorPowerLimits",
+      "exit_code": 0,
+      "seconds": 2.178
+    },
+    {
+      "test": "RetainedPhysicalSources",
+      "exit_code": 0,
+      "seconds": 4.083
+    },
+    {
+      "test": "LowPoleClosureFirst",
+      "exit_code": 0,
+      "seconds": 4.343
+    },
+    {
+      "test": "PhysicalCoordinateCampaign",
+      "exit_code": 0,
+      "seconds": 4.338
+    },
+    {
+      "test": "TopDerivativeBound",
+      "exit_code": 0,
+      "seconds": 4.786
+    },
+    {
+      "test": "FiniteFlowTargetSelection",
+      "exit_code": 0,
+      "seconds": 3.146
+    },
+    {
+      "test": "FiniteFlowDirectTargets",
+      "exit_code": 0,
+      "seconds": 2.803
+    },
+    {
+      "test": "FiniteFlowLinearAlgebra",
+      "exit_code": 0,
+      "seconds": 2.352
+    },
+    {
+      "test": "PreserveActualSpan",
+      "exit_code": 0,
+      "seconds": 2.096
+    },
+    {
+      "test": "FiniteSupportThenSpan",
+      "exit_code": 0,
+      "seconds": 3.945
+    },
+    {
+      "test": "PhysicalConstantCandidates",
+      "exit_code": 0,
+      "seconds": 2.161
+    },
+    {
+      "test": "BinaryCheckpoint",
+      "exit_code": 0,
+      "seconds": 3.893
+    },
+    {
+      "test": "FileHashedCheckpoint",
+      "exit_code": 0,
+      "seconds": 3.702
+    },
+    {
+      "test": "DeferredBoundaryCoefficients",
+      "exit_code": 0,
+      "seconds": 2.081
+    },
+    {
+      "test": "VerifiedRoundContinuation",
+      "exit_code": 0,
+      "seconds": 5.989
+    },
+    {
+      "test": "AdaptiveCampaign",
+      "exit_code": 0,
+      "seconds": 8.973
+    }
+  ],
+  "ResultsSHA256": "a3f9a0564f4bda2bdb069058db85d303dc0221aa0dfd10146a762908ee6a867c",
+  "KernelFiles": {
+    "Kernel/ClosurePreference.wl": "c8829d9f8979932701946fe9aa22ec6b20dd4b899b1177a128b13645eccc3db4",
+    "Kernel/Complexity.wl": "a375a9e56f39179c1281ea23ce7526abf80430067747e960b80ad72c66b3199a",
+    "Kernel/ConformalIBP.wl": "240d1a7fb01749a233677e01ec3c5b67806bec18c44add14bad11f4b21482bb5",
+    "Kernel/ConstantPoleCancellations.wl": "526dfae20ad6b80c5fc418ed1ae596aed4e4a77abd8793222d65fad912eb8acb",
+    "Kernel/CoordinateReconstruction.wl": "5eb4b910e1c3e124e9df0fdb0fe4df20bb59bb22f370ca765c00e0019ee68115",
+    "Kernel/Coupled.wl": "88915bb6fe565de95924b7adfd9c04a96230e608628656cce39c4eac5176b47e",
+    "Kernel/FiniteCoordinateSystem.wl": "a9709089169b15259a228274ef8e9dd811c7baa8953caa15e7c3110de09e96e9",
+    "Kernel/FiniteRepresentativePreference.wl": "b9b9f3b82128a563dd4e42097222ace61daa2e703bfe72cc09aa4fc3a0731daa",
+    "Kernel/FiniteSupport.wl": "55ca3d43d6248320cae405653e71a203eea28a678535bcdbbdc93d698fb5b0ea",
+    "Kernel/GrowthChains.wl": "7aa82990875a9c64b8a074aa3cf74878fe933ecb64c9cbf31711810ba6e3acba",
+    "Kernel/Iteration.wl": "250a83f16224ea67574d23ebffa8b8a5b38933ceb3ea67dc40a452fd4bbabee5",
+    "Kernel/LinearAlgebra.wl": "f15c085c27b58f810fc4988c0fbdc18ab9326e4bfc67087745d86b5460a27131",
+    "Kernel/MasterCount.wl": "47de99689af61e7678e9ab6fc768c0b7dfbbf1c994c331dd2cecfe8dcadf090a",
+    "Kernel/Ordering.wl": "4b4633247fad8828701a1c7396a56109a7530407a8d46d2cebad4534de8ac45d",
+    "Kernel/Ordering01Reference.wl": "743626b32ab15ce77ac5bcf074de7175004fbb67a6ac83c2be42a28d2b474358",
+    "Kernel/Ordering01Symmetry.wl": "b674f75cc4b24dac71519656e45f303d5ca63a66160a6c5b6c685a15763c0c3a",
+    "Kernel/PhysicalConstruction.wl": "3bed694e600f8646f46704d36a305ca104850e6670a24576adfbe1a7fd426513",
+    "Kernel/PhysicalCoordinateCampaign.wl": "b7e2c2bbf9a684f985b9246674f040cc015fee1303eea2a9cae9eec803f83f8a",
+    "Kernel/PhysicalCoordinateCore.wl": "ac11102cb2bd7138a16ec7fdacc874f251cba8ae2b1a162d05cf4e4e510f8387",
+    "Kernel/PhysicalCoordinateReference.wl": "4d9fc17866c4bf4d03a5ac121a7b063fd01888ed19f0ebc6c1f5cfa00edf0fbc",
+    "Kernel/PhysicalCoordinateSelection.wl": "21a8b163b5b336db851b8ac84fc5ff3038304fdb4b187576593550f9b41d6fa9",
+    "Kernel/PhysicalRelationDerivatives.wl": "0ee4f0f4a0f7ced1af746dbf886f45fb12ec5ea56721a7897b57374d07f2a1c3",
+    "Kernel/Reduction.wl": "8c1948ff62a1eff2a136ef5a45eeaa2f39ad577a1bfac635b98f9144d665586f",
+    "Kernel/Reporting.wl": "789f9232f7b698feef6099e8656efd803deff857ea02b2c84c77672a079a0794",
+    "Kernel/SeedPlanning.wl": "7ddd9923aeff0ee270b64c462b92f098ef75f0eef340e6d3fb80d63cc06230cf",
+    "Kernel/SpanPreservingFiniteBasis.wl": "8499c0316e9b1dd74bcd6d78b528dcd14358bcb30bbadf4cafa70bc788cd504e",
+    "Kernel/TargetReduction.wl": "a0845c2ae5fc80cd0806b8fe58f56673764e86cb76792c1f88223b9a40cbd418",
+    "Kernel/TopAnnihilator.wl": "bfe4504fef23943178ea0f8a88f30b335d14be6d137a211583d6ff02830eccea"
+  },
+  "FourLoopClosureClaimed": true,
+  "RetainedSourcePositiveAndUnresolvedSourceRejection": true,
+  "SourceVanishingOnlyAtNumericalPointRejected": true,
+  "HardPropagatorLimitsRegressionPassed": true,
+  "ThreeLoopClosedComparisonComplete": true,
+  "FourLoopHighestClosureIndependentlyVerified": true,
+  "FourLoopHighestBasisCount": 53,
+  "FourLoopFullSystemClaimed": true,
+  "FourLoopVerificationReport": "reproduction/four-loop-physical-cover-20260927/HighestVerification.json",
+  "CanonicalFullPhysicalPoolCacheRegressionPassed": true,
+  "CurrentImplementationHash": 25198455536859663158041172820890015546399026164759068379812159166583524482991,
+  "CachedCanonicalColumnReuseRegressionPassed": true,
+  "CachedAdditionalQueryColumnsRegressionPassed": true,
+  "FourLoopRequiredLowerBasisCount": 35,
+  "FourLoopRequiredLowerClosureIndependentlyVerified": true,
+  "FourLoopRequiredLowerSymbolicCurvatureExactlyZero": true,
+  "FourLoopRequiredLowerVerificationReport": "reproduction/four-loop-full-20260927/lower-35/independent-verification/Report.json",
+  "FourLoopFullBasisCount": 88,
+  "FourLoopFullBasisLoopCounts": {
+    "4": 53,
+    "3": 24,
+    "2": 7,
+    "1": 4
+  },
+  "FourLoopFullSymbolicCurvatureExactlyZero": true,
+  "FourLoopFullVerificationPoints": [
+    [
+      11,
+      17
+    ],
+    [
+      13,
+      19
+    ],
+    [
+      23,
+      29
+    ]
+  ],
+  "FourLoopFullVerificationReport": "reproduction/four-loop-full-20260927/independent-verification/Report.json",
+  "FullFourLoopDLog": {
+    "Passed": true,
+    "Dimension": 88,
+    "Letters": 18,
+    "BothNativeGaugeIdentitiesExactlyZero": true,
+    "ExactCurvature": true,
+    "Directory": "reproduction/four-loop-full-20260927/dlog",
+    "CandidateSHA256": "90922fd24225c32d50cd2c65c4ff03465d7bc56b73ef910c05b2d2ea9f7f78d6"
+  },
+  "FullFourLoopAnalytic": {
+    "Functions": 88,
+    "FourLoopFunctions": 53,
+    "LowerLoopFunctions": 35,
+    "UnknownIntegrationConstants": 0,
+    "MaximumChenWordLength": 8,
+    "CoefficientRecurrencesExactlyVerified": 196671,
+    "ExplicitFunctionVsDEMaxNativeAbsoluteDifference": "4.32e-49",
+    "TopDirectNumericalValidationPassed": true,
+    "TopDirectRequestedRelativePrecision": 0.001,
+    "BoundarySerialDirectBothWithinOneReportedError": true,
+    "BoundarySerialRequestedRelativePrecisionReached": false,
+    "Certificate": "reproduction/four-loop-full-20260927/analytic-88/AnalyticCertification88.json"
+  },
+  "LatestAdapterAndArtifactSync": "docs/SYNC_20260927.json"
+}

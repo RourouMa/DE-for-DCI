@@ -1,0 +1,11 @@
+{
+  "CoefficientRecurrencesChecked": 196671,
+  "AllYRecurrencesExactlyZero": true,
+  "AllInitialXRecurrencesExactlyZero": true,
+  "CanonicalBoundaryExactlyMatched": true,
+  "FailureCount": 0,
+  "TerminatingHigherWeightRecurrencesIncluded": true,
+  "Arithmetic": "fractions.Fraction, five independent boundary monomials",
+  "CandidateSHA256": "65391339918081249100659656892067437284169368382142011304420538984695295080662",
+  "Seconds": 4.77183985710144
+}

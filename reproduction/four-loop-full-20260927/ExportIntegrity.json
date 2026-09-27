@@ -1,0 +1,14 @@
+{
+	"ExportMatchesVerifiedCandidate":true,
+	"CandidateSHA256":42285664991240484377240617304679883743907896145210457372624021512396025543655,
+	"BasisCount":88,
+	"Highest53BlockExactlyPreserved":true,
+	"Lower35BlockExactlyPreserved":true,
+	"LowerDerivativesDoNotRaiseLoopOrder":true,
+	"AllRepresentativesSingleAtoms":true,
+	"MaximumExternalPropagatorPower":3,
+	"MaximumInternalPropagatorPower":1,
+	"FullSymbolicCurvatureExactlyZero":true,
+	"ThreeIndependentNativePointsPassed":true,
+	"SourceFullPoolHash":22255973515291319681257048522839225917112611100297540466513404103356548834462
+}

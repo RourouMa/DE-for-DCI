@@ -1,0 +1,12 @@
+{
+  "CanonicalBoundarySource": "../global-boundary/CanonicalBoundary88.wl",
+  "CanonicalBoundaryConstraintsRank": 88,
+  "PathRegularityResidualExactlyZero": true,
+  "SeparateCornerResiduesAnnihilateBoundaryExactly": true,
+  "NoReplacementByNativeBoundary": true,
+  "PhysicalCanonicalRegularityIndependentlyPending": false,
+  "MaximumWordLength": 8,
+  "Domain": "0 < x < y^3 < 1",
+  "PhysicalCanonicalRegularityIndependentlyProved": true,
+  "IndependentBoundaryCertificate": "../boundary/IndependentBoundaryCrossCheck.json"
+}

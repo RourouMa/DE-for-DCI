@@ -1,0 +1,11 @@
+{
+	"LoaderReturns88IndexedNativeFunctions":true,
+	"VariablesExplicitlyNamespaced":true,
+	"UnknownBoundarySymbolsAbsent":true,
+	"All15GPLKernelConversionsExactlyVerified":true,
+	"FourOneLoopFunctionsExactlyReproduced":true,
+	"NonSystemSymbols":[
+		"DCIAnalytic`x",
+		"DCIAnalytic`y"
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"GapIndex":2,
+	"Original30NativeDEExactlyPreserved":true,
+	"YPrimitiveDerivativeResidualExactlyZero":true,
+	"RegularY1LimitFinite":true,
+	"ScaledXResidualBoundaryExactlyZero":true,
+	"ActualXDerivativeNeedNotUseSingularCoproductFormula":true
+}

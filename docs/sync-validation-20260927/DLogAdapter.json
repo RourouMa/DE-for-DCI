@@ -1,0 +1,15 @@
+{
+  "Passed": true,
+  "Checks": {
+    "ExactConstantResidues": true,
+    "RejectNonDLogPole": true,
+    "BothGaugeIdentities": true,
+    "RejectWrongInverse": true,
+    "RejectDependentAlphabet": true,
+    "RejectAllSingularSamples": true,
+    "HermiteDerivativeResidual": true,
+    "Full88ExactReconstruction": true
+  },
+  "FullDimension": 88,
+  "Letters": 18
+}

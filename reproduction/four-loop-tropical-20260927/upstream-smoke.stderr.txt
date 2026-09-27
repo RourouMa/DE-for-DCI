@@ -1,0 +1,4 @@
+(Effective) kinematic regime: Euclidean (generic).
+Generalized permutahedron property seems fulfilled.
+Started integrating using 2 threads and N = 1e+07 points.
+Finished in 2.40609 seconds = 0.000668358 hours.

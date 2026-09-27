@@ -1,0 +1,75 @@
+{
+  "ExplicitExpressionEvaluatedDirectly": true,
+  "DifferentialEquationMatricesUsedByExpressionEvaluator": false,
+  "CanonicalComponents": 88,
+  "NativeComponents": 88,
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "ExplicitTermCount": 62140,
+  "TopExplicitTermCount": 3084,
+  "MaximumWordLength": 8,
+  "Orders": [
+    240,
+    320,
+    400,
+    480
+  ],
+  "RequestedPrecisions": [
+    80,
+    100,
+    120,
+    140
+  ],
+  "Convergence": [
+    {
+      "Orders": [
+        240,
+        320
+      ],
+      "TopAbsoluteDifference": "1.99938621416053533075002115132115052997056177698000400963912818821953E-31",
+      "MaxCanonical88Difference": "6.77648481737529939587326450316666614861471502566082265770287139412549E-31",
+      "MaxNative88Difference": "1.591653704557275406676706077377439779347772718276825916971923517777199E-30",
+      "MaxNativeDifferenceIndex": 46
+    },
+    {
+      "Orders": [
+        320,
+        400
+      ],
+      "TopAbsoluteDifference": "2.149138418671762123666299410428446755480796807482763022780829059817453905209375E-41",
+      "MaxCanonical88Difference": "5.814062637414940999446479069294509605948810108791244057832650911230655105558959E-41",
+      "MaxNative88Difference": "1.4077358713706949081853350412006891580899567136881950744922315501223856132276516E-40",
+      "MaxNativeDifferenceIndex": 53
+    },
+    {
+      "Orders": [
+        400,
+        480
+      ],
+      "TopAbsoluteDifference": "2.1925285043791992376104592680526814587259630352535765822363508730010624825568230168018262E-51",
+      "MaxCanonical88Difference": "5.1577718049074899464167182133062436781902876317784218861298097163666847069655617258082970E-51",
+      "MaxNative88Difference": "1.39988410094106977895894477674991277359622687961301508585710490241476343644716183296190829E-50",
+      "MaxNativeDifferenceIndex": 53
+    }
+  ],
+  "BestTopValue": "1.2949774454346312026756864422914142929288329003802768566657260796825898789997241610504974664120850148671804108899250948124825568230168018262",
+  "Conservative50DigitTopValue": "1.2949774454346312026756864422914142929288329003803",
+  "TopDifferenceVersusIndependentDE85DigitRun": "1.710277027640075119473039339757610504974664120850148671804108899250948124825568230168018262E-49",
+  "MaxCanonical88DifferenceVersusDE": "1.993954943199202025450385255559766105363898676226539309984363607719562747069655617258082970E-49",
+  "MaxNative88DifferenceVersusDE": "4.319673706562234261297666404209458302345195048471119325682549987528617353096071946417265049E-49",
+  "All88CanonicalAgreeWithDETo40AbsoluteDecimalPlaces": true,
+  "All88NativeAgreeWithDETo40AbsoluteDecimalPlaces": true,
+  "MaxNativeDifferenceIndex": 46,
+  "IndependentOneLoopClosedFormIndices": [
+    80,
+    81,
+    82,
+    83
+  ],
+  "IndependentOneLoopClosedFormMaxDifference": "9.4334752893090959747905856220280953453266377605569419671473488220362562779843929301379842160694918473125784E-63",
+  "TopCanonicalCancellationRatio": "524.00100074852236047881131752660976031924938856776027835368034881203745340896842740763914129718483358362665979000793474317863181206411723367",
+  "HighestOrderArithmeticPrecisionIsNotClaimedAccuracy": true,
+  "Conclusion": "The explicit finite analytic expression independently reproduces the differential-equation solution to its stated conservative 40-decimal-place accuracy. This does not resolve or certify the separate original-integral direct numerical comparison."
+}

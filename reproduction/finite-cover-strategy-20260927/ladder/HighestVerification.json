@@ -1,0 +1,21 @@
+{
+	"Passed":true,
+	"HighestLoopClosedModuloSources":true,
+	"BasisCount":12,
+	"NativeFiniteness":true,
+	"Independent":true,
+	"FreshNativeDEFullPoolAgreement":true,
+	"HomogeneousCurvatureAtPointZero":true,
+	"OriginalTopRationallyCovered":true,
+	"FullPoolHash":111324100375850272488824741420897007012706631073698282716189308052257016070487,
+	"ImplementationHash":20611029306463957087107673423941240121750244943564457710152554003949762964447,
+	"Point":[
+		11,
+		17
+	],
+	"Prime":9223372036854775783,
+	"SourcesRetained":true,
+	"FullDEClaimed":false,
+	"LowerLoopComputed":false,
+	"Seconds":2.0942924e1
+}

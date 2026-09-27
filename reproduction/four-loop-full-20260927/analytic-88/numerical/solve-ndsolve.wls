@@ -1,0 +1,18 @@
+$IterationLimit=Infinity;out=DirectoryName[$InputFileName];root=DirectoryName[DirectoryName[out]];
+startTime=AbsoluteTime[];prec=80;ndprec=70;ord=88;sl=4;s0=1/20;
+bf=Environment["DCI_BOUNDARY_JSON"];If[bf===$Failed||!FileExistsQ[bf],Print["Provide DCI_BOUNDARY_JSON"];Quit[2]];
+a=Get[FileNameJoin[{root,"four-loop-dlog-20260927","structure","Full88DLogCandidate.wl"}]];bd=Import[bf,"RawJSON"];
+dec[s_String]:=Module[{q=StringSplit[s,{"e","E"}],m,places,n,ex},m=StringSplit[q[[1]],"."];places=If[Length[m]==2,StringLength[m[[2]]],0];n=ToExpression[StringReplace[q[[1]],"."->""]];ex=If[Length[q]==2,ToExpression[q[[2]]],0];N[n 10^(ex-places),80]];
+v0=dec /@ Lookup[bd,"Values",Lookup[bd,"values",{}]];If[Length[v0]!=88,Print["Need 88 values"];Quit[3]];
+cs=SparseArray /@ a["ResidueMatrices"];wl=a["Letters"]/.{x->1-sl s,y->1-s};vals=Exponent[#,s,Min]& /@ wl;
+r=Total[MapThread[Times,{vals,cs}]];rv=N[r.v0,prec];Print["Boundary Rv0 ",Max[Abs[rv]]];
+If[Max[Abs[rv]]>10^-60,Print["Nonregular boundary"];Quit[4]];
+ks=Table[With[{q=Cancel[D[wl[[k]],s]/wl[[k]]-vals[[k]]/s]},CoefficientList[Normal[Series[q,{s,0,ord-1}]],s]],{k,Length[wl]}];ks=N[PadRight[#,ord]& /@ks,prec];
+powers={SparseArray[IdentityMatrix[88]]};Do[z=Last[powers].r;If[Total[Abs[Flatten[Normal[z]]]]===0,Break[]];AppendTo[powers,z],{90}];If[Length[powers]>88,Print["R not nilpotent"];Quit[5]];
+Print["Residue nilpotence index ",Length[powers]];vc={v0};
+Do[rhs=Sum[cs[[k]].Sum[ks[[k,j+1]]vc[[n-j]],{j,0,n-1}],{k,Length[cs]}];vn=Sum[powers[[k+1]].rhs/n^(k+1),{k,0,Length[powers]-1}];AppendTo[vc,vn],{n,ord}];
+vstart=Sum[vc[[n+1]]N[s0,prec]^n,{n,0,ord}];Print["Initial Taylor tail ",Max[Abs[Last[vc]N[s0,prec]^ord]]];
+xx=1-sl s0+(1/4-(1-sl s0))t;yy=1-s0+(3/4-(1-s0))t;ww=a["Letters"]/.{x->xx,y->yy};conn=Sum[cs[[k]]Cancel[D[ww[[k]],t]/ww[[k]]],{k,Length[ww]}];
+Print["NDSolve start"];uv=Table[Unique["u"],{88}];eqs=Join[Thread[(Derivative[1][#][t]& /@uv)==conn.(#[t]& /@uv)],Thread[(#[0]& /@uv)==vstart]];sol=NDSolveValue[eqs,uv,{t,0,1},WorkingPrecision->ndprec,AccuracyGoal->50,PrecisionGoal->50,MaxSteps->Infinity,Method->"Extrapolation"];v=(#[1]& /@sol);top=N[(a["NewToNative"][[1]]/.{x->1/4,y->3/4}).v,65];Print["Top ",InputForm[top]];
+Put[<|"Top"->top,"CanonicalValues"->v,"InitialValues"->vstart,"BoundaryRv0"->rv,"TaylorCoefficients"->vc,"Solution"->sol,"BoundaryFile"->bf|>,FileNameJoin[{out,"TopNDSolve.wl"}]];
+Export[FileNameJoin[{out,"TopNDSolve.json"}],<|"TopValue"->ToString[top,InputForm],"WorkingPrecision"->ndprec,"InitialWorkingPrecision"->prec,"AccuracyGoal"->50,"PrecisionGoal"->50,"InitialTaylorDegree"->ord,"ResidueNilpotenceIndex"->Length[powers],"InitialTaylorTail"->ToString[Max[Abs[Last[vc]N[s0,prec]^ord]],InputForm],"BoundaryResidueResidual"->ToString[Max[Abs[rv]],InputForm],"Point"->{"1/4","3/4"},"DirectEstimateUsedForBoundary"->False,"Seconds"->(AbsoluteTime[]-startTime)|>,"RawJSON"];Quit[0];

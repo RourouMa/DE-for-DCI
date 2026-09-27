@@ -1,0 +1,17 @@
+{
+	"NonzeroDerivativeRemainderCount":0,
+	"RemainderLoopCounts":{},
+	"AdditionalDirectionDetails":[],
+	"BasisCount":88,
+	"BasisRank":88,
+	"InputAndDERank":88,
+	"UnresolvedCoordinateAtoms":323,
+	"BasisDependent":false,
+	"DerivativeAddsDirections":false,
+	"AddedRowPositions":[],
+	"Point":[
+		11,
+		17
+	],
+	"FullPoolHash":22255973515291319681257048522839225917112611100297540466513404103356548834462
+}

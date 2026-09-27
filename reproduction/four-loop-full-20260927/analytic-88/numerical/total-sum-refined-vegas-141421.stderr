@@ -1,0 +1,1 @@
+Predeclared full sum Vegas: seed=141421 mineval=maxeval=1000000 nstart=10000 nincrease=10000 epsrel=0.001 dim=12 sectors=1492 prefactor=24 CUBACORES=2

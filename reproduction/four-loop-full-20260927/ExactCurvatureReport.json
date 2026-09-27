@@ -1,0 +1,16 @@
+{
+  "Passed": true,
+  "BasisCount": 88,
+  "AllEntriesChecked": true,
+  "CheckedEntries": 7744,
+  "SymbolicCurvatureExactlyZero": true,
+  "MatrixFileSHA256": 42285664991240484377240617304679883743907896145210457372624021512396025543655,
+  "Method": "Entrywise exact rational simplification of d_y A_x - d_x A_y + A_x A_y - A_y A_x",
+  "Workers": 4,
+  "WorkerExitCodes": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

@@ -20,28 +20,32 @@ pendingSeedPlan[plan_Association,completed_List]:=Module[{done=Association[(#->T
   total++;key={Hash[ops[[batch["OperatorIndex"]]],"SHA256"],seed};
   Which[KeyExistsQ[done,key],prior++;False,KeyExistsQ[seen,key],overlap++;False,True,AssociateTo[seen,key->True];True]]]|>],{batch,plan["Batches"]}];
  Join[plan,<|"Batches"->batches,"SeedingDeduplication"-><|"CandidateOrdinaryApplications"->total,"SkippedCompletedOrdinaryApplications"->prior,"SkippedDuplicateOrdinaryApplications"->overlap,"PendingOrdinaryApplications"->(total-prior-overlap)|>|>]];
-generatePlannedSystem[f_,targets_,options_,plan_]:=Module[{done=Association[(#->True)& /@ options["CompletedApplications"]],
- equations={},attempted={},rejected={},r,key,ops=plan["Operators"],syms,raw,newSymmetry,images},
- Do[Do[key={Hash[ops[[b["OperatorIndex"]]],"SHA256"],seed};If[KeyExistsQ[done,key],Continue[]];
-  r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];AppendTo[attempted,key];AssociateTo[done,key->True];
-  If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],
-  {seed,b["Seeds"]}],{b,plan["Batches"]}];
- Do[If[options["SeedDomain"]==="Original" && !originalDomainExpressionQ[f,seed],Continue[]];
-  If[!FiniteIntegralQ[f,seed],Continue[]];
-  Do[If[ops[[k]]["Degree"]=!=ConstantArray[0,f["LoopCount"]],Continue[]];
-   key={Hash[ops[[k]],"SHA256"],seed};If[KeyExistsQ[done,key] || MemberQ[attempted,key],Continue[]];
-   r=IBPRelation[f,ops[[k]],seed];AppendTo[attempted,key];AssociateTo[done,key->True];
-   If[FailureQ[r],AppendTo[rejected,<|"Application"->key,"Failure"->r|>],If[!zero[r],AppendTo[equations,r]]],{k,Length[ops]}],
-  {seed,options["FiniteSeeds"]}];
- raw=Union[support[targets],support[equations]];
- newSymmetry=Complement[raw,options["CompletedSymmetryInputs"]];
+generatePlannedSystem[f_,targets_,options_,plan_]:=Module[
+ {done=Association[(#->True)& /@ options["CompletedApplications"]],equations,attempted,rejected,
+  r,key,ops=plan["Operators"],opHashes,syms,raw,newSymmetry,images,harvest,eqTag,appTag,rejTag},
+ opHashes=Hash[#,"SHA256"]& /@ ops;
+ harvest=Association[Last[Reap[
+  Do[Do[key={opHashes[[b["OperatorIndex"]]],seed};If[KeyExistsQ[done,key],Continue[]];
+   r=IBPRelation[f,ops[[b["OperatorIndex"]]],seed];Sow[key,appTag];AssociateTo[done,key->True];
+   If[FailureQ[r],Sow[<|"Application"->key,"Failure"->r|>,rejTag],If[!zero[r],Sow[r,eqTag]]],
+   {seed,b["Seeds"]}],{b,plan["Batches"]}];
+  Do[If[options["SeedDomain"]==="Original"&&!originalDomainExpressionQ[f,seed],Continue[]];
+   If[!FiniteIntegralQ[f,seed],Continue[]];
+   Do[If[ops[[k]]["Degree"]=!=ConstantArray[0,f["LoopCount"]],Continue[]];
+    key={opHashes[[k]],seed};If[KeyExistsQ[done,key],Continue[]];
+    r=IBPRelation[f,ops[[k]],seed];Sow[key,appTag];AssociateTo[done,key->True];
+    If[FailureQ[r],Sow[<|"Application"->key,"Failure"->r|>,rejTag],If[!zero[r],Sow[r,eqTag]]],{k,Length[ops]}],
+   {seed,options["FiniteSeeds"]}],{eqTag,appTag,rejTag},Rule]]];
+ equations=Lookup[harvest,eqTag,{}];attempted=Lookup[harvest,appTag,{}];rejected=Lookup[harvest,rejTag,{}];
+ raw=Union[support[targets],support[equations]];newSymmetry=Complement[raw,options["CompletedSymmetryInputs"]];
  images=CanonicalIntegral[f,#]& /@ newSymmetry;
  If[AnyTrue[images,FailureQ],Return[First[Select[images,FailureQ]]]];
  syms=newSymmetry-images;
  equations=DeleteCases[DeleteDuplicates[canonicalLinear /@ Join[equations,syms]],0];
  <|"Equations"->equations,"Applications"->attempted,"RejectedApplications"->rejected,
-  "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,
-  "NewSymmetryInputs"->newSymmetry,"AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],"SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","InverseOperatorPolicy","UnmappedCenters"}],
+  "DegreeCoverageGaps"->plan["EmptyDegrees"],"SymmetryInputs"->raw,"NewSymmetryInputs"->newSymmetry,
+  "AllGeneratedSupportCanonicalized"->True,"SeedGeometry"->plan["Geometry"],
+  "SeedPolicy"->KeyTake[plan,{"SeedDomain","SeedCenters","BlockExpansion","InverseOperatorPolicy","UnmappedCenters"}],
   "SeedingDeduplication"->Lookup[plan,"SeedingDeduplication",<||>],"SeedPlanning"->Lookup[plan,"SeedPlanning",<||>],
   "AllActualSeedsInsideOriginalDomain"->And@@(originalDomainExpressionQ[f,Last[#]]& /@ attempted)|>];
 
@@ -172,14 +176,20 @@ FiniteIntegralQ[f_Association,e_]:=Module[{gs=support[e],bad,rrs=0,a,supported=T
 
 primitive[v_]:=Module[{a=v,d,g},If[!VectorQ[a,MatchQ[#,_Integer|_Rational]&],Return[$Failed]];
  If[And@@(zero /@ a),Return[a]];d=LCM@@(Denominator /@ a);a=d a;g=GCD@@Abs[a];Sign[First[Select[a,#!=0&]]] a/g];
-constantAtoms[c_,vars_]:=Module[{atoms={},den,poly,mons,failed=False},
- Do[den=If[vars==={},LCM@@(Denominator /@ row),PolynomialLCM@@(Denominator /@ row)];
+constantAtoms[c_,vars_]:=Module[{den,poly,rules,mons,index,block,failed=False,blocks},
+ blocks=Reap[Do[
+  den=If[vars==={},LCM@@(Denominator /@ row),PolynomialLCM@@(Denominator /@ row)];
   poly=Expand[Cancel[den #]]& /@ row;
-  If[vars==={},AppendTo[atoms,poly],
+  If[vars==={},Sow[{poly}],
    If[!And@@(PolynomialQ[#,vars]& /@ poly),failed=True;Break[]];
-   mons=Union[Flatten[First /@ CoefficientRules[#,vars]& /@ poly,1]];
-   Do[AppendTo[atoms,Fold[Coefficient[#1,First[#2],Last[#2]]&,#,Transpose[{vars,mon}]]& /@ poly],{mon,mons}]],{row,c}];
- If[failed,$Failed,atoms]];
+   rules=CoefficientRules[#,vars]& /@ poly;
+   mons=Union[Flatten[First /@ #& /@ rules,1]];If[mons==={},Continue[]];
+   index=AssociationThread[mons,Range[Length[mons]]];
+   block=Normal[SparseArray[Flatten[MapIndexed[
+    Function[{columnRules,id},({index[First[#]],First[id]}->Last[#])& /@ columnRules],rules],1],
+    {Length[mons],Length[row]}]];
+   Sow[block]],{row,c}]][[2]];
+ If[failed,$Failed,If[blocks==={},{},Join@@First[blocks]]]];
 BuildFiniteBasis[f_Association,rows_List]:=Module[{gs=support[rows],safe,div,c,atoms,env,p,inside,pool,chosen={},ranks={},trial,v,rank,maps,highRows,
  basis,m,bp,w,residue,den,definitions},
  safe=Select[gs,FiniteIntegralQ[f,#]&];div=Complement[gs,safe];

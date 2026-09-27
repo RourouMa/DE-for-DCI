@@ -2,28 +2,31 @@
 
 A Wolfram Language research package for auditable IBP reduction and differential-equation iteration of **four-dimensional embedding-space conformal integrals at variable loop order**.
 
-Version 0.5.0 is an experimental research package. It does not assert that the four-loop ladder is closed, that every possible conformal family is supported, or that a bounded seed search finds all IBP identities. Unsupported cases return diagnostics instead of fabricated finite combinations or a false closure certificate.
+Version 0.6.0 is an experimental research package. The four-loop ladder result below has a complete, verified source-retaining differential-equation system. This family-specific result does not imply support for every conformal family or completeness of a bounded IBP seed search. Unsupported cases return diagnostics.
 
-## Start here: collaborator release (25 September 2026)
+## Current local work (27 September 2026)
 
-The [English collaborator handoff](docs/COLLABORATOR_HANDOFF.md) explains the
-current strategy, verified three-loop counts, open four-loop problem, dependencies
-and hardware. The corrected complete systems have **19+7+4 = 30** ladder elements
-and **31+11+4 = 46** tennis-court elements. The current four-loop fifth round has a
-100-element finite cover, but the sixth-round input-plus-DE rank is **166**;
-it is not closed. Lower-loop DE work waits for verified highest-loop closure.
+The [0.6.0 strategy notes](docs/STRATEGIES_0.6.0.zh-CN.md) describe the integrated physical-coordinate finite-cover route and the rule to repair relations after three increases along a fixed direction. The new from-Top ladder run has **12** highest-loop finite elements and **12+7+4 = 23** elements in the full source-retaining system; both independently passed full-pool numerical verification. The tennis-court cover has decreased from **31 to 23** at highest loop and from **46 to 23+11+4 = 38** in the full source-retaining system; both passed independent verification. The prior verified baselines were **19+7+4 = 30** and **31+11+4 = 46**. The compressed bases have substantially more complicated DE entries; [the recorded selection lesson](docs/FINITE_COVER_COMPLEXITY_LESSONS.zh-CN.md) prioritizes simple atoms and short constant combinations and requires a matrix-complexity comparison before adopting a smaller basis.
+
+The [complete four-loop ladder system](reproduction/four-loop-full-20260927/README.zh-CN.md) closes with **53+24+7+4 = 88 individual integrals**, including all lower-loop sources. Three independent native-pool checks and the exact full curvature check passed. A rational invertible transformation gives a [constant-residue dlog form with 18 letters](reproduction/four-loop-full-20260927/dlog/README.zh-CN.md). [All 88 analytic integral functions](reproduction/four-loop-full-20260927/analytic-88/README.zh-CN.md) are exported as explicit finite Chen/GPL sums, with every integration constant fixed. Two independent direct top integrations passed the predeclared **0.1% statistical precision** check at (1/4,3/4), using the complete sector sum as one integrand. Earlier unsafe concurrent-sector runs and correlated-error estimates remain documented and excluded from acceptance. The operational bound **70** applies to the highest-loop quotient. The [25 September collaborator handoff](docs/COLLABORATOR_HANDOFF.md) is a historical release snapshot.
 
 Use `python3 scripts/run-four-loop.py --help` for the configurable production
 launcher. A portable [epoch-3 relation-pool snapshot](reproduction/four-loop-20260925/README.md)
 is supplied separately as a Release asset; a clone contains code, documentation,
 small basis/status files and corrected three-loop matrices. There is no Codex or
-Claude runtime dependency. See [0.5.0 validation](docs/VALIDATION_0.5.0.json) for the
-44 regression groups passed on the release source.
+Claude runtime dependency. The current local 0.6.0 source passes [52 regression groups](docs/VALIDATION_0.6.0.json).
+The [0.5.0 validation](docs/VALIDATION_0.5.0.json) records the 44 groups for the earlier release.
+
+## Reusing the latest work for four-loop tennis court
+
+The [transfer workflow](docs/FOUR_LOOP_TENNIS_WORKFLOW_20260927.zh-CN.md) collects the low-power finite-cover policy, source-retaining closure checks, exact dlog helpers, boundary construction, analytic iteration, and numerical validation. [Adapters/DLogTools.wl](Adapters/DLogTools.wl) exposes exact constant-residue decomposition, rational Hermite extraction and gauge verification; it does not perform an automatic full gauge search.
+
+The [tropical Monte Carlo adapter](Adapters/TropicalMonteCarlo.zh-CN.md) accepts a verified momentum-graph JSON for a new topology and records normalization, fixed sample budgets, actual threads, warnings and errors. Its [ladder pilot](reproduction/four-loop-tropical-20260927/README.zh-CN.md) passes exact U/F mapping checks but has **not** reached the 0.1% top precision target. The accepted complete-sum Vegas result remains available. External feyntrop is pinned and installed separately; no large relation pools, binary caches or compiled libraries are included in this source snapshot.
 
 ## Counting before DE iteration (0.5.0)
 
-The four-loop ladder campaign uses the user-estimated same-loop threshold **100**:
-`MasterCountStrategy -> "UserEstimate", MasterCountUserUpperBound -> 100`.
+The four-loop ladder campaign uses the user-estimated same-loop threshold **70**:
+`MasterCountStrategy -> "UserEstimate", MasterCountUserUpperBound -> 70`.
 When the rational rank of the input plus both derivatives exceeds this value,
 the campaign repairs the relation pool and replays from the original top before
 advancing differentiation. This operational threshold is not a certified count;
@@ -247,9 +250,19 @@ result = RunDE[family, targets, "Solver" -> "FiniteFlow", "Workers" -> 4];
 
 `Workers -> 4` launches up to four independent kernel processes, not Wolfram `Parallel*`. IBP application IDs are independent of shard numbering. Use `"KernelExecutable"` to specify a different kernel path. Reduction itself is not sharded by this option. Failed worker job directories are retained for inspection.
 
+## Optional NeatIBP-style selection and Kira
+
+The [linear-system adapters](Adapters/README.md) apply SparseRREF/SpaSM or
+coefficient-aware target dependency selection to existing conformalIBP
+equations. They also export arbitrary homogeneous systems to Kira. Generator
+syzygies and the default campaign solver are unchanged. A production-sized
+numerical comparison reduced 104615 selected original rows to 49082 while
+preserving all 1084 target normal forms in an independent full-pool check;
+this does not by itself establish symbolic closure or an end-to-end speedup.
+
 ## Checkpoints and Ubuntu
 
-All machine-specific paths are supplied at runtime. On Ubuntu, clone this private repository using your GitHub authorization, install/activate Wolfram, and build the Linux FiniteFlow backend. Do not copy macOS dynamic libraries.
+All machine-specific paths are supplied at runtime. On Ubuntu, clone this repository, install/activate Wolfram, and build the Linux FiniteFlow backend. Do not copy macOS dynamic libraries.
 
 ```sh
 git clone https://github.com/RourouMa/DE-for-DCI.git
@@ -272,7 +285,7 @@ WolframKernel -script Tests/FiniteFlow.wls /path/to/finiteflow/install /path/to/
 WolframKernel -script Tests/CompareLegacy.wls /path/to/IBP4loop.wl
 ```
 
-The repository excludes original research inputs, PDFs, large relation caches and computed campaign outputs. No four-loop closure result is bundled or implied.
+The repository excludes original research inputs, PDFs and large relation caches. Selected verified matrices, analytic functions and audit certificates are bundled under `reproduction/`; their documentation identifies the retained external inputs needed for full relation-pool reconstruction.
 
 ## Optimized reduction and default seeding (0.2.0)
 
@@ -420,3 +433,21 @@ Parallel workers receive only completed finite-expression applications needed by
 Joint action searches also admit seeds with disjoint double-collision pairs. Each completed relation must cancel every literal pair residue and pass the independent rational-action check. Overlapping multi-pair seeds remain unsupported; the ordinary contact calculation is unchanged. This extends relation discovery, not the finite-basis validator or the closure acceptance criterion.
 
 Joint searches match seed weights to each generated operator degree, so legal mixed-degree pairs can participate together. Sparse constraint assembly avoids allocating coefficients for absent integral/action pairs; complete candidate actions still undergo the independent rational and residue checks.
+
+### Physical-coordinate finite coverage (0.6.0)
+
+`RunPhysicalCoordinateDE[family, {top}, physicalEquations, "OutputDirectory" -> path]` restarts from the original input and reconstructs complete physical rows directly in an independent finite basis. It uses constant physical candidates, exact constant cancellations of over-limit propagator powers, hard finite-representative limits of three for external-loop denominators and two for loop-loop denominators, physical derivative caching, a full-pool finite-field rank witness and rational coordinate reconstruction. Sources are retained in the immutable physical pool; this API reports highest-loop closure modulo sources, not a full mixed-loop DE.
+
+Initialize FiniteFlow first. Options include `"Workers"`, `"MasterCountUserUpperBound"`, `"GrowthChainThreshold" -> 3`, `"VerificationPoint" -> {11,17}`, `"ExtraFiniteCandidates"`, and `"FiniteReferenceBasis"`. The latter uses a finite candidate frame only as a coordinate reference: all coordinates are recomputed in the current physical pool and only the actual independent span is selected, preferring constant combinations when available. A candidate is not verified closure until `scripts/verify-physical-coordinate-run.wls RUN FINITEFLOW_ROOT [PACKAGE_ROOT]` passes a fresh full-pool solve, native differentiation, basis independence, numerical homogeneous curvature, and original-top rational coverage.
+
+Repeated chains trigger `RelationRepairRequired` before another DE input is accepted. `AssessGrowthChains` also drives the ordinary `RunDE` repair path. `DifferentiatePhysicalRelations` derives identities from complete finite source-free physical relations, including coefficient derivatives; callers must verify the parent identities are in their physical pool. No projected reduction identity may be promoted to a physical relation.
+
+The planned IBP generator now collects equations, application records and rejected applications with `Reap`/`Sow`, preserving their exact native order, symmetry expansion and deduplication.
+
+`ReconstructFiniteCoordinateSystem[families, basis, originalInputs, physicalEquations, "OutputDirectory" -> path]` reconnects a verified highest-loop basis with declared lower-loop finite candidates. `families` maps each loop count to a complete `CreateFamily` result. It recomputes every native derivative, maps all contact sources to their declared families, reconstructs the full rational matrices, and checks full-pool independence, top coverage, and numerical curvature. Saved DE matrices are not used as equations. Run `scripts/verify-finite-coordinate-system.wls RUN FINITEFLOW_ROOT [PACKAGE_ROOT]` for a separate process that recomputes derivatives and checks the saved matrices against a fresh complete-pool solve.
+
+For the four-loop closure search, use `"FiniteCoverPolicy" -> "LowPoleClosureFirst"` with [the four-loop physical-cover options](Examples/four-loop-physical-closure-policy.wl). Low-pole simple representatives take precedence over matching cover cardinality to the current rank. A larger covering space receives a separate rational coverage certificate and actual-rank certificate. After closure, use the verified finite definitions as a reference frame and replay with `"PreserveActualSpan"` to compress the system, then reverify closure.
+
+The [four-loop simple physical cover](reproduction/four-loop-physical-cover-20260927/README.zh-CN.md) has independently verified highest-loop closure with **53 individual integrals**, with external-loop powers at most 3 and loop-loop powers at most 1. Its [complete mixed-loop extension](reproduction/four-loop-full-20260927/README.zh-CN.md) contains 88 individual integrals and retains every lower-loop source. The dlog basis and analytic functions are provided alongside the original atom basis.
+
+同步验证见 [SYNC_20260927.json](docs/SYNC_20260927.json)。从 package 根目录运行 `python3 scripts/verify-artifacts.py` 可核对已发布结果的 SHA-256 清单。

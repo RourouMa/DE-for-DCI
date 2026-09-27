@@ -1,0 +1,21 @@
+{
+  "Policy": "Fixed configured wall clock plus 60s grace; only registered task PIDs",
+  "Pending": [],
+  "Actions": [
+    {
+      "File": "DirectStrong-qmc-default.json",
+      "PID": 639244,
+      "Seconds": 962.9956419467926
+    },
+    {
+      "File": "DirectStrong-qmc-polysingular.json",
+      "PID": 639246,
+      "Seconds": 962.9810292720795
+    },
+    {
+      "File": "DirectSerial-qmc-default.json",
+      "PID": 659076,
+      "Seconds": 960.7522630691528
+    }
+  ]
+}

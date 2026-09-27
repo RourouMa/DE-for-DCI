@@ -1,0 +1,1 @@
+{"Method":"qmc","Seed":20260928,"MaxEval":100000,"Sectors":1492,"Dimension":12,"Prefactor":24,"Value":1.4154877649188298,"Error":0.13039812625380001,"Seconds":21.141684971,"SingleTotalIntegrand":true,"ReferenceRead":false}

@@ -1,0 +1,113 @@
+{
+  "All20UAndFChecksPassed": true,
+  "MaxRelativeDifference": 1.4099832412739488e-14,
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "Integrand": "24 U^3/F^5",
+  "ProjectiveGauge": "last active internal parameter=1",
+  "DEOrBoundaryUsed": false,
+  "Checks": [
+    {
+      "U_relative": 6.661338147750939e-16,
+      "F_relative": 4.440892098500626e-16,
+      "IntegrandRelative": 6.661338147750939e-16
+    },
+    {
+      "U_relative": 0.0,
+      "F_relative": 1.1102230246251565e-16,
+      "IntegrandRelative": 6.661338147750939e-16
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 4.440892098500626e-16,
+      "IntegrandRelative": 1.5543122344752192e-15
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 4.440892098500626e-16,
+      "IntegrandRelative": 1.6653345369377348e-15
+    },
+    {
+      "U_relative": 6.661338147750939e-16,
+      "F_relative": 8.881784197001252e-16,
+      "IntegrandRelative": 3.1086244689504383e-15
+    },
+    {
+      "U_relative": 4.440892098500626e-16,
+      "F_relative": 8.881784197001252e-16,
+      "IntegrandRelative": 3.552713678800501e-15
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 1.1102230246251565e-16,
+      "IntegrandRelative": 1.5543122344752192e-15
+    },
+    {
+      "U_relative": 9.992007221626409e-16,
+      "F_relative": 1.2212453270876722e-15,
+      "IntegrandRelative": 3.3306690738754696e-15
+    },
+    {
+      "U_relative": 1.1102230246251565e-16,
+      "F_relative": 1.5543122344752192e-15,
+      "IntegrandRelative": 7.771561172376096e-15
+    },
+    {
+      "U_relative": 0.0,
+      "F_relative": 2.220446049250313e-16,
+      "IntegrandRelative": 9.992007221626409e-16
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 4.440892098500626e-16,
+      "IntegrandRelative": 3.1086244689504383e-15
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 0.0,
+      "IntegrandRelative": 2.220446049250313e-16
+    },
+    {
+      "U_relative": 3.3306690738754696e-16,
+      "F_relative": 1.5543122344752192e-15,
+      "IntegrandRelative": 8.770761894538737e-15
+    },
+    {
+      "U_relative": 3.3306690738754696e-16,
+      "F_relative": 2.6645352591003757e-15,
+      "IntegrandRelative": 1.4099832412739488e-14
+    },
+    {
+      "U_relative": 1.1102230246251565e-15,
+      "F_relative": 2.220446049250313e-16,
+      "IntegrandRelative": 3.1086244689504383e-15
+    },
+    {
+      "U_relative": 4.440892098500626e-16,
+      "F_relative": 2.220446049250313e-16,
+      "IntegrandRelative": 1.1102230246251565e-15
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 2.220446049250313e-16,
+      "IntegrandRelative": 4.440892098500626e-16
+    },
+    {
+      "U_relative": 0.0,
+      "F_relative": 0.0,
+      "IntegrandRelative": 4.440892098500626e-16
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 1.3322676295501878e-15,
+      "IntegrandRelative": 6.8833827526759706e-15
+    },
+    {
+      "U_relative": 2.220446049250313e-16,
+      "F_relative": 4.440892098500626e-16,
+      "IntegrandRelative": 2.9976021664879227e-15
+    }
+  ]
+}

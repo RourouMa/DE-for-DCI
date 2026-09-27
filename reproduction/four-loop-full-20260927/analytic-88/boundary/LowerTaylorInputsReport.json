@@ -1,0 +1,9 @@
+{
+	"LowerFunctionCount":35,
+	"TaylorTotalDegree":4,
+	"All35ExactCoefficientCertificatesPassed":true,
+	"All35ZerothOrderValuesMatchPreviouslyCertifiedBoundary":true,
+	"Lower35FunctionsSHA256":"2a15b0197e3e19bf4e5ed7caa3582c13428b4b6d72c2b1afe027766787e8802e",
+	"NativeBoundaryValuesSHA256":"7b12aaba67375beed7922906ba78f6d9dbf9e89a875040b3e537e3a80bad02c3",
+	"FrozenDLogCandidateSHA256":"90922fd24225c32d50cd2c65c4ff03465d7bc56b73ef910c05b2d2ea9f7f78d6"
+}

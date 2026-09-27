@@ -1,0 +1,34 @@
+{
+  "BoundaryAt": [
+    1,
+    1
+  ],
+  "ExactExpression": "Li_4(1/2) + log(2)^4/24 - pi^4/720 + pi^2*(3-6*log(2)+2*log(2)^2)/24 + 7*zeta(3)/8 - 5/4",
+  "Value100Digits": "0.1121917760611485848069079170637114913661157735248317181197455879011464703665349135328591850890456914",
+  "All53FourLoopIntegrandsCoincideAtBoundary": true,
+  "GPLPrimitiveDerivativeExactlyZero": true,
+  "KnownLowerLoopBoundariesReproduced": true,
+  "RadialAndSpectralCrosscheck": "B4RadialCheck.json",
+  "IndependentOriginalParametricChecks": [
+    {
+      "Seed": 20260927,
+      "Value": "0.112192492323338319",
+      "ReportedError": "0.000000960082532809187811",
+      "AbsoluteDifference": "0.0000007162621897341930920829362885086338842264751682818802544120988535296334650864671408149109543086267292",
+      "DifferenceOverReportedError": 0.7460423091319245,
+      "WithinThreeReportedErrors": true
+    },
+    {
+      "Seed": 918273,
+      "Value": "0.112190040406717664",
+      "ReportedError": "0.000000938986013127938195",
+      "AbsoluteDifference": "0.000001735654430920806907917063711491366115773524831718119745587901146470366534913532859185089045691373977",
+      "DifferenceOverReportedError": 1.848434808031929,
+      "WithinThreeReportedErrors": true
+    }
+  ],
+  "IndependentNumericalChecksPassed": true,
+  "NumericalAcceptanceCriterion": "Absolute difference at most three randomized QMC reported errors; this is a statistical cross-check, not an exact proof.",
+  "AllInitialTaylorJetsDetermined": false,
+  "GeneralFourLoopAnalyticFunctionsSolved": false
+}

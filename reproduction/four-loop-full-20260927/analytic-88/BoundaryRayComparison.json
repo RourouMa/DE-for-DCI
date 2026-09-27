@@ -1,0 +1,21 @@
+{
+	"Passed":true,
+	"Rays":[
+		[
+			4,
+			1
+		],
+		[
+			5,
+			1
+		]
+	],
+	"ConstraintRanks":[
+		88,
+		88
+	],
+	"ExactRationalCoefficientMatricesIdentical":true,
+	"CanonicalConstantsIdentical":true,
+	"NumberOfNonzeroConstants":27,
+	"PhysicalCanonicalRegularityProof":"Separate analytical argument required and in progress"
+}

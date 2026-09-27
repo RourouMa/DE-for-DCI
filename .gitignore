@@ -16,3 +16,12 @@
 
 __pycache__/
 *.pyc
+
+# Optional external numerical dependencies and generated builds
+/external-tools/
+
+# Reconstructible large interpolation cache; final values and certificates are published.
+/reproduction/four-loop-full-20260927/analytic-88/numerical/TopNDSolve.wl
+# Small raw counterexamples are part of the concurrency certificate.
+!/reproduction/four-loop-full-20260927/analytic-88/numerical/reproduce-shared-vegas.log
+!/reproduction/four-loop-full-20260927/analytic-88/numerical/reproduce-shared-vegas-two-cores.log

@@ -1,0 +1,169 @@
+{
+  "Status": "Physical normalization and specified contact-risk audit completed; final complete-sector-sum top validation passed at 0.1% statistical precision",
+  "FrozenExpressionsModified": false,
+  "ConstantsFittedToNumerics": false,
+  "Original83MappingPreserved": true,
+  "LegacyDirectMatches": 16,
+  "LegacyConnectedThreeLoopMatches": 7,
+  "LegacyConnectedMaximumReportedPull": 2.0822908793354062,
+  "LegacyAmplitudeSectorThreads": 2,
+  "LegacyThreadSafetyCaveat": true,
+  "MainCheckpoint": {
+    "Relations": 1314910,
+    "TotalApplications": 4387468,
+    "AtomicApplications": 4387108,
+    "WholeApplications": 360,
+    "WholeSeedAtoms": 63,
+    "WholeMaxInternalPower": 1,
+    "WholeApplicationsWithDoublePole": 0,
+    "CoupledGroups": []
+  },
+  "NewLowerSourcePool": {
+    "Rows": 77412,
+    "Applications": 192288,
+    "AllAtomicG": true,
+    "BadExamples": [],
+    "CompletedCoupledGroups": [],
+    "CoupledSearches": [],
+    "GenerationKeys": [
+      "Equations",
+      "Applications",
+      "RejectedApplications",
+      "DegreeCoverageGaps",
+      "SymmetryInputs",
+      "NewSymmetryInputs",
+      "AllActualSeedsInsideOriginalDomain",
+      "SeedPolicy",
+      "SeedingDeduplication",
+      "SeedPlanning",
+      "AllGeneratedSupportCanonicalized",
+      "IndependentKernels",
+      "WorkerPayload",
+      "JobDirectory"
+    ]
+  },
+  "NewLowerGapPool": {
+    "Rows": 15798,
+    "Applications": 36810,
+    "AllAtomicG": true,
+    "BadExamples": [],
+    "CompletedCoupledGroups": [],
+    "CoupledSearches": [],
+    "GenerationKeys": [
+      "Equations",
+      "Applications",
+      "RejectedApplications",
+      "DegreeCoverageGaps",
+      "SymmetryInputs",
+      "NewSymmetryInputs",
+      "AllActualSeedsInsideOriginalDomain",
+      "SeedPolicy",
+      "SeedingDeduplication",
+      "SeedPlanning",
+      "AllGeneratedSupportCanonicalized",
+      "IndependentKernels",
+      "WorkerPayload",
+      "JobDirectory"
+    ]
+  },
+  "HistoricalJointCandidateMembership": [
+    {
+      "Mode": "Coupled",
+      "File": "/neatibp-evaluation-20260926/epoch5/highest-block/growth-directions/coupled-chain-full/Generation.mx",
+      "CandidateRows": 228,
+      "CurrentHighPoolMatches": 0,
+      "CurrentSelectedNativeMatches": 0,
+      "CurrentHighPoolIndices": [],
+      "CurrentSelectedIndices": []
+    },
+    {
+      "Mode": "WholeFinite",
+      "File": "/neatibp-evaluation-20260926/epoch5-prefix-demand/whole-finite-seeding/Generation.mx",
+      "CandidateRows": 888,
+      "CurrentHighPoolMatches": 11,
+      "CurrentSelectedNativeMatches": 0,
+      "CurrentHighPoolIndices": [
+        711070,
+        1181972,
+        1181971,
+        1393684,
+        1181970,
+        1393687,
+        1393686,
+        602187,
+        1047078,
+        612777,
+        1082476
+      ],
+      "CurrentSelectedIndices": []
+    },
+    {
+      "Mode": "WholeConstant",
+      "File": "/neatibp-evaluation-20260926/epoch5-prefix-demand/whole-constant-seeding/Generation.mx",
+      "CandidateRows": 212,
+      "CurrentHighPoolMatches": 0,
+      "CurrentSelectedNativeMatches": 0,
+      "CurrentHighPoolIndices": [],
+      "CurrentSelectedIndices": []
+    }
+  ],
+  "PairContactConcernApplicableToAuditedWholeApplications": false,
+  "PairContactNeighborNormalizationProved": true,
+  "IndependentTwoLoopEndpointNormalizationProved": true,
+  "GeneralArbitraryJointContactFormulaClaimed": false,
+  "DirectConnectedThreeLoopAttempts": [
+    {
+      "File": "ConnectedLowerDirect-ladder1t0-2026092702.json",
+      "Seed": 2026092702,
+      "AmplitudeThreads": 2,
+      "AcceptanceEligible": false,
+      "Value": "1.79630234524369459",
+      "ReportedError": "0.0000345147503823065049",
+      "AbsoluteDifference": "0.0000715593910165423364596929964282967690827633191996166437",
+      "RelativeDifference": "0.00003983863965596870837300024511703724619754698700563666214656204069330975",
+      "DifferenceOverReportedError": "2.073298813519052389193235006941570280955369706280886241517461471717513",
+      "ActualRelativeReportedError": "0.00001921433241664229750788564835512575426561248235513538508105830476894433",
+      "WithinTwoReportedErrors": false,
+      "Seconds": 1145.323798418045
+    },
+    {
+      "File": "ConnectedLowerDirect-ladder1t0-2026092713.json",
+      "Seed": 2026092713,
+      "AmplitudeThreads": 1,
+      "AcceptanceEligible": true,
+      "Value": "1.79620996858101845",
+      "ReportedError": "0.0000281339034084596566",
+      "AbsoluteDifference": "0.0000208172716595976635403070035717032309172366808003833563",
+      "RelativeDifference": "0.00001158941925701135344625792328046024781930112122105971545196940894162330",
+      "DifferenceOverReportedError": "0.7399354208821966728394734825818282410747288085416947739150236589873363",
+      "ActualRelativeReportedError": "0.00001566292577180442845955809620208703087417256029635067362240737267495945",
+      "WithinTwoReportedErrors": true,
+      "Seconds": 1263.8964803218842
+    },
+    {
+      "File": "ConnectedLowerDirect-ladder1t0-2026092724.json",
+      "Seed": 2026092724,
+      "AmplitudeThreads": 1,
+      "AcceptanceEligible": true,
+      "Value": "1.79651411172439279",
+      "ReportedError": "0.000252968156532693824",
+      "AbsoluteDifference": "0.0002833258717147423364596929964282967690827633191996166437",
+      "RelativeDifference": "0.0001577335573726103323121647722436467238220578477179788088527100721505060",
+      "DifferenceOverReportedError": "1.120006073484292696002891827456918357962767787423129341993361902701114",
+      "ActualRelativeReportedError": "0.0001408105591165555115531727753827367181133463587531094516109225947361311",
+      "WithinTwoReportedErrors": true,
+      "Seconds": 173.19556736946106
+    }
+  ],
+  "BudgetAuditFile": "ConnectedLowerBudgetAudit.json",
+  "FourLoopTopDirectValidationPassed": true,
+  "Limitations": [
+    "This audits the specified nonvanishing-vector isolated pair-contact concern and normalization, not every possible multi-cluster extension of the distribution formula.",
+    "No arbitrary coupled/contact formula is certified by cancellation of infinity symbols alone.",
+    "The final direct four-loop check concerns top at (1/4,3/4), with 0.1% requested statistical precision; it does not numerically validate all 88 integrals independently."
+  ],
+  "DirectConnectedThreeLoopSerialComparison": "ConnectedLowerComparison.json",
+  "SerialConnectedThreeLoopChecksWithinTwoReportedErrors": true,
+  "FourLoopTopDirectValidationRelativePrecision": 0.001,
+  "FourLoopTopDirectValidationReport": "../numerical/FinalDirectValidation.json"
+}

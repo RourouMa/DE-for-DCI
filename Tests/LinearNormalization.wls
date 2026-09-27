@@ -13,5 +13,11 @@ Do[coeffs=Table[RandomInteger[{-5,5}] (1+x)^RandomInteger[{0,3}]/(1+y)^RandomInt
  actual=normal[expr];
  reference=(Together[Coefficient[Expand[expr],#]]& /@ {g,h,b}).{g,h,b};
  If[actual=!=expected,Print[<|"Case"->k,"SameAsPreviousImplementation"->(actual===reference),"ExactDifference"->Together[actual-expected]|>]];
- assert[actual===reference && TrueQ[Together[actual-expected]===0],"random exact linear case "<>ToString[k]],{k,20}];
+ assert[TrueQ[Together[actual-reference]===0] && TrueQ[Together[actual-expected]===0],"random exact linear case "<>ToString[k]],{k,20}];
+assert[normal[(g+h)^2-g^2-2g h-h^2]===0,"expanded fallback retains nonlinear cancellation to zero"];
+assert[normal[(g+h)^2-g^2-2g h-h^2+g]===g,"expanded fallback retains nonlinear cancellation to a linear row"];
+compact=normal[(x+y)^40(g+b)/(x-y)];
+assert[LeafCount[compact]<100&&TrueQ[Together[compact-(x+y)^40(g+b)/(x-y)]===0],"large scalar polynomials stay compact without changing the linear expression"];
+co=ConformalIBP`Private`coeff[{(x+y)^40(g+b)/(x-y)},{g,h,b}];
+assert[co==={{(x+y)^40/(x-y),0,(x+y)^40/(x-y)}}&&ConformalIBP`Private`coeff[{3+g},{g}]==={{1}},"linear coefficient lookup stays compact and preserves fallback behavior"];
 assert[$MessageList==={},"no unexpected Wolfram messages"];Quit[0];

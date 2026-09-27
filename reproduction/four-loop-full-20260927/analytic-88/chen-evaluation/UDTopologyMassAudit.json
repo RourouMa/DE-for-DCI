@@ -1,0 +1,129 @@
+{
+  "Integral": 1,
+  "NativeDefinitionSource": "four-loop-analytic-20260927/TopParametricConstruction.json",
+  "NativeDefinitionSHA256": "f1496810cdb15dc464247e0a19e754c7122d12719b79319f0b487dfd0fe1cc00",
+  "MomentumPropagatorSource": "four-loop-analytic-20260927/feynman_four.py",
+  "MomentumPropagatorSourceSHA256": "ededc770708e0f18a67f5df3d998cbab2e3e11a1380970fd9f2252698a6953ca",
+  "Indices": [
+    1,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1
+  ],
+  "ExternalLoopEdges": [
+    {
+      "External": 1,
+      "Loop": 1,
+      "Power": 1,
+      "MassSquared": "x"
+    },
+    {
+      "External": 2,
+      "Loop": 1,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 4,
+      "Loop": 1,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 2,
+      "Loop": 2,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 4,
+      "Loop": 2,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 2,
+      "Loop": 3,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 4,
+      "Loop": 3,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 2,
+      "Loop": 4,
+      "Power": 1,
+      "MassSquared": "y"
+    },
+    {
+      "External": 3,
+      "Loop": 4,
+      "Power": 1,
+      "MassSquared": "x"
+    },
+    {
+      "External": 4,
+      "Loop": 4,
+      "Power": 1,
+      "MassSquared": "y"
+    }
+  ],
+  "LoopLoopEdges": [
+    {
+      "Loops": [
+        1,
+        2
+      ],
+      "Power": 1,
+      "MassSquared": "0"
+    },
+    {
+      "Loops": [
+        2,
+        3
+      ],
+      "Power": 1,
+      "MassSquared": "0"
+    },
+    {
+      "Loops": [
+        3,
+        4
+      ],
+      "Power": 1,
+      "MassSquared": "0"
+    }
+  ],
+  "LadderTopologyMatches": true,
+  "AllPropagatorPowersOne": true,
+  "ExternalMassivePropagators": 10,
+  "InternalMasslessPropagators": 3,
+  "MasslessUDDirectSubstitutionApplicable": false,
+  "Reason": "Ordinary massless UD ladders and this top have identical graph connectivity but different propagator masses. The massive extension of dimension recursion is not a license to reuse the massless closed formula."
+}

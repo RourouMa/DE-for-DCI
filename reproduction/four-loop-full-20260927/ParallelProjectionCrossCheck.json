@@ -1,0 +1,38 @@
+[
+  {
+    "Part": 1,
+    "Completed": true,
+    "CoordinateKey": "Weights",
+    "Rows": [
+      1,
+      27
+    ],
+    "Variable": "x",
+    "ExactMatch": true
+  },
+  {
+    "Part": 2,
+    "Completed": false,
+    "Reason": "Redundant projection superseded by independently verified full reconstruction",
+    "StoppedPID": 615036,
+    "StoppedAt": "2026-09-27T12:21:24.997147+08:00"
+  },
+  {
+    "Part": 3,
+    "Completed": true,
+    "CoordinateKey": "Weights",
+    "Rows": [
+      1,
+      27
+    ],
+    "Variable": "y",
+    "ExactMatch": true
+  },
+  {
+    "Part": 4,
+    "Completed": false,
+    "Reason": "Redundant projection superseded by independently verified full reconstruction",
+    "StoppedPID": 615038,
+    "StoppedAt": "2026-09-27T12:21:24.997242+08:00"
+  }
+]

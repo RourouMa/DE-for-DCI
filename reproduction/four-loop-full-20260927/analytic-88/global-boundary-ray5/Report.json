@@ -1,0 +1,13 @@
+{
+	"Passed":true,
+	"ConstraintRank":88,
+	"UnknownConstants":88,
+	"UniqueWithinRegularCanonicalSolutions":true,
+	"MaximumInversePoleOrder":6,
+	"Ray":[
+		5,
+		1
+	],
+	"ResidueNilpotent":true,
+	"PhysicalCanonicalRegularityStillRequiresJustification":true
+}

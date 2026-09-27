@@ -1,0 +1,6 @@
+(Effective) kinematic regime: Minkowski (exceptional).
+Warning: Kinematics are non-Euclidean and (very) exceptional. Detailed info on the N[F] polytope is needed. The integration might fail or be unstable. Check the result by 1) varying the number of sample points 2) evaluating at multiple kinematic points close to the current one (i.e. by making the kinematics more generic) 3) increasing the spacetime dimension D0.
+The generalized permutahedron property seems fulfilled. This is a good sign that the integration might succeed anyway.
+Analytic continuation: activated. Lambda = 0.
+Started integrating using 1 threads and N = 1e+06 points.
+Finished in 0.370885 seconds = 0.000103024 hours.

@@ -1,0 +1,44 @@
+{
+	"Records":[
+		{
+			"Mode":"Coupled",
+			"File":"\/neatibp-evaluation-20260926\/epoch5\/highest-block\/growth-directions\/coupled-chain-full\/Generation.mx",
+			"CandidateRows":228,
+			"CurrentHighPoolMatches":0,
+			"CurrentSelectedNativeMatches":0,
+			"CurrentHighPoolIndices":[],
+			"CurrentSelectedIndices":[]
+		},
+		{
+			"Mode":"WholeFinite",
+			"File":"\/neatibp-evaluation-20260926\/epoch5-prefix-demand\/whole-finite-seeding\/Generation.mx",
+			"CandidateRows":888,
+			"CurrentHighPoolMatches":11,
+			"CurrentSelectedNativeMatches":0,
+			"CurrentHighPoolIndices":[
+				711070,
+				1181972,
+				1181971,
+				1393684,
+				1181970,
+				1393687,
+				1393686,
+				602187,
+				1047078,
+				612777,
+				1082476
+			],
+			"CurrentSelectedIndices":[]
+		},
+		{
+			"Mode":"WholeConstant",
+			"File":"\/neatibp-evaluation-20260926\/epoch5-prefix-demand\/whole-constant-seeding\/Generation.mx",
+			"CandidateRows":212,
+			"CurrentHighPoolMatches":0,
+			"CurrentSelectedNativeMatches":0,
+			"CurrentHighPoolIndices":[],
+			"CurrentSelectedIndices":[]
+		}
+	],
+	"Comparison":"Exact symbolic native canonical rows; original pool unchanged; selected rows source-free matches literal."
+}

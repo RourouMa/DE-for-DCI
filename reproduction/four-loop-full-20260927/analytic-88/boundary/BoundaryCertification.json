@@ -1,0 +1,83 @@
+{
+  "PhysicalIntegralAnalyticityJustified": true,
+  "CanonicalRegularityProved": true,
+  "All88ConstantsFixed": true,
+  "NoExtraTaylorData": true,
+  "TwoIndependentConstructions": true,
+  "TwoIndependentConstructionsExactAgree": true,
+  "TwoRaysExactAgree": true,
+  "AllEightVanishingLetterResiduesAnnihilateBoundary": true,
+  "All35ExactNativeGPLTaylorInputsPassed": true,
+  "BoundaryPoint": [
+    1,
+    1
+  ],
+  "GenericRays": [
+    [
+      4,
+      1
+    ],
+    [
+      5,
+      1
+    ]
+  ],
+  "Dimension": 88,
+  "ConstraintRank": 88,
+  "RadialResidueNilpotentPower": 10,
+  "FrozenDLogCandidateSHA256": "90922fd24225c32d50cd2c65c4ff03465d7bc56b73ef910c05b2d2ea9f7f78d6",
+  "Construction1": "Explicit certified lower35 GPL Taylor series to total degree4, then source-only12 canonical DE Taylor recurrence and direct forward T transformation",
+  "Construction2": "Global Tinv Frobenius regularity constraints and all88 native boundary values; exact constant linear rank88",
+  "PhysicalAnalyticityProof": "Uniform complex-neighborhood conductance bound and common Wick-contour majorant; stereographic compactification reduces convergence to an S4 forest integral, including external numerator powers",
+  "CanonicalRegularityProof": "Native integrals analytic and rational T imply meromorphic J; nilpotent regular-singular residue excludes every negative Laurent exponent",
+  "InitialDataSufficiencyProof": "Rc=0 and the finite inverse (nI-R)^-1 for all positive n determine a unique convergent Taylor solution",
+  "SupersedesOpenRegularityItemIn": "../global-boundary/Report.json (historical report retained unchanged)",
+  "ConstantsDeterminedWithoutNumericalFitting": true,
+  "NumericalConstantFormat": "88 finite decimal strings, 110 requested decimal digits",
+  "Evidence": {
+    "BoundaryRegularityProof.zh-CN.md": {
+      "Path": "BoundaryRegularityProof.zh-CN.md",
+      "SHA256": "888b908a055c6bbb867f7ddff031058aaec546d2a40bce4ef91191e4f5c028f2"
+    },
+    "PropagatorRegularityAudit.json": {
+      "Path": "PropagatorRegularityAudit.json",
+      "SHA256": "871f4d1a3a8d3c3305c1a76c24b1eddbf7dd08b34cf7d0e636fba6fa977f1c8b"
+    },
+    "IndependentBoundaryCrossCheck.json": {
+      "Path": "IndependentBoundaryCrossCheck.json",
+      "SHA256": "6385cfa041e271353e999045b0373db7fef298f9c724bd6d3b9c680e0df161fb"
+    },
+    "IndependentBoundaryCrossCheck.wl": {
+      "Path": "IndependentBoundaryCrossCheck.wl",
+      "SHA256": "1a7932f0e5f486c4ea9f323f4ae8cdaaf968b41cea2a14d986e9ba6a16510120"
+    },
+    "LowerTaylorInputsReport.json": {
+      "Path": "LowerTaylorInputsReport.json",
+      "SHA256": "7eb452a0399565af92568f0e129cbacc7b4e060e776aaa682bbf47fe09e13939"
+    },
+    "CanonicalBoundary88-ray4.wl": {
+      "Path": "CanonicalBoundary88-ray4.wl",
+      "SHA256": "2433693e4c51ca833b5f7dfcd307848cf7c397eb711a0fd691c40ebd7e49cb82"
+    },
+    "CanonicalBoundary88-ray5.wl": {
+      "Path": "CanonicalBoundary88-ray5.wl",
+      "SHA256": "705d68fc5d705f9eb3c6dfcc59e079a38101826ee99471e865d2e9779082e3b7"
+    },
+    "Constants88Exact.wl": {
+      "Path": "Constants88Exact.wl",
+      "SHA256": "024e9fed598289b5b317941c8a26122f70815e272ce55183af71f8681f4378ef"
+    },
+    "Constants88Numerical.json": {
+      "Path": "Constants88Numerical.json",
+      "SHA256": "62a0a007ae8ca8018a24519158199cba75930febf0bb0c5b2abe743c1ea374be"
+    },
+    "../global-boundary/Report.json": {
+      "Path": "../global-boundary/Report.json",
+      "SHA256": "f0e3102d3dfa9fb31eff2b754c1d2ed4199e312489d2342ea6a73a04166bd89a"
+    },
+    "../global-boundary/CanonicalBoundary88.wl": {
+      "Path": "../global-boundary/CanonicalBoundary88.wl",
+      "SHA256": "0787c4af7ebeafffc40231188afa47cfb634bc98cfa08e01561e8acdbd296145"
+    }
+  }
+}

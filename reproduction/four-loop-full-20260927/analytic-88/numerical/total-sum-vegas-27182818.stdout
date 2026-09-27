@@ -1,0 +1,1 @@
+{"Method":"vegas","Seed":27182818,"MaxEval":100000,"Sectors":1492,"Dimension":12,"Prefactor":24,"Value":1.2976376007479031,"Error":0.0027172414357952489,"Seconds":54.929124858000002,"SingleTotalIntegrand":true,"ReferenceRead":false}

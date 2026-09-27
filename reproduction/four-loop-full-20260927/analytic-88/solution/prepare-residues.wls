@@ -1,0 +1,12 @@
+$IterationLimit=Infinity;o=DirectoryName[$InputFileName];r=DirectoryName[DirectoryName[o]];f=FileNameJoin[{r,"dlog","Full88DLog.wl"}];a=Get[f];letters=a["Letters"];rr=a["ResidueMatrices"];n=88;
+Print["Letters ",letters];xl={x,1-x,1+x};rx=Table[ConstantArray[0,{n,n}],{3}];zeroletters={};
+Do[p=Factor[letters[[i]]/.y->1];If[p===0,AppendTo[zeroletters,i],Do[co=Factor[PolynomialRemainder[p, xl[[j]],x]];If[co===0,ex=0;While[PolynomialRemainder[p,xl[[j]],x]===0,p=Cancel[p/xl[[j]]];ex++];rx[[j]]=rx[[j]]+ex rr[[i]]],{j,3}];If[!FreeQ[p,x],Print["Unhandled x pullback ",i,p];Quit[2]]],{i,Length[letters]}];
+yi=Select[Range[Length[letters]],!FreeQ[letters[[#]],y]&];yl=letters[[yi]];ry=rr[[yi]];
+ri=First[FirstPosition[letters,1-y]];byline=rr[[ri]];
+edges=DeleteDuplicates[Flatten[Position[#,Except[0],{2},Heads->False]& /@rr,1]];
+deps=Table[Cases[edges,{i,j_}:>j],{i,n}];heights=ConstantArray[-1,n];pending=Range[n];ord={};While[pending=!={},ready=Select[pending,Intersection[deps[[#]],pending]==={}&];If[ready==={},Print["Cyclic"];Quit[3]];Do[heights[[i]]=If[deps[[i]]==={},0,1+Max[heights[[deps[[i]]]]]],{i,ready}];ord=Join[ord,ready];pending=Complement[pending,ready]];
+sparse[m_]:=Cases[ArrayRules[SparseArray[m]],Rule[{i_Integer,j_Integer},c_]:>{i-1,j-1,ToString[c,InputForm]}];
+json=<|"Dimension"->n,"CandidateSHA256"->ToString[FileHash[f,"SHA256"]],"XLetters"->(ToString[#,InputForm]& /@xl),"YPolynomialLetters"->(ToString[#,InputForm]& /@yl),"Rx"->(sparse/@rx),"Ry"->(sparse/@ry),"YBoundaryResidue"->sparse[byline],"DAGHeights"->heights,"MaximumWordLengthBound"->Max[heights],"TopWordLengthBound"->heights[[1]],"Path"->"(1,1) -> (x,1) -> (x,y)","BoundaryValidated"->False,"ZeroLettersOnFirstSegment"->zeroletters|>;
+Export[FileNameJoin[{o,"ChenResidues.json"}],json,"RawJSON"];
+Put[<|"Rx"->rx,"Ry"->ry,"XLetters"->xl,"YLetters"->yl,"YBoundaryResidue"->byline,"DAGHeights"->heights,"HighOrder"->ord|>,FileNameJoin[{o,"ChenResidues.wl"}]];
+Print[KeyDrop[json,{"Rx","Ry","YBoundaryResidue"}]];Quit[];

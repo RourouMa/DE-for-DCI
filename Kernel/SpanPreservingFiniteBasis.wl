@@ -10,12 +10,14 @@ finiteRepresentativeCost[f_,e_]:=Module[{ps=IntegralComplexity[f,#]& /@ support[
  {Length[ps],Max[Lookup[ps,"JointExcess"]],Max[Lookup[ps,"MaxDenominatorPower"]],Total[Lookup[ps,"NumeratorDegree"]],Total[Lookup[ps,"Dots"]],e}];
 (* Whole physical derivatives contain useful constant combinations which their
    separate atoms do not reveal. Membership is still checked after reduction. *)
+cachedFiniteCandidateQ[f_Association,e_]:=If[f["FiniteValidator"]===Automatic,cachedNativeFiniteCandidateQ[f,e],TrueQ[FiniteIntegralQ[f,e]]];
+cachedNativeFiniteCandidateQ[f_Association,e_]:=cachedNativeFiniteCandidateQ[f,e]=TrueQ[FiniteIntegralQ[f,e]];
 physicalConstantCandidates[f_,queries_List]:=Module[{whole,atoms,c,blocks},
  whole=Select[queries,Length[support[#]]>1&];If[whole==={},Return[{}]];
  atoms=support[whole];c=Map[Together,coeff[whole,atoms],{2}];
  blocks=constantAtoms[c,f["Variables"]];If[blocks===$Failed,Return[{}]];
  blocks=DeleteDuplicates[primitive /@ blocks];
- Select[DeleteCases[canonicalLinear /@ (#.atoms& /@ blocks),0],FiniteIntegralQ[f,#]&]];
+ Select[DeleteCases[canonicalLinear /@ (#.atoms& /@ blocks),0],cachedFiniteCandidateQ[f,#]&]];
 BuildSpanPreservingFiniteBasis[f_Association,rows_List,queries_List,reduction_Association]:=Module[
  {raw=support[rows],known,cs,images,actual,c,r,p,eligible,ec,ind,basis,bi,atoms,av,bv,eq,rules,wi,w,res,rank,baseline},
  If[!MemberQ[$Packages,"FiniteFlow`"],Return[fail["FiniteFlowRequired","PreserveActualSpan requires FiniteFlow; initialize it before the campaign."]]];
@@ -23,7 +25,7 @@ BuildSpanPreservingFiniteBasis[f_Association,rows_List,queries_List,reduction_As
  If[rank===0,Return[<|"Basis"->{},"SingleFinite"->{},"Combinations"->{},"Weights"->ConstantArray[{},Length[rows]],"ReducedBasis"->{},"BoundaryRows"->rows,"ExactCoverage"->True,"SpanPreserving"->True,"ActualRationalRank"->0,"CoverageViaVerifiedReduction"->True,"FiniteBasisPolicy"->"PreserveActualSpan"|>]];
  p=pivots[r];baseline=BuildFiniteBasis[f,rows];
  cs=Union[raw,support[queries],Select[queries,Length[support[#]]>1&&constantCombinationQ[#]&],physicalConstantCandidates[f,queries],If[AssociationQ[baseline],baseline["Basis"],{}]];
- cs=Select[cs,FiniteIntegralQ[f,#]&&AllTrue[support[canonExpr[f,#]],KeyExistsQ[known,#]||MemberQ[raw,#]&]&];
+ cs=Select[cs,representativePoleLimitsQ[f,#]&&FiniteIntegralQ[f,#]&&AllTrue[support[canonExpr[f,#]],KeyExistsQ[known,#]||MemberQ[raw,#]&]&];
  cs=SortBy[cs,finiteRepresentativeCost[f,#]&];
  images=closureLinear /@ ((canonExpr[f,#]& /@ cs)/.Dispatch[Normal[known]]);
  eligible=Select[Range[Length[cs]],Complement[support[images[[#]]],raw]==={}&&With[{v=First[coeff[{images[[#]]}/._BoundaryIntegral->0,raw]]},AllTrue[v-v[[p]].r,zero]]&];

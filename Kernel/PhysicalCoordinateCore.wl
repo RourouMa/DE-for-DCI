@@ -1,0 +1,64 @@
+(* Auxiliary coordinates represent complete physical combinations. They are
+   never labelled as physical G integrals or inserted as extra IBP identities. *)
+readCoordinateBenchmark[file_String]:=Block[{benchmark},Get[file];benchmark];
+readCoordinateManifest[file_String]:=Block[{sourceManifest},Get[file];sourceManifest];
+projectRowsInPhysicalBasis[f_Association,physicalRows_List,basis_List,reference_Association,dir_String,threads_Integer]:=Module[
+ {benchmark,manifest,required,known,rows,highCols,queryVars,basisVars,cols,graph,in,sys,learn,values,
+  numericRules,numericForms,expected,basisExpected,weightsAtPoint,point,prime,mod,rank,joinedMatrix,
+  keepSources=Lookup[f,"SourceTreatment","HighestLoopQuotient"]==="RetainAll",prepareRows,coordinateAtoms,
+  basisMatrix,atoms,agreement,count,coefficients,rules,forms,weights,passed,record,started=AbsoluteTime[]},
+ If[!DirectoryQ[dir],CreateDirectory[dir,CreateIntermediateDirectories->True]];
+ prepareRows[e_]:=If[keepSources,e,e/._BoundaryIntegral->0];
+ coordinateAtoms[e_]:=Join[ConformalIBP`Private`support[e],ConformalIBP`Private`sources[e]];
+ benchmark=readCoordinateBenchmark[reference["FullReferenceBenchmark"]];
+ manifest=readCoordinateManifest[reference["FullReferenceSourceManifest"]];
+ If[f["Hash"]=!=reference["FamilyHash"]||manifest["FullPoolHash"]=!=reference["FullPoolHash"]||
+  manifest["OriginalEquationsHash"]=!=Hash[benchmark["Rows"],"SHA256"],Return[Failure["ReferenceProvenance",<||>]]];
+ required=coordinateAtoms[prepareRows[{physicalRows,basis}]];
+ known=Union[reference["FullReferenceQueries"],coordinateAtoms[Last /@ reference["FullPoolNumericalRules"]]];
+ If[Complement[required,known]=!={},Return[Failure["UnknownReferenceTargets",<|"Count"->Length[Complement[required,known]]|>]]];
+ point=Thread[f["Variables"]->reference["Point"]];prime=reference["Prime"];
+ mod[q_]:=With[{v=Together[q]},If[MatchQ[v,_Integer|_Rational]&&Mod[Denominator[v],prime]=!=0,Mod[Numerator[v]PowerMod[Denominator[v],-1,prime],prime],$Failed]];
+ rank[m_]:=Length[Select[RowReduce[m,Modulus->prime],AnyTrue[#,UnequalTo[0]]&]];
+ expected=prepareRows[(physicalRows/.point)/.Dispatch[reference["FullPoolNumericalRules"]]];
+ basisExpected=prepareRows[(basis/.point)/.Dispatch[reference["FullPoolNumericalRules"]]];
+ atoms=coordinateAtoms[{expected,basisExpected}];
+ joinedMatrix=Map[mod,ConformalIBP`Private`coeff[Join[basisExpected,expected],atoms],{2}];
+ If[!MatrixQ[joinedMatrix,IntegerQ],Return[Failure["ReferencePointPole",<||>]]];
+ basisMatrix=Take[joinedMatrix,Length[basis]];
+ If[rank[basisMatrix]=!=Length[basis]||rank[joinedMatrix]=!=Length[basis],Return[Failure["NumericalBasisDoesNotSpan",<||>]]];
+ rows=DeleteCases[prepareRows[benchmark["Rows"]],0];
+ highCols=If[keepSources,benchmark["Columns"],Select[benchmark["Columns"],MatchQ[#,_G]&]];
+ queryVars=Table[Unique["physicalCoordinateQuery"],{Length[physicalRows]}];
+ basisVars=Table[Unique["physicalCoordinateBasis"],{Length[basis]}];
+ cols=Join[queryVars,highCols,Complement[required,highCols],basisVars];
+ FiniteFlow`FFNewGraph[graph];FiniteFlow`FFGraphInputVars[graph,in,f["Variables"]];
+ FiniteFlow`FFAlgSparseSolver[graph,sys,{in},f["Variables"],
+  #==0& /@ Join[queryVars-prepareRows[physicalRows],rows,basisVars-prepareRows[basis]],
+  cols,"NeededVars"->queryVars];
+ FiniteFlow`FFSolverSparseOutput[graph,sys];FiniteFlow`FFGraphOutput[graph,sys];learn=FiniteFlow`FFSparseSolverLearn[graph,cols];
+ If[!ListQ[learn],FiniteFlow`FFDeleteGraph[graph];Return[Failure["CoordinateLearning",<||>]]];
+ values=FiniteFlow`FFGraphEvaluateMany[graph,{reference["Point"]},"NThreads"->1];
+ If[!MatchQ[values,{_List}],FiniteFlow`FFDeleteGraph[graph];Return[Failure["CoordinateEvaluation",<||>]]];
+ numericRules=FiniteFlow`FFSparseSolverSol[First[values],learn];numericForms=queryVars/.Dispatch[numericRules];
+ If[!FreeQ[numericForms,_G|_BoundaryIntegral]||!FreeQ[numericForms,Alternatives@@queryVars],FiniteFlow`FFDeleteGraph[graph];Return[Failure["PhysicalBasisDidNotEliminateFreeIntegrals",<||>]]];
+ weightsAtPoint=Table[Coefficient[numericForms[[i]],basisVars[[j]]],{i,Length[physicalRows]},{j,Length[basis]}];
+ agreement=AllTrue[weightsAtPoint.basisExpected-expected,ConformalIBP`Private`numericalLinearZeroQ[#,prime]&];
+ If[!agreement,FiniteFlow`FFDeleteGraph[graph];Return[Failure["FullPoolCoordinateMismatch",<||>]]];
+ count=FiniteFlow`FFSparseSolverMarkAndSweepEqs[graph,sys];FiniteFlow`FFSparseSolverDeleteUnneededEqs[graph,sys];
+ Print[<|"Event"->"PhysicalBasisCoordinateReconstruction","Rows"->Length[physicalRows],"Basis"->Length[basis],
+  "ProjectedDependencyRows"->count,"Coefficients"->FiniteFlow`FFNParsOut[graph],"FullPoolPointAgreement"->agreement|>];
+ coefficients=reconstructWithDegreeAudit[graph,f["Variables"],threads,dir];FiniteFlow`FFDeleteGraph[graph];
+ If[!ListQ[coefficients],Return[Failure["CoordinateReconstruction",<||>]]];
+ rules=FiniteFlow`FFSparseSolverSol[coefficients,learn];forms=queryVars/.Dispatch[rules];
+ If[!FreeQ[forms,_G|_BoundaryIntegral]||!FreeQ[forms,Alternatives@@queryVars],Return[Failure["UnresolvedCoordinate",<||>]]];
+ weights=Table[Coefficient[forms[[i]],basisVars[[j]]],{i,Length[physicalRows]},{j,Length[basis]}];
+ passed=AllTrue[(weights/.point).basisExpected-expected,ConformalIBP`Private`numericalLinearZeroQ[#,prime]&];
+ record=<|"PhysicalRows"->physicalRows,"PhysicalBasis"->basis,"Weights"->weights,"FullPoolHash"->reference["FullPoolHash"],
+  "FullPoolProjectionAgreement"->passed,"IndependentBasisPointWitness"->True,"AuxiliaryDefinitionsOnly"->True,
+  "PhysicalBenchmark"->reference["FullReferenceBenchmark"],"OriginalPhysicalSourceManifest"->reference["FullReferenceSourceManifest"],
+  "SourceInformationRetained"->True,"SourceCoefficientsPending"->!keepSources,"BoundarySourceTreatment"->If[keepSources,"RetainAll","HighestLoopQuotient"],"FullDEClaimed"->False,"LowerLoopIBPOrDEComputed"->False,
+  "ProjectedDependencyRows"->count,"Seconds"->N[AbsoluteTime[]-started]|>;
+ If[passed,Put[record,FileNameJoin[{dir,"PhysicalCoordinates.wl"}]]];
+ Export[FileNameJoin[{dir,"Report.json"}],Join[KeyDrop[record,{"PhysicalRows","PhysicalBasis","Weights"}],<|"Rows"->Length[physicalRows],"BasisCount"->Length[basis]|>],"RawJSON"];
+ If[passed,record,Failure["ReconstructedCoordinateMismatch",<||>]]];

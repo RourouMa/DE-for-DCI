@@ -1,0 +1,212 @@
+{
+  "Test": "Four exact one-loop functions embedded as a closed subsystem of full88 canonical DE",
+  "CanonicalZeroBasedIndices": [
+    78,
+    79,
+    80,
+    81
+  ],
+  "WorkingPrecision": 60,
+  "Results": [
+    {
+      "Slope": 4,
+      "Degree": 40,
+      "Step": "1/10",
+      "MaxError": "7.1758042772402990779230916467944644219e-31",
+      "Values": [
+        "0.79762406967037545162032934326658665084749308943912",
+        "0.28768207245178092743921900599382743150350971089776",
+        "1.3862943611198906188344642429156773068749089571895",
+        "0.5"
+      ],
+      "Audit": {
+        "slope": 4,
+        "initial_s": "1/20",
+        "start": [
+          "4/5",
+          "19/20"
+        ],
+        "boundary_residue_residual": "0.0",
+        "segments": [
+          {
+            "center": "0",
+            "step": "1/10",
+            "last_term_max": "7.74190982961e-49"
+          },
+          {
+            "center": "1/10",
+            "step": "1/10",
+            "last_term_max": "1.33720095631e-47"
+          },
+          {
+            "center": "1/5",
+            "step": "1/10",
+            "last_term_max": "2.87398143862e-46"
+          },
+          {
+            "center": "3/10",
+            "step": "1/10",
+            "last_term_max": "7.97073878475e-45"
+          },
+          {
+            "center": "2/5",
+            "step": "1/10",
+            "last_term_max": "2.98763711462e-43"
+          },
+          {
+            "center": "1/2",
+            "step": "1/10",
+            "last_term_max": "1.6072204594e-41"
+          },
+          {
+            "center": "3/5",
+            "step": "1/10",
+            "last_term_max": "1.34441475745e-39"
+          },
+          {
+            "center": "7/10",
+            "step": "1/10",
+            "last_term_max": "1.95219735473e-37"
+          },
+          {
+            "center": "4/5",
+            "step": "1/10",
+            "last_term_max": "5.75900635475e-35"
+          },
+          {
+            "center": "9/10",
+            "step": "1/10",
+            "last_term_max": "4.36972407638e-32"
+          }
+        ],
+        "initial_taylor_last_term_max": "2.74877906944e-30"
+      }
+    },
+    {
+      "Slope": 5,
+      "Degree": 56,
+      "Step": "1/20",
+      "MaxError": "1.119873923915609616114894827747414532916e-36",
+      "Values": [
+        "0.79762406967037545162032934326730423023599286005566",
+        "0.28768207245178092743921900599382743150350971089776",
+        "1.3862943611198906188344642429163531350311263448049",
+        "0.5"
+      ],
+      "Audit": {
+        "slope": 5,
+        "initial_s": "1/20",
+        "start": [
+          "3/4",
+          "19/20"
+        ],
+        "boundary_residue_residual": "0.0",
+        "segments": [
+          {
+            "center": "0",
+            "step": "1/20",
+            "last_term_max": "3.41209966955e-85"
+          },
+          {
+            "center": "1/20",
+            "step": "1/20",
+            "last_term_max": "2.27784459216e-84"
+          },
+          {
+            "center": "1/10",
+            "step": "1/20",
+            "last_term_max": "1.62540734459e-83"
+          },
+          {
+            "center": "3/20",
+            "step": "1/20",
+            "last_term_max": "1.24577950015e-82"
+          },
+          {
+            "center": "1/5",
+            "step": "1/20",
+            "last_term_max": "1.03110878402e-81"
+          },
+          {
+            "center": "1/4",
+            "step": "1/20",
+            "last_term_max": "9.27195867596e-81"
+          },
+          {
+            "center": "3/10",
+            "step": "1/20",
+            "last_term_max": "9.1197395841e-80"
+          },
+          {
+            "center": "7/20",
+            "step": "1/20",
+            "last_term_max": "9.88674097237e-79"
+          },
+          {
+            "center": "2/5",
+            "step": "1/20",
+            "last_term_max": "1.19163114869e-77"
+          },
+          {
+            "center": "9/20",
+            "step": "1/20",
+            "last_term_max": "1.61261786937e-76"
+          },
+          {
+            "center": "1/2",
+            "step": "1/20",
+            "last_term_max": "2.47817639425e-75"
+          },
+          {
+            "center": "11/20",
+            "step": "1/20",
+            "last_term_max": "4.38137392849e-74"
+          },
+          {
+            "center": "3/5",
+            "step": "1/20",
+            "last_term_max": "9.04798115151e-73"
+          },
+          {
+            "center": "13/20",
+            "step": "1/20",
+            "last_term_max": "2.22163329689e-71"
+          },
+          {
+            "center": "7/10",
+            "step": "1/20",
+            "last_term_max": "6.62358241194e-70"
+          },
+          {
+            "center": "3/4",
+            "step": "1/20",
+            "last_term_max": "2.45867692806e-68"
+          },
+          {
+            "center": "4/5",
+            "step": "1/20",
+            "last_term_max": "1.17122942582e-66"
+          },
+          {
+            "center": "17/20",
+            "step": "1/20",
+            "last_term_max": "7.42992181677e-65"
+          },
+          {
+            "center": "9/10",
+            "step": "1/20",
+            "last_term_max": "6.57146492683e-63"
+          },
+          {
+            "center": "19/20",
+            "step": "1/20",
+            "last_term_max": "8.58660735554e-61"
+          }
+        ],
+        "initial_taylor_last_term_max": "3.43916061498e-36"
+      }
+    }
+  ],
+  "Seconds": 1.471813440322876,
+  "Passed": true
+}

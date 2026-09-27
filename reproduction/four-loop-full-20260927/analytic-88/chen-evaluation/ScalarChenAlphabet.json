@@ -1,0 +1,27 @@
+{
+  "ContainsDifferentialEquationMatrices": false,
+  "XLetters": [
+    "x",
+    "1 - x",
+    "1 + x"
+  ],
+  "YPolynomialLetters": [
+    "1 - y",
+    "y",
+    "1 + y",
+    "-x + y",
+    "x + y",
+    "1 - x*y",
+    "1 + x*y",
+    "-x + y^2",
+    "x + y^2",
+    "1 - x*y^2",
+    "1 + x*y^2",
+    "-x + y^3",
+    "x + y^3",
+    "1 - x*y^3",
+    "1 + x*y^3"
+  ],
+  "SourceAlphabetMetadataFile": "../solution/ChenResidues.json",
+  "SourceSHA256": "3189c1edf1d2f9e2ff72f978c3ef4ca8065c143a281ec27926bc7cf600e08549"
+}

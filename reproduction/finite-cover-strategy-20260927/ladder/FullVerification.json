@@ -1,0 +1,21 @@
+{
+	"Passed":true,
+	"FullDEClosed":true,
+	"BasisCount":23,
+	"NativeFiniteness":true,
+	"Independent":true,
+	"FreshNativeDEFullPoolAgreement":true,
+	"OriginalTopCoordinateAgreement":true,
+	"FullCurvatureAtPointZero":true,
+	"NoSourcesDiscarded":true,
+	"SymbolicResidualCheckPerformed":false,
+	"Point":[
+		11,
+		17
+	],
+	"Prime":9223372036854775783,
+	"FullPoolHash":75193268557186809465831977167904987418281086125512340387168522087376961888798,
+	"ImplementationHash":28197010221222325301185408414911989627575677221462589635830663184550906550967,
+	"CandidateSHA256":37052205562102817351829053392527275460725080193775822696019175116338038464837,
+	"Seconds":1.6375195e1
+}

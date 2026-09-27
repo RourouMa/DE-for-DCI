@@ -1,0 +1,50 @@
+[
+  {
+    "System": "ladder",
+    "Part": "Highest",
+    "OldCount": 19,
+    "NewCount": 12,
+    "OldMaximumNumeratorTotalDegree": 15,
+    "NewMaximumNumeratorTotalDegree": 29,
+    "OldMaximumDenominatorTotalDegree": 15,
+    "NewMaximumDenominatorTotalDegree": 33,
+    "OldMaximumStoredCharacters": 530,
+    "NewMaximumStoredCharacters": 1533
+  },
+  {
+    "System": "ladder",
+    "Part": "Full",
+    "OldCount": 30,
+    "NewCount": 23,
+    "OldMaximumNumeratorTotalDegree": 18,
+    "NewMaximumNumeratorTotalDegree": 53,
+    "OldMaximumDenominatorTotalDegree": 18,
+    "NewMaximumDenominatorTotalDegree": 57,
+    "OldMaximumStoredCharacters": 1080,
+    "NewMaximumStoredCharacters": 22349
+  },
+  {
+    "System": "tennis",
+    "Part": "Highest",
+    "OldCount": 31,
+    "NewCount": 23,
+    "OldMaximumNumeratorTotalDegree": 23,
+    "NewMaximumNumeratorTotalDegree": 65,
+    "OldMaximumDenominatorTotalDegree": 21,
+    "NewMaximumDenominatorTotalDegree": 71,
+    "OldMaximumStoredCharacters": 1535,
+    "NewMaximumStoredCharacters": 12031
+  },
+  {
+    "System": "tennis",
+    "Part": "Full",
+    "OldCount": 46,
+    "NewCount": 38,
+    "OldMaximumNumeratorTotalDegree": 28,
+    "NewMaximumNumeratorTotalDegree": 108,
+    "OldMaximumDenominatorTotalDegree": 25,
+    "NewMaximumDenominatorTotalDegree": 112,
+    "OldMaximumStoredCharacters": 2710,
+    "NewMaximumStoredCharacters": 85875
+  }
+]

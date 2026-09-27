@@ -1,0 +1,9 @@
+{
+	"ExternalLoopPowerLimit":3,
+	"LoopLoopPowerLimit":2,
+	"HardSelectionLimits":true,
+	"MaximumExternalLoopPower":3,
+	"MaximumLoopLoopPower":1,
+	"PropagatorPowerLimitsSatisfied":true,
+	"PowerLimitViolatingAtomCount":0
+}

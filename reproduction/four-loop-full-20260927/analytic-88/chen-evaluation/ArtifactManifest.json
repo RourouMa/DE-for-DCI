@@ -1,0 +1,15 @@
+{
+  "ChenEvaluation-N240-P80.json": "56505227a4b3e67640510d0e1d59d742b1422e1d216443e7c1cd596bbf2a10e5",
+  "ChenEvaluation-N320-P100.json": "3660f0294271774fe933b6c2e2b94cbb3080a56d0a7ca5aa9fb54098680e19e8",
+  "ChenEvaluation-N400-P120.json": "f3cd2208fc788a62e19abf74454438a5d41194b9ac4b8d9684d5bc05ca103b6b",
+  "ChenEvaluation-N480-P140.json": "15c819a4df3504af2af98783c73bfb75ba4a565f76926d3d77e28ccd5c355ab0",
+  "ExplicitChenNumericalValidation.json": "c5ec3c18476d6e5c3518a78c28fc8ec1a550afd0651473377760619ac50ceefc",
+  "NativeInverseAtPoint.json": "c6aa49025ce0fbbf201d9a73e27ace7c01474e3b512da5480ab596334f98517c",
+  "README.zh-CN.md": "81e0007ea53830b422ead4b92c064be2a2b44f3051eded5ab32a3c7cafa1a09b",
+  "ScalarChenAlphabet.json": "b4f4310e3ddcef6ffbd497ee3631678a80d67b2b4087bd04457c7438f8f8ac0d",
+  "UDApplicability.zh-CN.md": "7d4bca1c2b75483e5ffdf78615f5ce026a34a2bcec456aee7e82c1a3f26ca937",
+  "UDTopologyMassAudit.json": "87538dd4e26841bc80be276c821ca7977d3fb2e328f64834782a4af235029212",
+  "compare_evaluations.py": "ccb3d268014bc95250a487d3e4d93ee3b433f50f8d3b0fe16628272edf138034",
+  "evaluate_chen_series.py": "3d837b928740b102d7d6c81cc41040f938a26dd5a7540a08e2ee5b9fdc4fc18b",
+  "export-inverse-point.wls": "8c6665ecbbdab4ade71ed28156d7b4e407a6aa68e5bbf2e134a72f00fafa3cd8"
+}

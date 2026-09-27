@@ -1,0 +1,217 @@
+{
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "DETopValueConservative40Digits": "1.294977445434631202675686442291414292929",
+  "DETopValueNDSolve": "1.294977445434631202675686442291414292928832900378583797041644177287435",
+  "MaximumDifferenceAcrossThreeAlgorithmsAndPaths": "4.52442840989275092070642575066e-46",
+  "MaxCanonical88DifferenceAcrossTwoTaylorPaths": "5.0099563962642870297319192346e-46",
+  "DECrossCheckAgreesAt40DecimalPlaces": true,
+  "NoDirectEstimateUsedForBoundary": true,
+  "NDSolveWarning": null,
+  "NDSolveSettings": "80-digit initial Taylor arithmetic, 70-digit NDSolve with 50-digit error goals; rerun completed without warnings. Precision claim additionally requires cross-method agreement.",
+  "DirectComparisons": [
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumerical-20260927.json",
+      "Value": "1.28678601192980158",
+      "ReportedError": "0.00105664284534977542",
+      "DEMinusDirect": "0.00819143350482962267568644229141",
+      "DifferenceOverReportedError": "7.7523200397179159225",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": false,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Concurrent sectors share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumerical-918273.json",
+      "Value": "1.28964076360234836",
+      "ReportedError": "0.00099894594415108999",
+      "DEMinusDirect": "0.00533668183228284267568644229141",
+      "DifferenceOverReportedError": "5.3423129284718059466",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": false,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Concurrent sectors share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumericalRefined-20260927.json",
+      "Value": "1.29098057924056109",
+      "ReportedError": "0.000745475000844100289",
+      "DEMinusDirect": "0.00399686619407011267568644229141",
+      "DifferenceOverReportedError": "5.3615026520600512929",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": false,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Concurrent sectors share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/TopDirectNumericalRefined-918273.json",
+      "Value": "1.29018378031000358",
+      "ReportedError": "0.000700369982736128208",
+      "DEMinusDirect": "0.00479366512462762267568644229141",
+      "DifferenceOverReportedError": "6.8444754098401825245",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": false,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Concurrent sectors share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectStrong-vegas.json",
+      "Value": "1.29263096328823335",
+      "ReportedError": "0.0000616304247380276582",
+      "DEMinusDirect": "0.00234648214639785267568644229141",
+      "DifferenceOverReportedError": "38.073437857552342883",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": false,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Concurrent sectors share a mutable integrator: Vegas error reproduced; QMC risk not independently quantified",
+      "RequestedRelativeAccuracyReached": true
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectSerial-vegas.json",
+      "Value": "1.29652372447698716",
+      "ReportedError": "0.0000927472216725275272",
+      "DEMinusDirect": "-0.00154627904235595732431355770859",
+      "DifferenceOverReportedError": "16.671971563909149525",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": true,
+      "EligibleForErrorBarBasedAcceptance": false,
+      "ConfigurationAudit": "Serial sectors; no concurrent integrator calls. Vegas cross-sector repeated-seed error correlations remain unquantified",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/TopDirectSerialCoarse-173205.json",
+      "Value": "1.25178762348550343",
+      "ReportedError": "0.00248990035537524504",
+      "DEMinusDirect": "0.0431898219491277726756864422914",
+      "DifferenceOverReportedError": "17.346004170764805826",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": true,
+      "EligibleForErrorBarBasedAcceptance": true,
+      "ConfigurationAudit": "Serial sectors; QMC RNG advances across sequential calls",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/TopDirectSerialCoarse-223607.json",
+      "Value": "1.25405849968506589",
+      "ReportedError": "0.00262617308360726682",
+      "DEMinusDirect": "0.0409189457495653126756864422914",
+      "DifferenceOverReportedError": "15.58120673956483576",
+      "WithinThreeReportedErrors": false,
+      "RaceFreeConfiguration": true,
+      "EligibleForErrorBarBasedAcceptance": true,
+      "ConfigurationAudit": "Serial sectors; QMC RNG advances across sequential calls",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/TotalSum-qmc-20260928.json",
+      "Value": "1.4154877649188298",
+      "ReportedError": "0.1303981262538",
+      "DEMinusDirect": "-0.120510319484198597324313557709",
+      "DifferenceOverReportedError": "0.9241721713826140433",
+      "WithinThreeReportedErrors": true,
+      "RaceFreeConfiguration": true,
+      "EligibleForErrorBarBasedAcceptance": true,
+      "ConfigurationAudit": "Single pointwise total-sector integrand; sector covariance included in direct total error estimate",
+      "RequestedRelativeAccuracyReached": false
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/TotalSum-vegas-27182818.json",
+      "Value": "1.2976376007479031",
+      "ReportedError": "0.002717241435795249",
+      "DEMinusDirect": "-0.00266015531327189732431355770859",
+      "DifferenceOverReportedError": "0.97899114823904324596",
+      "WithinThreeReportedErrors": true,
+      "RaceFreeConfiguration": true,
+      "EligibleForErrorBarBasedAcceptance": true,
+      "ConfigurationAudit": "Single pointwise total-sector integrand; sector covariance included in direct total error estimate",
+      "RequestedRelativeAccuracyReached": false
+    }
+  ],
+  "DirectRunsWithoutFinalEstimate": [
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectStrong-qmc-default.json",
+      "Status": "TimedOut",
+      "Seconds": 962.9956419467926,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 314159,
+        "MaxEval": 4000000000,
+        "WallClockLimit": 900,
+        "Threads": 4,
+        "EpsRel": 5e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "FitFunction": "default",
+        "MinM": 128
+      }
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectStrong-qmc-polysingular.json",
+      "Status": "TimedOut",
+      "Seconds": 962.9810292720795,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 161803,
+        "MaxEval": 4000000000,
+        "WallClockLimit": 900,
+        "Threads": 4,
+        "EpsRel": 5e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "FitFunction": "polysingular",
+        "MinM": 128
+      }
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectSerial-qmc-default.json",
+      "Status": "TimedOut",
+      "Seconds": 960.7522630691528,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 314159,
+        "MaxEval": 4000000000,
+        "WallClockLimit": 900,
+        "AmplitudeThreads": 1,
+        "IntegratorThreads": 4,
+        "EpsRel": 5e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "FitFunction": "default",
+        "MinM": 128
+      }
+    },
+    {
+      "File": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-dlog-analytic-20260927/numerical/DirectSerial-qmc-polysingular.json",
+      "Status": "Running",
+      "Seconds": null,
+      "PredeclaredPlan": {
+        "Integrator": "Qmc",
+        "Seed": 161803,
+        "MaxEval": 4000000000,
+        "WallClockLimit": 900,
+        "AmplitudeThreads": 1,
+        "IntegratorThreads": 4,
+        "EpsRel": 5e-05,
+        "EpsAbs": 1e-08,
+        "Transform": "korobov3",
+        "FitFunction": "polysingular",
+        "MinM": 128,
+        "MinN": 10000
+      }
+    }
+  ],
+  "OriginalRefinedDirectValidationPassed": false,
+  "OriginalRefinedEligibleForValidation": false,
+  "RaceFreeDirectChecksCompleted": 5,
+  "ErrorBarEligibleChecksCompleted": 4,
+  "ErrorBarEligibleChecksAllWithinThreeReportedErrors": false,
+  "Interpretation": "Legacy/concurrent, correlated-error and insufficiently converged estimates are retained. Two predetermined complete-sector-sum Vegas runs pass the requested 0.1% statistical check; see FinalDirectValidation.json. No direct estimate was used to fit boundary constants.",
+  "FinalCompleteSectorSumValidationPassedAtRelativePrecision001": true,
+  "FinalValidationReport": "FinalDirectValidation.json"
+}

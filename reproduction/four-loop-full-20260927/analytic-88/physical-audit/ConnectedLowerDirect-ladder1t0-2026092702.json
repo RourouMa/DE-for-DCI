@@ -1,0 +1,32 @@
+{
+  "Library": "/home/april/Documents/Codex/2026-09-10/new-chat/work/numerical/ladder1t0/ladder1t0_pylink.so",
+  "LibrarySHA256": "7b280b0132dd9b315f7f5422ce8b2b4a71e27d3face5dfbda233f895d254ffdb",
+  "Name": "ladder1t0",
+  "Seed": 2026092702,
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "Method": "Direct original compiled pySecDec momentum-space integral, QMC korobov3",
+  "DEOrAnalyticBoundaryUsed": false,
+  "Seconds": 1145.323798418045,
+  "Raw": [
+    " + ((1.79630234524369459e+00,0.00000000000000000e+00) +/- (3.45147503823065049e-05,0.00000000000000000e+00)) + O(eps)",
+    "1",
+    " + ((1.79630234524369459e+00,0.00000000000000000e+00) +/- (3.45147503823065049e-05,0.00000000000000000e+00)) + O(eps)\n"
+  ],
+  "Sympy": [
+    "(1.79630234524369459+0*I) + O(eps)",
+    "(3.45147503823065049e-05+0*I) + O(eps)"
+  ],
+  "NumberOfAmplitudeThreads": 2,
+  "QMCInternalThreads": 2,
+  "MaxEval": 300000000,
+  "AcceptanceEligible": false,
+  "Status": "Computed",
+  "CurrentNativeIndex": 56,
+  "CurrentAnalyticReference": "1.7962307858526780476635403070035717032309172366808003833563",
+  "DirectValue": "1.79630234524369459",
+  "DirectReportedError": "0.0000345147503823065049",
+  "PullVsCurrentAnalytic": 2.0732988135190524
+}

@@ -1,0 +1,43 @@
+{
+  "ExternalLoopLimit": 3,
+  "LoopLoopLimit": 2,
+  "AllPassed": true,
+  "Results": [
+    {
+      "Run": "ladder",
+      "Part": "Highest",
+      "Audit": {
+        "BasisCount": 12,
+        "AtomCount": 19,
+        "MaxExternalLoopPower": 3,
+        "MaxLoopLoopPower": 1,
+        "ViolatingAtomCount": 0,
+        "Passed": true
+      }
+    },
+    {
+      "Run": "ladder",
+      "Part": "RetainedLower1",
+      "Audit": {
+        "BasisCount": 4,
+        "AtomCount": 4,
+        "MaxExternalLoopPower": 2,
+        "MaxLoopLoopPower": 0,
+        "ViolatingAtomCount": 0,
+        "Passed": true
+      }
+    },
+    {
+      "Run": "ladder",
+      "Part": "RetainedLower2",
+      "Audit": {
+        "BasisCount": 7,
+        "AtomCount": 7,
+        "MaxExternalLoopPower": 2,
+        "MaxLoopLoopPower": 1,
+        "ViolatingAtomCount": 0,
+        "Passed": true
+      }
+    }
+  ]
+}

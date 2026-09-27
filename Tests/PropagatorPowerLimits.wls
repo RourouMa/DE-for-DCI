@@ -1,0 +1,24 @@
+root=DirectoryName[DirectoryName[$InputFileName]];Get[FileNameJoin[{root,"Kernel","ConformalIBP.wl"}]];Get[FileNameJoin[{root,"Examples","kinematics.wl"}]];
+assert[q_,name_]:=If[TrueQ[q],Print["PASS ",name],Print["FAIL ",name];Quit[1]];
+f=LadderFamily[2,kinematics,{x,y}];a=G[3,0,0,1,1,1,1,1,2,1,1];
+extBad=G@@ReplacePart[List@@a,1->4];intBad=G@@ReplacePart[List@@a,9->3];num=G@@ReplacePart[List@@a,{1->-7,9->-6}];
+assert[ConformalIBP`Private`representativePoleLimitsQ[f,a],"external cubic and internal quadratic poles are allowed"];
+assert[!ConformalIBP`Private`representativePoleLimitsQ[f,extBad]&&!ConformalIBP`Private`representativePoleLimitsQ[f,intBad],"external quartic and internal cubic poles are excluded"];
+assert[ConformalIBP`Private`representativePoleLimitsQ[f,num],"negative numerator exponents do not count as denominator powers"];
+split=G@@ReplacePart[List@@extBad,9->0];assert[!ConformalIBP`Private`representativePoleLimitsQ[f,split],"the external limit also applies to disconnected factors"];
+reverse=CreateFamily[Join[KeyDrop[f,{"Hash"}],<|"Propagators"->Reverse[f["Propagators"]],"TopSector"->Reverse[f["TopSector"]],"SuperSectors"->{}|>]];
+reindex[g_]:=G@@Join[Reverse[Take[List@@g,9]],{1,1}];
+assert[ConformalIBP`Private`representativePolePowers[reverse,reindex[a]]==={3,2}&&!ConformalIBP`Private`representativePoleLimitsQ[reverse,reindex[intBad]],"propagator type follows family metadata under reordered slots"];
+(* A custom validator isolates exact cancellation from the independent native finiteness tests. *)
+custom=Append[f,"FiniteValidator"->Function[{family,expr},True]];b=G@@ReplacePart[List@@a,1->2];
+cancel=ConformalIBP`Private`constantPoleCancellationCandidates[custom,{intBad+a,intBad+b}];
+assert[AssociationQ[cancel]&&AnyTrue[cancel["Candidates"],ConformalIBP`Private`representativePoleLimitsQ[custom,#]&&ConformalIBP`Private`support[#]===Sort[{a,b}]&],"internal cubic atoms cancel exactly before the hard filter"];
+assert[TrueQ[InitializeFiniteFlow[Environment["FINITEFLOW_ROOT"],FileNameJoin[{Environment["FINITEFLOW_ROOT"],"mathlink"}]]],"FiniteFlow initialized"];
+one=LadderFamily[1,kinematics,{x,y}];high=G[4,0,0,0,1];
+physical=<|"Basis"->{high},"PhysicalInput"->{high},"RawDerivative"->{},"PhysicalDE"->{},"FiniteCoverPolicy"->"LowPoleClosureFirst"|>;
+reference=<|"FullReferenceQueries"->{high},"FullPoolNumericalRules"->{high->high},"Point"->{11,17},"Prime"->FiniteFlow`FFPrimeNo[0],"FullPoolHash"->0|>;
+dir=CreateDirectory[FileNameJoin[{$TemporaryDirectory,"propagator-power-limits-"<>CreateUUID[]}]];
+choice=ConformalIBP`Private`selectLowPolePhysicalBasis[one,physical,reference,dir,1];assert[FailureQ[choice],"missing compliant cover fails instead of admitting a quartic representative"];
+full=ReconstructFiniteCoordinateSystem[<|1->one|>,{high},{high},{},"OutputDirectory"->FileNameJoin[{dir,"full"}]];
+assert[MatchQ[full,Failure["MixedBasisPowerLimits",_]],"explicit full-system representatives obey the same hard bounds"];
+assert[$MessageList==={},"no unexpected messages"];Quit[0];

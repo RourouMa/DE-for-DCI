@@ -1,0 +1,52 @@
+{
+	"FullDEClosed":true,
+	"BasisCount":35,
+	"BasisLoopCounts":{
+		"3":24,
+		"2":7,
+		"1":4
+	},
+	"EveryBasisExpressionFinite":true,
+	"IndependentBasisPointWitness":true,
+	"CompletePhysicalPoolAgreement":true,
+	"OriginalTopRationallyCovered":true,
+	"FullCurvatureNumericallyZero":true,
+	"SymbolicCurvatureChecked":false,
+	"PropagatorPowerLimitsSatisfied":true,
+	"ExternalLoopPowerLimit":3,
+	"LoopLoopPowerLimit":2,
+	"CanonicalPhysicalPoolCaches":[
+		{
+			"Index":"\/home\/april\/Documents\/ChatGPT\/DE for DCI\/four-loop-full-closure-20260927\/lower-source-relations\/CanonicalPoolIndex.wl",
+			"IndexSHA256":10251641582893738920858846446378139955680509534737510360075756805821175753236,
+			"FileSHA256":79232483191909392166460611864134377589779095305923174445188707346848251568901,
+			"FullPoolHash":57966004229739032034675306637713977950648318297912001759560383068862634347265,
+			"FamilyHash":27033797847927953022158675360922230950852059488169883549136748894305989533192,
+			"LoopCount":3,
+			"Rows":77412
+		},
+		{
+			"Index":"\/home\/april\/Documents\/ChatGPT\/DE for DCI\/four-loop-full-closure-20260927\/lower-gap-relations\/CanonicalPoolIndex.wl",
+			"IndexSHA256":35803777516782893129860961125638023751329457458492981811415857875503427784465,
+			"FileSHA256":81300131256318172031415398282223749925892900042128141081894026511894607760828,
+			"FullPoolHash":94915517837416619761489376038027550611679402069481135733278965327398078260917,
+			"FamilyHash":27033797847927953022158675360922230950852059488169883549136748894305989533192,
+			"LoopCount":3,
+			"Rows":15798
+		}
+	],
+	"ReusedPhysicalColumnOrderCount":64987,
+	"NoSourcesDiscarded":true,
+	"UnmappedPoolSourceCount":0,
+	"BoundarySourceTreatment":"RetainAll",
+	"OldDEOrReductionRulesUsedAsEquations":false,
+	"NativeDerivativesRecomputed":true,
+	"Point":[
+		11,
+		17
+	],
+	"Prime":9223372036854775783,
+	"FullPoolHash":324731566767049337916835481666172560073983833891342922612698917920478793914,
+	"ImplementationHash":25198455536859663158041172820890015546399026164759068379812159166583524482991,
+	"Seconds":2.24459997e2
+}

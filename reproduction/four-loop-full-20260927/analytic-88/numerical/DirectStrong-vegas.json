@@ -1,0 +1,37 @@
+{
+  "PredeclaredPlan": {
+    "Integrator": "Vegas",
+    "Seed": 271828,
+    "MaxEval": 1000000000,
+    "WallClockLimit": 600,
+    "Threads": 4,
+    "EpsRel": 5e-05,
+    "EpsAbs": 1e-08,
+    "NStart": 1000000,
+    "NIncrease": 500000
+  },
+  "Point": [
+    "1/4",
+    "3/4"
+  ],
+  "IntegralIndex": 1,
+  "Loops": 4,
+  "Library": "/home/april/Documents/ChatGPT/DE for DCI/four-loop-analytic-20260927/numerical-work/four_top_p1/four_top_p1_pylink.so",
+  "LibrarySHA256": "828be769cf8a7c65a5058d3e1ba80f567da07b9daba513025ec482b5cefd9587",
+  "PID": 639242,
+  "StartedUnix": 1790484672.0589085,
+  "DirectEstimateUsedForBoundary": false,
+  "DEOrAnalyticReferenceRead": false,
+  "StoppingRule": "Requested error or fixed maxeval or fixed wall clock only; no reference-value stopping",
+  "Status": "Computed",
+  "Seconds": 316.3960864870169,
+  "SympyResult": [
+    "(1.29263096328823335+0*I) + O(eps)",
+    "(6.16304247380276582e-05+1.888779665731403e-16*I) + O(eps)"
+  ],
+  "RawResult": [
+    " + ((1.29263096328823335e+00,0.00000000000000000e+00) +/- (6.16304247380276582e-05,1.88877966573140300e-16)) + O(eps)",
+    "1",
+    " + ((1.29263096328823335e+00,0.00000000000000000e+00) +/- (6.16304247380276582e-05,1.88877966573140300e-16)) + O(eps)\n"
+  ]
+}

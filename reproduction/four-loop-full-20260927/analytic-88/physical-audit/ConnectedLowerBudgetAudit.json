@@ -1,0 +1,31 @@
+{
+  "Jobs": [
+    {
+      "PID": 657472,
+      "Seed": 2026092702,
+      "StartedUnix": 1790485328.76,
+      "Status": "Computed",
+      "AmplitudeSectorThreads": 2,
+      "QMCInternalThreads": 2,
+      "WallClockLimit": 1800,
+      "ShutdownGraceSeconds": 60,
+      "MaxEval": 300000000,
+      "AcceptanceEligible": false,
+      "PlanBasis": "Requested wall_clock_limit=1800 set before integration started; enforce 60-second shutdown grace independent of estimate"
+    },
+    {
+      "PID": 661812,
+      "Seed": 2026092713,
+      "StartedUnix": 1790485530.47,
+      "Status": "Computed",
+      "AmplitudeSectorThreads": 1,
+      "QMCInternalThreads": 2,
+      "WallClockLimit": 1800,
+      "ShutdownGraceSeconds": 60,
+      "MaxEval": 100000000,
+      "AcceptanceEligible": true,
+      "PlanBasis": "Requested wall_clock_limit=1800 set before integration started; enforce 60-second shutdown grace independent of estimate"
+    }
+  ],
+  "UpdatedUnix": 1790486797.695259
+}
